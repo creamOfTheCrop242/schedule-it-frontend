@@ -1,0 +1,63 @@
+<section class="min-h-screen flex flex-col justify-end p-3">
+  <div
+    id="image-container"
+    class="w-[200px] rounded-full overflow-hidden mx-auto mt-20"
+  >
+    <img src="/wiz-book.png" alt="" />
+  </div>
+
+  <!-- Input container sticks to bottom -->
+  <div id="input-container" class="mt-auto mb-20">
+    <h1 class="font-['Source_Sans_Pro'] text-white text-2xl">Login</h1>
+
+    <form (ngSubmit)="login()" [formGroup]="form">
+      <app-input
+        placeholder="example@email.com"
+        [name]="form.controls['email']"
+      ></app-input>
+      <app-input
+        placeholder="**************"
+        [name]="form.controls['password']"
+      ></app-input>
+
+      <button
+        class="bg-[#8a15ed] w-full mt-3 p-3 rounded-3xl text-white font-['Source_Sans_Pro']"
+        type="submit"
+      >
+        Log in
+      </button>
+    </form>
+
+    <div id="line-div" class="flex w-full items-center mt-3 gap-4">
+      <div class="bg-white h-px w-full"></div>
+      <span class="text-white font-['Source_Sans_Pro']">or</span>
+      <div class="bg-white h-px w-full"></div>
+    </div>
+
+    <div id="external-sign-in" class="w-full flex mt-3 gap-4">
+      <div id="google" class="w-full">
+        <a
+          href="http://localhost:3000/auth/google"
+          class="bg-white p-3 rounded-3xl block w-full text-center font-['Source_Sans_Pro']"
+          >Google</a
+        >
+      </div>
+      <div id="facebook" class="w-full">
+        <a
+          href=""
+          class="bg-white p-3 rounded-3xl block w-full text-center font-['Source_Sans_Pro']"
+          >Facebook</a
+        >
+      </div>
+    </div>
+
+    <div id="new-sign-in w-full">
+      <a
+        routerLink="/auth/register"
+        class="bg-white w-full mt-3 p-3 rounded-3xl font-['Source_Sans_Pro'] block text-center"
+      >
+        New user? Sign up now
+      </a>
+    </div>
+  </div>
+</section>
