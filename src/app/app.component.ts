@@ -22,20 +22,20 @@ export class AppComponent {
   router = inject(Router);
   title = 'schedule-it';
   status = false;
-  effect = effect(() => {
-    if (
-      ResourceStatus[this.authService.authStatus.status()] ===
-      RxResourceStatuses.Error
-    ) {
-      localStorage.setItem('isLoggedIn', 'false');
-      this.router.navigate(['/auth']);
-    }
+  // effect = effect(() => {
+  //   if (
+  //     ResourceStatus[this.authService.authStatus.status()] ===
+  //     RxResourceStatuses.Error
+  //   ) {
+  //     localStorage.setItem('isLoggedIn', 'false');
+  //     this.router.navigate(['/auth']);
+  //   }
 
-    if (this.authService.authStatus.value()) {
-      localStorage.setItem('isLoggedIn', 'true');
-      this.router.navigate(['/dashboard']);
-    }
-  });
+  //   if (this.authService.authStatus.value()) {
+  //     localStorage.setItem('isLoggedIn', 'true');
+  //     this.router.navigate(['/dashboard']);
+  //   }
+  // });
 
   constructor() {}
 
