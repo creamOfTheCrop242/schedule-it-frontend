@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { InputComponent } from '../../../shared/components/input/input.component';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { RegisterRequest } from '../../models/auth.model';
 import { take } from 'rxjs';
@@ -14,6 +14,7 @@ import { take } from 'rxjs';
 })
 export class RegisterComponent {
   authService = inject(AuthService);
+  router = inject(Router);
   form = new FormGroup({
     name: new FormControl('', [Validators.required]),
     email: new FormControl('', [Validators.required]),
@@ -67,6 +68,11 @@ export class RegisterComponent {
     this.authService
       .sendVerifyCode(request)
       .pipe(take(1))
-      .subscribe({ next: (response) => {}, error: (error) => {} });
+      .subscribe({
+        next: (response) => {
+          this.router.navigate(['send-verify-code']);
+        },
+        error: (error) => {},
+      });
   }
 }
