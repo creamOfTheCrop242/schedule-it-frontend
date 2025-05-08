@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { catchError, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment.development';
-import { LoginRequest } from '../models/auth.model';
+import { LoginRequest, RegisterRequest } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root',
@@ -24,5 +24,15 @@ export class AuthService {
     return this.httpClient.post(`${environment.baseUrl}/auth/login`, request, {
       withCredentials: true,
     });
+  }
+
+  sendVerifyCode(request: RegisterRequest) {
+    return this.httpClient.post(
+      `${environment.baseUrl}/auth/send-verify-code`,
+      request,
+      {
+        withCredentials: true,
+      }
+    );
   }
 }

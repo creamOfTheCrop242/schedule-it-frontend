@@ -10,10 +10,16 @@ import { Router, RouterModule } from '@angular/router';
 import { LoginRequest } from '../../models/auth.model';
 import { AuthService } from '../../services/auth.service';
 import { take } from 'rxjs';
+import { ErrorTextComponent } from '../../../shared/components/error-text/error-text.component';
 
 @Component({
   selector: 'app-login',
-  imports: [InputComponent, RouterModule, ReactiveFormsModule],
+  imports: [
+    InputComponent,
+    RouterModule,
+    ReactiveFormsModule,
+    ErrorTextComponent,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
@@ -23,24 +29,48 @@ export class LoginComponent {
     password: new FormControl('', [Validators.required]),
   });
   router = inject(Router);
-  accountService = inject(AuthService);
+  authService = inject(AuthService);
+  formErrors = { email: null, password: null };
+  submissionError;
 
-  navigateToRegister() {
-    this.router.navigate(['auth/register']);
+  validateForm() {
+    if (this.form.invalid) {
+      if (this.form.controls['email'].errors) {
+        this.formErrors.email = 'Please enter a valid email';
+      }
+
+      if (this.form.controls['password'].errors) {
+        this.formErrors.password = 'Please enter a valid password';
+      }
+
+      return false;
+    }
+    this.formErrors.email = null;
+    this.formErrors.password = null;
+    return true;
   }
 
   login() {
-    console.log('here');
-    const requst: LoginRequest = {
+    if (!this.validateForm()) {
+      return;
+    }
+
+    const request: LoginRequest = {
       email: this.form.controls['email'].value,
       password: this.form.controls['password'].value,
     };
 
-    this.accountService
-      .loginUser(requst)
+    this.authService
+      .loginUser(request)
       .pipe(take(1))
-      .subscribe((response) => {
-        console.log(response);
+      .subscribe({
+        next: (response) => {
+          localStorage.setItem('isLoggedIn', 'true');
+          this.router.navigate(['/dashboard']);
+        },
+        error: (error) => {
+          this.submissionError = 'An error has occured';
+        },
       });
   }
 }
