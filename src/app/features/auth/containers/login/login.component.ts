@@ -33,10 +33,6 @@ export class LoginComponent {
   formErrors = { email: null, password: null };
   submissionError;
 
-  navigateToRegister() {
-    this.router.navigate(['auth/register']);
-  }
-
   validateForm() {
     if (this.form.invalid) {
       if (this.form.controls['email'].errors) {

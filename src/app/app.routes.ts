@@ -4,6 +4,7 @@ import { LoginComponent } from './features/auth/containers/login/login.component
 import { RegisterComponent } from './features/auth/containers/register/register.component';
 import { loginGuard } from './features/auth/guards/login.guard';
 import { DashboardContainerComponent } from './features/dashboard/containers/dashboard-container/dashboard-container.component';
+import { SendVerifyCodeComponent } from './features/auth/components/send-verify-code/send-verify-code.component';
 
 export const routes: Routes = [
   {
@@ -23,9 +24,18 @@ export const routes: Routes = [
       },
       {
         path: 'register',
-        title: 'Register',
-        component: RegisterComponent,
-        canActivate: [loginGuard],
+        children: [
+          {
+            path: 'create-user',
+            component: RegisterComponent,
+            canActivate: [loginGuard],
+          },
+          {
+            path: 'send-verify-code',
+            component: SendVerifyCodeComponent,
+            canActivate: [loginGuard],
+          },
+        ],
       },
     ],
   },
