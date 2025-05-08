@@ -9,16 +9,25 @@
   <!-- Input container sticks to bottom -->
   <div id="input-container" class="mt-auto mb-20">
     <h1 class="font-['Source_Sans_Pro'] text-white text-2xl">Login</h1>
-
+    @if (submissionError) {
+    <app-error-text>{{ submissionError }}</app-error-text>
+    }
     <form (ngSubmit)="login()" [formGroup]="form">
       <app-input
         placeholder="example@email.com"
         [name]="form.controls['email']"
       ></app-input>
+      @if (formErrors.email) {
+      <app-error-text>{{ formErrors.email }}</app-error-text>
+      }
+
       <app-input
         placeholder="**************"
         [name]="form.controls['password']"
       ></app-input>
+      @if (formErrors.password) {
+      <app-error-text>{{ formErrors.password }}</app-error-text>
+      }
 
       <button
         class="bg-[#8a15ed] w-full mt-3 p-3 rounded-3xl text-white font-['Source_Sans_Pro']"
@@ -44,7 +53,7 @@
       </div>
       <div id="facebook" class="w-full">
         <a
-          href=""
+          href="http://localhost:3000/auth/facebook"
           class="bg-white p-3 rounded-3xl block w-full text-center font-['Source_Sans_Pro']"
           >Facebook</a
         >
