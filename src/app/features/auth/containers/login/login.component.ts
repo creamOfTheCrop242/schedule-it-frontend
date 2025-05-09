@@ -11,6 +11,7 @@ import { LoginRequest } from '../../models/auth.model';
 import { AuthService } from '../../services/auth.service';
 import { take } from 'rxjs';
 import { ErrorTextComponent } from '../../../shared/components/error-text/error-text.component';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-login',
@@ -19,6 +20,7 @@ import { ErrorTextComponent } from '../../../shared/components/error-text/error-
     RouterModule,
     ReactiveFormsModule,
     ErrorTextComponent,
+    ButtonComponent,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',

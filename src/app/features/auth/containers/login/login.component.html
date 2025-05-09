@@ -28,13 +28,9 @@
       @if (formErrors.password) {
       <app-error-text>{{ formErrors.password }}</app-error-text>
       }
-
-      <button
-        class="bg-[#8a15ed] w-full mt-3 p-3 rounded-3xl text-white font-['Source_Sans_Pro']"
-        type="submit"
-      >
-        Log in
-      </button>
+      <div class="mt-3">
+        <app-button background="purple" label="Log in"></app-button>
+      </div>
     </form>
 
     <div id="line-div" class="flex w-full items-center mt-3 gap-4">
@@ -45,28 +41,36 @@
 
     <div id="external-sign-in" class="w-full flex mt-3 gap-4">
       <div id="google" class="w-full">
-        <a
-          href="http://localhost:3000/auth/google"
-          class="bg-white p-3 rounded-3xl block w-full text-center font-['Source_Sans_Pro']"
-          >Google</a
-        >
+        <app-button
+          label="Google"
+          link="http://localhost:3000/auth/google"
+          [isInternal]="false"
+          background="white"
+          color="black"
+          type="link"
+        ></app-button>
       </div>
       <div id="facebook" class="w-full">
-        <a
-          href="http://localhost:3000/auth/facebook"
-          class="bg-white p-3 rounded-3xl block w-full text-center font-['Source_Sans_Pro']"
-          >Facebook</a
-        >
+        <app-button
+          label="Facebook"
+          link="http://localhost:3000/auth/facebook"
+          [isInternal]="false"
+          background="white"
+          color="black"
+          type="link"
+        ></app-button>
       </div>
     </div>
 
-    <div id="new-sign-in w-full">
-      <a
-        routerLink="/auth/register/create-user"
-        class="bg-white w-full mt-3 p-3 rounded-3xl font-['Source_Sans_Pro'] block text-center"
-      >
-        New user? Sign up now
-      </a>
+    <div id="new-sign-in" class="mt-3">
+      <app-button
+        label="New user? Sign up now"
+        link="/auth/register/create-user"
+        [isInternal]="true"
+        background="white"
+        color="black"
+        type="link"
+      ></app-button>
     </div>
   </div>
 </section>

@@ -1,0 +1,27 @@
+@if (type() === 'button') {
+<button
+  class="p-3 rounded-3xl w-full {{ bgOptions[background()] }} {{
+    colorOptions[color()]
+  }}"
+>
+  {{ label() }}
+</button>
+} @else if (type() === 'link' && isInternal()) {
+<a
+  [routerLink]="link()"
+  class="p-3 rounded-3xl block w-full text-center {{
+    bgOptions[background()]
+  }} {{ colorOptions[color()] }}"
+>
+  {{ label() }}
+</a>
+} @else {
+<a
+  [href]="link()"
+  class="p-3 rounded-3xl block w-full text-center {{
+    bgOptions[background()]
+  }} {{ colorOptions[color()] }}"
+>
+  {{ label() }}
+</a>
+}
