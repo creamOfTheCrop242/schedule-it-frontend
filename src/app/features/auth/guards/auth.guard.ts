@@ -5,8 +5,9 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { filter, map, take } from 'rxjs';
 import { RxResourceStatuses } from '../models/auth.model';
 
-export const loginGuard: CanActivateFn = (route, state) => {
+export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
+  const router = inject(Router);
 
   return toObservable(authService.authStatus.status).pipe(
     filter(
@@ -15,8 +16,10 @@ export const loginGuard: CanActivateFn = (route, state) => {
     ),
     take(1),
     map((status) => {
+      console.log();
       const rxStatus = ResourceStatus[status];
-      if (rxStatus === RxResourceStatuses.Resolved) {
+      if (rxStatus === RxResourceStatuses.Error) {
+        router.navigate(['/auth']);
         return false;
       }
       return true;
