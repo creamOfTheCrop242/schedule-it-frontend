@@ -17,4 +17,10 @@ export class AppService {
       withCredentials: true,
     });
   }
+
+  verifyCode() {
+    return this.httpService.get('http://localhost:3000/auth/send-verify-code', {
+      withCredentials: true,
+    });
+  }
 }

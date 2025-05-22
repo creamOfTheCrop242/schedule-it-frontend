@@ -1,4 +1,4 @@
-@if (type() === 'button') {
+@if (!link()) {
 <button
   class="p-3 rounded-3xl w-full {{ bgOptions[background()] }} {{
     colorOptions[color()]
@@ -6,7 +6,7 @@
 >
   {{ label() }}
 </button>
-} @else if (type() === 'link' && isInternal()) {
+} @else if (link() && isInternal()) {
 <a
   [routerLink]="link()"
   class="p-3 rounded-3xl block w-full text-center {{

@@ -67,7 +67,7 @@ export class LoginComponent {
       .pipe(take(1))
       .subscribe({
         next: (response) => {
-          localStorage.setItem('isLoggedIn', 'true');
+          this.authService.authStatus.reload();
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {

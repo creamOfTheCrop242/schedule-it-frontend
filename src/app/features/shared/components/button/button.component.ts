@@ -12,12 +12,12 @@ export class ButtonComponent {
   label = input<string>();
   link = input<string>();
   isInternal = input<boolean>();
-  type = input<'button' | 'link'>('button');
   background = input<string>();
   color = input<string>('white');
   bgOptions = {
     purple: 'cotc-bg-purple',
     white: 'bg-white',
+    clear: 'bg-transparent',
   };
   colorOptions = {
     black: 'text-black',

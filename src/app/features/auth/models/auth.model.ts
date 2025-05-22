@@ -17,3 +17,8 @@ export interface RegisterRequest {
   name: string;
   password: string;
 }
+
+export interface VerifyCodeRequest {
+  email: string;
+  code: string;
+}
