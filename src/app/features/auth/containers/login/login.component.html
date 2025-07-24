@@ -24,6 +24,7 @@
       <app-input
         placeholder="**************"
         [name]="form.controls['password']"
+        type="password"
       ></app-input>
       @if (formErrors.password) {
       <app-error-text>{{ formErrors.password }}</app-error-text>

@@ -2,6 +2,7 @@
 
 body {
   background-color: #161616;
+  color: white;
   font-family: "Source Sans Pro";
 }
 
@@ -9,6 +10,30 @@ body {
   background-color: #8a15ed;
 }
 
+.cotc-bg-dark {
+  background-color: #2c2c2c;
+}
+
 .cotc-text-purple {
   color: #8a15ed;
+}
+
+.material-icons {
+  font-size: 2rem;
+}
+
+.active-icon {
+  filter: drop-shadow(0 0 8px #a855f7);
+}
+
+input:-webkit-autofill {
+  background-color: #2c2c2c !important;
+  -webkit-box-shadow: 0 0 0 1000px #2c2c2c inset !important;
+  -webkit-text-fill-color: #fff !important;
+}
+
+/* For Chrome, Safari, Edge */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }

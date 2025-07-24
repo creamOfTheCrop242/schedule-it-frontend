@@ -1,6 +1,16 @@
+@if (type() !== 'textarea') {
 <input
   [formControl]="name()"
-  type="text"
-  class="bg-[#2c2c2c] p-3 w-full rounded-3xl text-white mt-3 placeholder-light"
+  [type]="type()"
+  class="bg-[#2c2c2c] autofill:bg-[#2c2c2c] p-3 w-full rounded-3xl text-white mt-3 placeholder-light"
   [placeholder]="placeholder()"
 />
+} @else {
+<textarea
+  id="description"
+  class="bg-[#2c2c2c] autofill:bg-[#2c2c2c] p-3 w-full rounded-3xl text-white mt-3 placeholder-light"
+  [placeholder]="placeholder()"
+  [formControl]="name()"
+  rows="4"
+></textarea>
+}

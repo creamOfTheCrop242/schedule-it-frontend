@@ -16,12 +16,12 @@ export const authGuard: CanActivateFn = (route, state) => {
     ),
     take(1),
     map((status) => {
-      console.log();
-      const rxStatus = ResourceStatus[status];
-      if (rxStatus === RxResourceStatuses.Error) {
-        router.navigate(['/auth']);
-        return false;
+      if (status === ResourceStatus.Error) {
+        console.log('Auth guard: User not authenticated, redirecting to auth');
+        return router.createUrlTree(['/auth']);
       }
+
+      console.log('Auth guard: User authenticated, allowing access');
       return true;
     })
   );

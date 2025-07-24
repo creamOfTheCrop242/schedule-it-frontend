@@ -1,0 +1,55 @@
+<!-- Original container (hidden when exploding) -->
+<div
+  class="cotc-bg-dark rounded-2xl px-4 py-2 w-full text-left my-2 task-container relative overflow-hidden"
+  [ngClass]="{
+    'border-2 border-purple-500': isExpanded(task().id)
+  }"
+  (click)="toggleDescription(task().id)"
+>
+  <div class="flex justify-between relative z-20">
+    <p class="w-full text-left">
+      {{ task().name }}
+    </p>
+
+    <div class="relative">
+      <input
+        type="checkbox"
+        id="completed"
+        class="mr-2 checkbox-animated"
+        (click)="completeTask(!task().completed, $event)"
+        [checked]="task().completed"
+      />
+      <!-- Ripple effect -->
+      <div class="checkbox-ripple"></div>
+    </div>
+  </div>
+  @if (expandedTaskId === task().id){
+  <hr class="my-2" />
+  }
+  <div
+    class="overflow-hidden transition-all duration-200"
+    [class.max-h-0]="!isExpanded(task().id)"
+    [class.max-h-40]="isExpanded(task().id)"
+    [class.overflow-y-auto]="isExpanded(task().id)"
+  >
+    <p class="py-2">{{ task().description }}</p>
+    <p class="py-2">
+      <span class="font-bold">Priority</span>: {{ task().priority }}
+    </p>
+    <p class="py-2">
+      <span class="font-bold">Start Date</span>: {{ task().startDate }}
+    </p>
+    <p class="py-2">
+      <span class="font-bold">Due Date</span>:
+      {{ task().dueDate | date : "MM/dd/yyyy HH:mm" }}
+    </p>
+
+    <p class="py-2">
+      <!-- <span class="font-bold">Dependency Task</span>:
+      {{ task().dependencyTask }}
+    </p> -->
+    </p>
+
+    <p class="py-2"><span class="font-bold">Notes</span>: {{ task().notes }}</p>
+  </div>
+</div>

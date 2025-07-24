@@ -1,4 +1,8 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  httpResource,
+} from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { catchError, throwError } from 'rxjs';
@@ -17,36 +21,25 @@ export class AuthService {
 
   constructor() {}
 
-  authStatus = rxResource({
-    loader: () =>
-      this.httpClient.get('http://localhost:3000/auth/status', {
-        withCredentials: true,
-      }),
+  authStatus = httpResource({
+    url: `${environment.baseUrl}/auth/status`,
   });
 
   loginUser(request: LoginRequest) {
-    return this.httpClient.post(`${environment.baseUrl}/auth/login`, request, {
-      withCredentials: true,
-    });
+    return this.httpClient.post(`${environment.baseUrl}/auth/login`, request);
   }
 
   sendVerifyCode(request: RegisterRequest) {
     return this.httpClient.post(
       `${environment.baseUrl}/auth/send-verify-code`,
-      request,
-      {
-        withCredentials: true,
-      }
+      request
     );
   }
 
   verifyCode(request: VerifyCodeRequest) {
     return this.httpClient.post(
       `${environment.baseUrl}/auth/register`,
-      request,
-      {
-        withCredentials: true,
-      }
+      request
     );
   }
 }

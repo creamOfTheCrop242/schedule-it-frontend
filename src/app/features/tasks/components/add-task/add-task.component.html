@@ -1,0 +1,108 @@
+<section class="p-4">
+  <h2 class="text-xl font-bold mb-4">Add New Task</h2>
+
+  <form (ngSubmit)="onSubmit()" [formGroup]="form" class="space-y-4">
+    <!-- Task Name -->
+    <div>
+      <label class="block text-sm font-medium mb-2">Task Name *</label>
+      <app-input
+        placeholder="Enter task name"
+        [name]="form.controls['name']"
+        type="text"
+      ></app-input>
+    </div>
+
+    <!-- Description -->
+    <div>
+      <label class="block text-sm font-medium mb-2">Description</label>
+      <app-input
+        placeholder="Enter task description"
+        [name]="form.controls['description']"
+        type="textarea"
+      ></app-input>
+    </div>
+
+    <!-- Priority -->
+    <div>
+      <label class="block text-sm font-medium mb-2">Priority *</label>
+      <select
+        formControlName="priority"
+        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+      >
+        <option *ngFor="let option of priorityOptions" [value]="option">
+          {{ option }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Start Date -->
+    <div>
+      <label class="block text-sm font-medium mb-2">Start Date</label>
+      <app-input
+        placeholder="Select start date"
+        [name]="form.controls['startDate']"
+        type="datetime-local"
+      ></app-input>
+    </div>
+
+    <!-- Due Date -->
+    <div>
+      <label class="block text-sm font-medium mb-2">Due Date</label>
+      <app-input
+        placeholder="Select due date"
+        [name]="form.controls['dueDate']"
+        type="datetime-local"
+      ></app-input>
+    </div>
+
+    <!-- Completed -->
+    <div class="flex items-center">
+      <input
+        type="checkbox"
+        formControlName="completed"
+        id="completed"
+        class="mr-2"
+      />
+      <label for="completed" class="text-sm font-medium"
+        >Mark as completed</label
+      >
+    </div>
+
+    <!-- Completed Date (only show if completed is true) -->
+    @if (form.get('completed')?.value) {
+    <div>
+      <label class="block text-sm font-medium mb-2">Completed Date</label>
+      <app-input
+        placeholder="Select completion date"
+        [name]="form.controls['completedDate']"
+        type="datetime-local"
+      ></app-input>
+    </div>
+    }
+
+    <!-- Dependency Task ID -->
+    <div>
+      <label class="block text-sm font-medium mb-2">Dependency Task</label>
+      <select
+        formControlName="dependencyTaskId"
+        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+      >
+        <option value="">No dependency (optional)</option>
+        <option *ngFor="let task of availableTasks" [value]="task.id">
+          {{ task.name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="pt-4">
+      <button
+        type="submit"
+        [disabled]="!form.valid"
+        class="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+      >
+        Create Task
+      </button>
+    </div>
+  </form>
+</section>

@@ -1,0 +1,40 @@
+<section class="p-5">
+  <div class="flex justify-between">
+    <h1 class="text-2xl">Existing Tasks</h1>
+  </div>
+  <div>
+    @if (incompleteTasks() && incompleteTasks().length > 0){
+    <div>
+      @for (task of incompleteTasks(); track task.id) {
+      <app-task [task]="task" />
+      }
+    </div>
+    } @else if (incompleteTasks() && incompleteTasks().length === 0) {
+    <div class="my-2">No tasks found</div>
+    } @else if (isLoading()) {
+    <div>Loading...</div>
+    } @else if (hasError()){
+    <div class="text-red-500">An error has occurred</div>
+    }
+    <div>
+      <div>
+        <h1 class="text-2xl">Completed Tasks</h1>
+        <div>
+          @if (completedTasks() && completedTasks().length > 0){
+          <div>
+            @for (task of completedTasks(); track task.id) {
+            <app-task [task]="task" />
+            }
+          </div>
+          } @else if (completedTasks() && completedTasks().length === 0) {
+          <div>No tasks found</div>
+          } @else if (isLoading()) {
+          <div>Loading...</div>
+          } @else if (hasError()){
+          <div class="text-red-500">An error has occurred</div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
