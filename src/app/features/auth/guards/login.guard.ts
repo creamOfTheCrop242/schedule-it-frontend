@@ -7,6 +7,7 @@ import { RxResourceStatuses } from '../models/auth.model';
 
 export const loginGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
+  const router = inject(Router);
 
   return toObservable(authService.authStatus.status).pipe(
     filter(
@@ -17,7 +18,10 @@ export const loginGuard: CanActivateFn = (route, state) => {
     map((status) => {
       const rxStatus = ResourceStatus[status];
       if (rxStatus === RxResourceStatuses.Resolved) {
-        return false;
+        console.log(
+          'Login guard: User already authenticated, redirecting to dashboard'
+        );
+        return router.createUrlTree(['/dashboard']);
       }
       return true;
     })
