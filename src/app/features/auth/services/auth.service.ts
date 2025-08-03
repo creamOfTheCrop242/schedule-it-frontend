@@ -1,12 +1,7 @@
-import {
-  HttpClient,
-  HttpErrorResponse,
-  httpResource,
-} from '@angular/common/http';
+import { HttpClient, httpResource } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
-import { catchError, throwError } from 'rxjs';
-import { environment } from '../../../../environments/environment.development';
+
+import { environment } from '../../../../environments/environment';
 import {
   LoginRequest,
   RegisterRequest,
