@@ -18,6 +18,7 @@ export class AuthService {
 
   authStatus = httpResource({
     url: `${environment.baseUrl}/auth/status`,
+    withCredentials: true,
   });
 
   loginUser(request: LoginRequest) {
