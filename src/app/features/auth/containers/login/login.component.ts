@@ -12,6 +12,7 @@ import { AuthService } from '../../services/auth.service';
 import { take } from 'rxjs';
 import { ErrorTextComponent } from '../../../shared/components/error-text/error-text.component';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -34,6 +35,8 @@ export class LoginComponent {
   authService = inject(AuthService);
   formErrors = { email: null, password: null };
   submissionError;
+  googleUrl = `${environment.baseUrl}/auth/google`;
+  facebookUrl = `${environment.baseUrl}/auth/facebook`;
 
   validateForm() {
     if (this.form.invalid) {
