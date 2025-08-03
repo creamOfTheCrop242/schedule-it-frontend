@@ -26,7 +26,7 @@ import { environment } from '../../../../../environments/environment';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   form = new FormGroup({
     email: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required]),
@@ -37,6 +37,11 @@ export class LoginComponent {
   submissionError;
   googleUrl = `${environment.baseUrl}/auth/google`;
   facebookUrl = `${environment.baseUrl}/auth/facebook`;
+
+  ngOnInit(): void {
+    console.log(this.googleUrl);
+    console.log(this.facebookUrl);
+  }
 
   validateForm() {
     if (this.form.invalid) {
