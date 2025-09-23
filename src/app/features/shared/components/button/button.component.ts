@@ -18,9 +18,14 @@ export class ButtonComponent {
     purple: 'cotc-bg-purple',
     white: 'bg-white',
     clear: 'bg-transparent',
+    red: 'bg-red-500',
   };
   colorOptions = {
     black: 'text-black',
     white: 'text-white',
   };
+
+  navigateToLink() {
+    window.location.href = this.link();
+  }
 }

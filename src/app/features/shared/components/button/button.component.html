@@ -17,7 +17,7 @@
 </a>
 } @else {
 <a
-  [href]="link()"
+  (click)="navigateToLink()"
   class="p-3 rounded-3xl block w-full text-center {{
     bgOptions[background()]
   }} {{ colorOptions[color()] }}"
