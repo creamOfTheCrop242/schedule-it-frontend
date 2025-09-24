@@ -59,6 +59,7 @@ export const routes: Routes = [
     children: [
       { path: '', component: TasksContainerComponent },
       { path: 'add-task', component: AddTaskComponent },
+      { path: 'edit-task/:id', component: AddTaskComponent },
     ],
   },
 ];

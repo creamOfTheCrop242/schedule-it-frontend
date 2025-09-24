@@ -3,10 +3,11 @@ import { Task } from '../../models/task.model';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { take } from 'rxjs';
+import { ButtonComponent } from '../../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-task',
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonComponent],
   templateUrl: './task.component.html',
   styleUrl: './task.component.scss',
 })
@@ -25,6 +26,14 @@ export class TaskComponent {
 
   isExpanded(taskId: string): boolean {
     return this.expandedTaskId === taskId;
+  }
+
+  deleteTask(id: string) {
+    this.taskService.deleteTask(id).subscribe({
+      next: (response) => {
+        this.taskService.tasks.reload();
+      },
+    });
   }
 
   completeTask(boolean: boolean, event?: Event) {

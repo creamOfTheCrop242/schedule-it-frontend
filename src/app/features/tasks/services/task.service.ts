@@ -40,4 +40,8 @@ export class TaskService {
   modifyTask(task) {
     return this.httpClient.patch(`${environment.baseUrl}/tasks`, task);
   }
+
+  deleteTask(id: string) {
+    return this.httpClient.delete(`${environment.baseUrl}/tasks/${id}`);
+  }
 }

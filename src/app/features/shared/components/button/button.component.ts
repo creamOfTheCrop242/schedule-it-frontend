@@ -25,7 +25,8 @@ export class ButtonComponent {
     white: 'text-white',
   };
 
-  navigateToLink() {
+  navigateToLink(event: Event) {
+    event.preventDefault();
     window.location.href = this.link();
   }
 }

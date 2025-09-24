@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { InputComponent } from '../../../shared/components/input/input.component';
 import {
   FormControl,
@@ -12,7 +12,7 @@ import { AddTask, Task } from '../../models/task.model';
 import { AccountService } from '../../../account/services/account.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { take } from 'rxjs';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-add-task',
@@ -20,7 +20,7 @@ import { Router } from '@angular/router';
   templateUrl: './add-task.component.html',
   styleUrl: './add-task.component.scss',
 })
-export class AddTaskComponent {
+export class AddTaskComponent implements OnInit {
   form = new FormGroup({
     name: new FormControl('', [Validators.required]),
     description: new FormControl(''),
@@ -34,6 +34,10 @@ export class AddTaskComponent {
   taskService = inject(TaskService);
   accountService = inject(AccountService);
   router = inject(Router);
+  route = inject(ActivatedRoute);
+
+  // Route parameter for id
+  id = this.route.snapshot.paramMap.get('id');
 
   priorityOptions = ['Low', 'Medium', 'High'];
 
@@ -45,6 +49,14 @@ export class AddTaskComponent {
     { id: '4', name: 'Write unit tests' },
     { id: '5', name: 'Deploy to production' },
   ];
+
+  ngOnInit(): void {
+    if (this.id) {
+      console.log(this.id);
+    } else {
+      console.log('No id');
+    }
+  }
 
   onSubmit() {
     if (this.form.valid) {

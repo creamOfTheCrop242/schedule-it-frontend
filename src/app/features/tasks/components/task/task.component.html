@@ -51,5 +51,11 @@
     </p>
 
     <p class="py-2"><span class="font-bold">Notes</span>: {{ task().notes }}</p>
+    <app-button
+      label="Delete"
+      background="red"
+      color="white"
+      (click)="deleteTask(task().id)"
+    ></app-button>
   </div>
 </div>
