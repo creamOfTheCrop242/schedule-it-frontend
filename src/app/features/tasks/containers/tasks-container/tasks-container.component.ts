@@ -25,10 +25,9 @@ export class TasksContainerComponent implements OnInit {
 
   ngOnInit(): void {
     this.form.controls.date.valueChanges.subscribe((value) => {
-      if (value) {
-        this.taskService.selectedDate.set(value.toString());
-        this.completedTasks.reload();
-      }
+      console.log(value);
+      this.taskService.selectedDate.set(value.toString());
+      this.completedTasks.reload();
     });
   }
 }
