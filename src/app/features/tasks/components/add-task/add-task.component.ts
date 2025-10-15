@@ -75,7 +75,7 @@ export class AddTaskComponent implements OnInit {
         .subscribe({
           next: (response) => {
             this.router.navigate(['/tasks']);
-            this.taskService.tasks.reload();
+            this.taskService.incompleteTasks.reload();
           },
           error: (error) => {
             console.log(error);

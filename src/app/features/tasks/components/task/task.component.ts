@@ -1,9 +1,9 @@
-import { Component, inject, input } from '@angular/core';
-import { Task } from '../../models/task.model';
 import { CommonModule } from '@angular/common';
-import { TaskService } from '../../services/task.service';
+import { Component, inject, input } from '@angular/core';
 import { take } from 'rxjs';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { Task } from '../../models/task.model';
+import { TaskService } from '../../services/task.service';
 
 @Component({
   selector: 'app-task',
@@ -31,7 +31,11 @@ export class TaskComponent {
   deleteTask(id: string) {
     this.taskService.deleteTask(id).subscribe({
       next: (response) => {
-        this.taskService.tasks.reload();
+        if (this.task().completed) {
+          this.taskService.completeTasks.reload();
+        } else {
+          this.taskService.incompleteTasks.reload();
+        }
       },
     });
   }
@@ -48,7 +52,8 @@ export class TaskComponent {
         .pipe(take(1))
         .subscribe({
           next: (response) => {
-            this.taskService.tasks.reload();
+            this.taskService.incompleteTasks.reload();
+            this.taskService.completeTasks.reload();
           },
           error: (error) => {
             console.error(error);
