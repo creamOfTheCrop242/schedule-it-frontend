@@ -26,6 +26,7 @@ export class TasksContainerComponent implements OnInit {
   ngOnInit(): void {
     this.form.controls.date.valueChanges.subscribe((value) => {
       console.log(value);
+      console.log(Intl.DateTimeFormat().resolvedOptions().timeZone);
       this.taskService.selectedDate.set(value.toString());
       this.completedTasks.reload();
     });
