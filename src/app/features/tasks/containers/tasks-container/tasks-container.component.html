@@ -31,6 +31,13 @@
           </h1>
           <button>filter</button>
         </div>
+        <div>
+          <p>
+            Daily Goal {{ dailyGoalStatus()?.currentValue }}/{{
+              dailyGoalStatus()?.target
+            }}
+          </p>
+        </div>
         <div class="w-40">
           <app-input [name]="form.controls.date" type="date" />
         </div>
