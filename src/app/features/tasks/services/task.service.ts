@@ -34,8 +34,11 @@ export class TaskService {
     },
   }));
 
-  modifyTask(task) {
-    return this.httpClient.patch(`${environment.baseUrl}/tasks`, task);
+  toggleTaskStatus(task) {
+    return this.httpClient.patch(
+      `${environment.baseUrl}/tasks/${task.id}/toggle-status`,
+      task
+    );
   }
 
   deleteTask(id: string) {

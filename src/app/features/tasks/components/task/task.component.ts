@@ -4,6 +4,7 @@ import { take } from 'rxjs';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { Task } from '../../models/task.model';
 import { TaskService } from '../../services/task.service';
+import { GoalsService } from '../../../goals/services/goals.service';
 
 @Component({
   selector: 'app-task',
@@ -15,6 +16,7 @@ export class TaskComponent {
   task = input<Task>();
   expandedTaskId: string | null = null;
   taskService = inject(TaskService);
+  goalsService = inject(GoalsService);
 
   toggleDescription(taskId: string): void {
     if (this.expandedTaskId === taskId) {
@@ -45,7 +47,7 @@ export class TaskComponent {
       event.stopPropagation();
 
       this.taskService
-        .modifyTask({
+        .toggleTaskStatus({
           id: this.task().id,
           completed: boolean,
         })
@@ -54,6 +56,7 @@ export class TaskComponent {
           next: (response) => {
             this.taskService.incompleteTasks.reload();
             this.taskService.completeTasks.reload();
+            this.goalsService.tasksGoalStatus.reload();
           },
           error: (error) => {
             console.error(error);
