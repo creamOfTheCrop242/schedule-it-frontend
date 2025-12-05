@@ -6,14 +6,15 @@
     </h1>
   </div>
   <div>
-    @if (incompleteTasks.value() && incompleteTasks.value().length > 0){
+    @if (incompleteTasks.value() && incompleteTasks.value().length > 0 &&
+    !isLoading()){
     <div>
       @for (task of incompleteTasks.value(); track task.id) {
       <app-task [task]="task" />
       }
     </div>
-    } @else if (incompleteTasks.value() && incompleteTasks.value().length === 0)
-    {
+    } @else if (incompleteTasks.value() && incompleteTasks.value().length === 0
+    && !isLoading()) {
     <div class="my-2">No tasks found</div>
     } @else if (isLoading()) {
     <div>Loading...</div>

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, effect, inject } from '@angular/core';
 import { InputComponent } from '../../../shared/components/input/input.component';
 import {
   FormControl,
@@ -9,10 +9,12 @@ import {
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { AddTask, Task } from '../../models/task.model';
-import { AccountService } from '../../../account/services/account.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { take } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
+import { GoalsService } from '../../../goals/services/goals.service';
+
+const PRIORITY_OPTIONS = ['Low', 'Medium', 'High'] as const;
+type Priority = (typeof PRIORITY_OPTIONS)[number];
 
 @Component({
   selector: 'app-add-task',
@@ -20,68 +22,106 @@ import { Router, ActivatedRoute } from '@angular/router';
   templateUrl: './add-task.component.html',
   styleUrl: './add-task.component.scss',
 })
-export class AddTaskComponent implements OnInit {
-  form = new FormGroup({
+export class AddTaskComponent {
+  // Services
+  private readonly taskService = inject(TaskService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly goalsService = inject(GoalsService);
+
+  // Form
+  readonly form = new FormGroup({
     name: new FormControl('', [Validators.required]),
     description: new FormControl(''),
-    priority: new FormControl('Medium', [Validators.required]),
+    priority: new FormControl<Priority>('Medium', [Validators.required]),
     startDate: new FormControl<Date | null>(null),
     dueDate: new FormControl<Date | null>(null),
     completed: new FormControl(false),
     completedDate: new FormControl<Date | null>(null),
     dependencyTaskId: new FormControl<string | null>(null),
   });
-  taskService = inject(TaskService);
-  accountService = inject(AccountService);
-  router = inject(Router);
-  route = inject(ActivatedRoute);
 
-  // Route parameter for id
-  id = this.route.snapshot.paramMap.get('id');
+  // Route parameter
+  readonly id = this.route.snapshot.paramMap.get('id');
 
-  priorityOptions = ['Low', 'Medium', 'High'];
+  // Computed signals
+  readonly currentTask = computed(() => {
+    const tasks = this.taskService.incompleteTasks.value();
+    if (!tasks || !this.id) return undefined;
+    return tasks.find((task) => task.id === this.id);
+  });
 
-  // Mock data - replace with actual task data from your service
-  availableTasks = [
-    { id: '1', name: 'Complete project setup' },
-    { id: '2', name: 'Design user interface' },
-    { id: '3', name: 'Implement authentication' },
-    { id: '4', name: 'Write unit tests' },
-    { id: '5', name: 'Deploy to production' },
-  ];
+  readonly availableTasks = computed(() => {
+    const tasks = this.taskService.incompleteTasks.value();
+    if (!tasks) return [];
+    return tasks.filter((task) => task.id !== this.id);
+  });
 
-  ngOnInit(): void {
-    if (this.id) {
-      console.log(this.id);
-    } else {
-      console.log('No id');
-    }
+  // Constants
+  readonly priorityOptions = PRIORITY_OPTIONS;
+
+  constructor() {
+    // Populate form when editing an existing task
+    effect(() => {
+      const task = this.currentTask();
+      if (task) {
+        this.populateForm(task);
+      }
+    });
   }
 
-  onSubmit() {
-    if (this.form.valid) {
-      const task: AddTask = {
-        name: this.form.value.name,
-        description: this.form.value.description,
-        priority: this.form.value.priority as 'Low' | 'Medium' | 'High',
-        startDate: this.form.value.startDate || null,
-        dueDate: this.form.value.dueDate,
-        completed: this.form.value.completed,
-      };
+  onSubmit(): void {
+    if (!this.form.valid) return;
 
-      this.taskService
-        .addTask(task)
-        .pipe(take(1))
-        .subscribe({
-          next: (response) => {
-            this.router.navigate(['/tasks']);
-            this.taskService.completeTasks.reload();
-            this.taskService.incompleteTasks.reload();
-          },
-          error: (error) => {
-            console.log(error);
-          },
-        });
-    }
+    const baseTask = this.buildBaseTask();
+    const operation = this.id
+      ? this.taskService.updateTask({ ...baseTask, id: this.id })
+      : this.taskService.addTask(baseTask);
+
+    operation.pipe(take(1)).subscribe({
+      next: () => this.handleSuccess(),
+      error: (error) => this.handleError(error),
+    });
+  }
+
+  private buildBaseTask(): AddTask {
+    return {
+      name: this.form.value.name!,
+      description: this.form.value.description || undefined,
+      priority: this.form.value.priority!,
+      startDate: this.form.value.startDate || undefined,
+      dueDate: this.form.value.dueDate || undefined,
+      completed: this.form.value.completed ?? false,
+    };
+  }
+
+  private populateForm(task: Task): void {
+    this.form.patchValue({
+      name: task.name,
+      description: task.description || '',
+      priority: task.priority,
+      startDate: this.toDate(task.startDate),
+      dueDate: this.toDate(task.dueDate),
+      completed: task.completed,
+      completedDate: this.toDate(task.completedDate),
+      dependencyTaskId: task.dependencyTask?.id || null,
+    });
+  }
+
+  private toDate(date: Date | string | undefined): Date | null {
+    if (!date) return null;
+    return date instanceof Date ? date : new Date(date);
+  }
+
+  private handleSuccess(): void {
+    this.router.navigate(['/tasks']);
+    this.taskService.completeTasks.reload();
+    this.taskService.incompleteTasks.reload();
+    this.goalsService.tasksGoalStatus.reload();
+  }
+
+  private handleError(error: unknown): void {
+    console.error('Task operation failed:', error);
+    // TODO: Add user-facing error notification
   }
 }

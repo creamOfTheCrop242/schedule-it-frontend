@@ -18,6 +18,13 @@ export class TaskService {
     return this.httpClient.post<Task>(`${environment.baseUrl}/tasks`, task);
   }
 
+  updateTask(task: Task) {
+    return this.httpClient.patch<Task>(
+      `${environment.baseUrl}/tasks/${task.id}`,
+      task
+    );
+  }
+
   incompleteTasks = httpResource<Task[]>({
     url: `${environment.baseUrl}/tasks`,
     params: {

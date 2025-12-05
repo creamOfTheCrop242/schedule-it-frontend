@@ -1,5 +1,7 @@
 <section class="p-4">
-  <h2 class="text-xl font-bold mb-4">Add New Task</h2>
+  <h2 class="text-xl font-bold mb-4">
+    {{ id ? "Edit Task" : "Add New Task" }}
+  </h2>
 
   <form (ngSubmit)="onSubmit()" [formGroup]="form" class="space-y-4">
     <!-- Task Name -->
@@ -88,9 +90,9 @@
         class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
       >
         <option value="">No dependency (optional)</option>
-        <option *ngFor="let task of availableTasks" [value]="task.id">
-          {{ task.name }}
-        </option>
+        @for (task of availableTasks(); track task.id) {
+        <option [value]="task.id">{{ task.name }}</option>
+        }
       </select>
     </div>
 
@@ -101,7 +103,7 @@
         [disabled]="!form.valid"
         class="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
       >
-        Create Task
+        {{ id ? "Update Task" : "Create Task" }}
       </button>
     </div>
   </form>
