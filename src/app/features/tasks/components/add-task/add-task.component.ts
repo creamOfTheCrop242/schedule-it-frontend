@@ -8,13 +8,10 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TaskService } from '../../services/task.service';
-import { AddTask, Task } from '../../models/task.model';
+import { AddTask, Task, TaskPriority } from '../../models/task.model';
 import { take } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import { GoalsService } from '../../../goals/services/goals.service';
-
-const PRIORITY_OPTIONS = ['Low', 'Medium', 'High'] as const;
-type Priority = (typeof PRIORITY_OPTIONS)[number];
 
 @Component({
   selector: 'app-add-task',
@@ -33,7 +30,9 @@ export class AddTaskComponent {
   readonly form = new FormGroup({
     name: new FormControl('', [Validators.required]),
     description: new FormControl(''),
-    priority: new FormControl<Priority>('Medium', [Validators.required]),
+    priority: new FormControl<TaskPriority>(TaskPriority.LOW, [
+      Validators.required,
+    ]),
     startDate: new FormControl<Date | null>(null),
     dueDate: new FormControl<Date | null>(null),
     completed: new FormControl(false),
@@ -58,7 +57,7 @@ export class AddTaskComponent {
   });
 
   // Constants
-  readonly priorityOptions = PRIORITY_OPTIONS;
+  readonly priorityOptions = Object.values(TaskPriority);
 
   constructor() {
     // Populate form when editing an existing task
