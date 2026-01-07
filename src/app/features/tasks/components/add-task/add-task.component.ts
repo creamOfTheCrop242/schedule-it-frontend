@@ -20,13 +20,11 @@ import { GoalsService } from '../../../goals/services/goals.service';
   styleUrl: './add-task.component.scss',
 })
 export class AddTaskComponent {
-  // Services
   private readonly taskService = inject(TaskService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly goalsService = inject(GoalsService);
 
-  // Form
   readonly form = new FormGroup({
     name: new FormControl('', [Validators.required]),
     description: new FormControl(''),
@@ -40,14 +38,23 @@ export class AddTaskComponent {
     dependencyTaskId: new FormControl<string | null>(null),
   });
 
-  // Route parameter
   readonly id = this.route.snapshot.paramMap.get('id');
 
-  // Computed signals
   readonly currentTask = computed(() => {
-    const tasks = this.taskService.incompleteTasks.value();
-    if (!tasks || !this.id) return undefined;
-    return tasks.find((task) => task.id === this.id);
+    if (!this.id) return undefined;
+
+    const incompleteTasks = this.taskService.incompleteTasks.value();
+    if (incompleteTasks) {
+      const task = incompleteTasks.find((task) => task.id === this.id);
+      if (task) return task;
+    }
+
+    const completedTasks = this.taskService.completeTasks.value();
+    if (completedTasks) {
+      return completedTasks.find((task) => task.id === this.id);
+    }
+
+    return undefined;
   });
 
   readonly availableTasks = computed(() => {
@@ -56,11 +63,9 @@ export class AddTaskComponent {
     return tasks.filter((task) => task.id !== this.id);
   });
 
-  // Constants
   readonly priorityOptions = Object.values(TaskPriority);
 
   constructor() {
-    // Populate form when editing an existing task
     effect(() => {
       const task = this.currentTask();
       if (task) {
@@ -121,6 +126,5 @@ export class AddTaskComponent {
 
   private handleError(error: unknown): void {
     console.error('Task operation failed:', error);
-    // TODO: Add user-facing error notification
   }
 }
