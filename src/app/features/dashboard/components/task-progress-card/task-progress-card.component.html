@@ -1,0 +1,41 @@
+<div class="cotc-bg-dark rounded-3xl p-4">
+  <h2 class="text-xl mb-4">Daily Task Goal Progress</h2>
+
+  @if (dailyGoalStatus()) {
+  <div class="space-y-2">
+    <div class="flex justify-between text-sm">
+      <span
+        >{{ dailyGoalStatus()!.currentValue }} /
+        {{ dailyGoalStatus()!.target }} tasks</span
+      >
+      <span class="font-semibold"
+        >{{ progressPercentage() | number : "1.0-0" }}%</span
+      >
+    </div>
+
+    <div class="w-full relative py-6">
+      <div
+        class="w-full bg-[#161616] rounded-full h-4 overflow-hidden relative z-10"
+      >
+        <div
+          class="progress-bar-track h-full bg-purple-600 transition-all duration-300 ease-out rounded-full"
+          [style.width.%]="progressPercentage()"
+        ></div>
+      </div>
+      <div
+        class="progress-bar-glow absolute top-1/2 left-0 -translate-y-1/2 h-4 bg-purple-600 rounded-full transition-all duration-300 ease-out"
+        [style.width.%]="progressPercentage()"
+      ></div>
+    </div>
+    <app-button
+      label="Modify Tasks"
+      background="purple"
+      color="white"
+      link="/tasks"
+      [isInternal]="true"
+    />
+  </div>
+  } @else {
+  <p class="text-gray-400 text-sm">No goal data available</p>
+  }
+</div>
