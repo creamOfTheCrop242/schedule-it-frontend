@@ -8,9 +8,7 @@
     <div class="flex justify-between text-sm">
       <span>{{ goal?.currentValue }} / {{ goal?.target }} tasks</span>
       <span class="font-semibold"
-        >{{
-          (goal?.currentValue / goal?.target) * 100 | number : "1.0-0"
-        }}%</span
+        >{{ getProgressPercentage(goal) | number : "1.0-0" }}%</span
       >
     </div>
 
@@ -19,13 +17,15 @@
         class="w-full bg-[#161616] rounded-full h-4 overflow-hidden relative z-10"
       >
         <div
-          class="progress-bar-track h-full bg-purple-600 transition-all duration-300 ease-out rounded-full"
-          [style.width.%]="(goal?.currentValue / goal?.target) * 100"
+          class="progress-bar-track h-full transition-all duration-300 ease-out rounded-full"
+          [ngClass]="getProgressBgColor(goal)"
+          [style.width.%]="getProgressPercentage(goal)"
         ></div>
       </div>
       <div
-        class="progress-bar-glow absolute top-1/2 left-0 -translate-y-1/2 h-4 bg-purple-600 rounded-full transition-all duration-300 ease-out"
-        [style.width.%]="(goal?.currentValue / goal?.target) * 100"
+        class="progress-bar-glow absolute top-1/2 left-0 -translate-y-1/2 h-4 rounded-full transition-all duration-300 ease-out"
+        [ngClass]="[getProgressColorClass(goal), getProgressBgColor(goal)]"
+        [style.width.%]="getProgressPercentage(goal)"
       ></div>
     </div>
   </div>
