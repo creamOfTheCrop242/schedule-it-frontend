@@ -11,12 +11,5 @@ import { ButtonComponent } from '../../../shared/components/button/button.compon
 })
 export class TaskProgressCardComponent {
   private readonly goalsService = inject(GoalsService);
-
-  readonly dailyGoalStatus = this.goalsService.dailyGoalStatus;
-
-  readonly progressPercentage = computed(() => {
-    const goal = this.dailyGoalStatus();
-    if (!goal || goal.target === 0) return 0;
-    return Math.min((goal.currentValue / goal.target) * 100, 100);
-  });
+  goals = this.goalsService.tasksGoalStatus;
 }

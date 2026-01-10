@@ -1,0 +1,54 @@
+<section class="p-4">
+  <h2 class="text-xl font-bold mb-4">
+    {{ id ? "Edit Goal" : "Add New Goal" }}
+  </h2>
+
+  <form (ngSubmit)="onSubmit()" [formGroup]="form" class="space-y-4">
+    <!-- Metric -->
+    <div>
+      <label class="block text-sm font-medium mb-2">Metric *</label>
+      <select
+        formControlName="metric"
+        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+      >
+        <option *ngFor="let option of metricOptions" [value]="option">
+          {{ option }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Scope -->
+    <div>
+      <label class="block text-sm font-medium mb-2">Scope *</label>
+      <select
+        formControlName="scope"
+        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+      >
+        <option *ngFor="let option of scopeOptions" [value]="option">
+          {{ option }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Target -->
+    <div>
+      <label class="block text-sm font-medium mb-2">Target *</label>
+      <app-input
+        placeholder="Enter target number"
+        [name]="form.controls['target']"
+        type="number"
+      ></app-input>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="pt-4">
+      <button
+        type="submit"
+        [disabled]="!form.valid"
+        class="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+      >
+        {{ id ? "Update Goal" : "Create Goal" }}
+      </button>
+    </div>
+  </form>
+</section>
