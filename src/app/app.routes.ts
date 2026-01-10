@@ -9,6 +9,8 @@ import { authGuard } from './features/auth/guards/auth.guard';
 import { loginGuard } from './features/auth/guards/login.guard';
 import { TasksComponent } from './features/tasks/components/tasks/tasks.component';
 import { TasksContainerComponent } from './features/tasks/containers/tasks-container/tasks-container.component';
+import { GoalsContainerComponent } from './features/goals/containers/goals-container/goals-container.component';
+import { AddGoalComponent } from './features/goals/components/add-goal/add-goal.component';
 
 export const routes: Routes = [
   {
@@ -60,6 +62,15 @@ export const routes: Routes = [
       { path: '', component: TasksContainerComponent },
       { path: 'add-task', component: AddTaskComponent },
       { path: 'edit-task/:id', component: AddTaskComponent },
+    ],
+  },
+  {
+    path: 'goals',
+    canActivate: [authGuard],
+    children: [
+      { path: '', component: GoalsContainerComponent },
+      { path: 'add-goal', component: AddGoalComponent },
+      { path: 'edit-goal/:id', component: AddGoalComponent },
     ],
   },
 ];

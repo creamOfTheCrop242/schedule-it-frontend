@@ -1,0 +1,12 @@
+<div class="">
+  <h2 class="text-xl mb-4">Task Goal Progress</h2>
+
+  @if (isLoaded()) {
+  <app-goal-card [goal]="dailyGoalStatus()" title="Daily"></app-goal-card>
+  <app-goal-card [goal]="weeklyGoalStatus()" title="Weekly"></app-goal-card>
+  <app-goal-card [goal]="monthlyGoalStatus()" title="Monthly"></app-goal-card>
+  <app-goal-card [goal]="yearlyGoalStatus()" title="Yearly"></app-goal-card>
+  } @else {
+  <p class="text-gray-400 text-sm">No goal data available</p>
+  }
+</div>

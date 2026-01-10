@@ -1,5 +1,5 @@
 <nav
-  class="bg-[#2c2c2c] p-4 border-t border-[#404040] fixed bottom-0 left-0 right-0 z-50 pb-5"
+  class="bg-[#2c2c2c] p-4 border-t border-[#404040] fixed bottom-0 left-0 right-0 z-50 pb-10"
 >
   <div class="text-white flex justify-between items-center">
     <div>
@@ -7,23 +7,61 @@
         routerLink="/dashboard"
         class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
       >
-        <span class="material-icons text-[2rem] text-purple-500 active-icon"
+        <span
+          class="material-icons text-[2rem]"
+          [ngClass]="{
+            'text-purple-500 active-icon': isActiveRoute('/dashboard'),
+            'text-gray-400': !isActiveRoute('/dashboard')
+          }"
           >home</span
         >
       </a>
     </div>
-    <div>icon 2</div>
+    <div>
+      <a
+        routerLink="/tasks"
+        class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
+      >
+        <span
+          class="material-icons text-[2rem]"
+          [ngClass]="{
+            'text-purple-500 active-icon': isActiveRoute('/tasks'),
+            'text-gray-400': !isActiveRoute('/tasks')
+          }"
+          >list</span
+        >
+      </a>
+    </div>
     <div>
       <a
         routerLink="/tasks/add-task"
         class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
       >
-        <span class="material-icons text-[2rem] text-purple-500 active-icon"
+        <span
+          class="material-icons text-[2rem]"
+          [ngClass]="{
+            'text-purple-500 active-icon': isActiveRoute('/tasks/add-task'),
+            'text-gray-400': !isActiveRoute('/tasks/add-task')
+          }"
           >add_circle</span
         >
       </a>
     </div>
-    <div>icon 4</div>
+    <div>
+      <a
+        routerLink="/goals"
+        class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
+      >
+        <span
+          class="material-icons text-[2rem]"
+          [ngClass]="{
+            'text-purple-500 active-icon': isActiveRoute('/goals'),
+            'text-gray-400': !isActiveRoute('/goals')
+          }"
+          >sports_score</span
+        >
+      </a>
+    </div>
     <div>icon 5</div>
   </div>
 </nav>

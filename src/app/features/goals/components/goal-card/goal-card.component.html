@@ -1,16 +1,11 @@
-<div class="cotc-bg-dark rounded-3xl p-4">
-  <h2 class="text-xl mb-4">Task Goal Progress</h2>
-
-  @if (goals.value() && goals.value().length > 0) { @for (goal of goals.value();
-  track goal.goalId) {
+@if (goal()) {
+<div class="cotc-bg-dark rounded-3xl p-4 m-4">
   <div class="space-y-2">
-    <p>{{ goal?.scope | titlecase }}</p>
+    <p class="text-xl">{{ title() }}</p>
     <div class="flex justify-between text-sm">
-      <span>{{ goal?.currentValue }} / {{ goal?.target }} tasks</span>
+      <span>{{ goal()?.currentValue }} / {{ goal()?.target }} tasks</span>
       <span class="font-semibold"
-        >{{
-          (goal?.currentValue / goal?.target) * 100 | number : "1.0-0"
-        }}%</span
+        >{{ progressPercentage() | number : "1.0-0" }}%</span
       >
     </div>
 
@@ -20,23 +15,32 @@
       >
         <div
           class="progress-bar-track h-full bg-purple-600 transition-all duration-300 ease-out rounded-full"
-          [style.width.%]="(goal?.currentValue / goal?.target) * 100"
+          [style.width.%]="progressPercentage()"
         ></div>
       </div>
       <div
         class="progress-bar-glow absolute top-1/2 left-0 -translate-y-1/2 h-4 bg-purple-600 rounded-full transition-all duration-300 ease-out"
-        [style.width.%]="(goal?.currentValue / goal?.target) * 100"
+        [style.width.%]="progressPercentage()"
       ></div>
     </div>
   </div>
-  } } @else {
-  <p class="text-gray-400 text-sm">No goal data available</p>
-  }
   <app-button
-    label="Modify Tasks"
+    label="Modify Goal"
     background="purple"
     color="white"
-    link="/tasks"
+    link="/goals/edit-goal/{{ goal().goalId }}"
     [isInternal]="true"
   />
 </div>
+} @else {
+<div class="cotc-bg-dark rounded-3xl p-4 m-4 flex justify-between items-center">
+  <p class="">No goal found for {{ title() }}</p>
+  <app-button
+    label="Create Goal"
+    background="purple"
+    color="white"
+    link="/goals/add-goal"
+    [isInternal]="true"
+  />
+</div>
+}
