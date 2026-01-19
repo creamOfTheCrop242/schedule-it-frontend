@@ -11,6 +11,7 @@ import { TasksComponent } from './features/tasks/components/tasks/tasks.componen
 import { TasksContainerComponent } from './features/tasks/containers/tasks-container/tasks-container.component';
 import { GoalsContainerComponent } from './features/goals/containers/goals-container/goals-container.component';
 import { AddGoalComponent } from './features/goals/components/add-goal/add-goal.component';
+import { SettingsComponent } from './features/account/components/settings/settings.component';
 
 export const routes: Routes = [
   {
@@ -72,5 +73,10 @@ export const routes: Routes = [
       { path: 'add-goal', component: AddGoalComponent },
       { path: 'edit-goal/:id', component: AddGoalComponent },
     ],
+  },
+  {
+    path: 'settings',
+    component: SettingsComponent,
+    canActivate: [authGuard],
   },
 ];

@@ -38,4 +38,12 @@ export class AuthService {
       request
     );
   }
+
+  logout() {
+    return this.httpClient.post(
+      `${environment.baseUrl}/auth/logout`,
+      {},
+      { withCredentials: true }
+    );
+  }
 }
