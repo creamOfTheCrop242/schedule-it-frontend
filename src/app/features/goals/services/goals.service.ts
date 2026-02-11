@@ -15,27 +15,27 @@ import {
 export class GoalsService {
   httpClient = inject(HttpClient);
   dailyGoalStatus = computed(() =>
-    this.tasksGoalStatus.value()?.find((goal) => goal.scope === GoalScope.DAY)
+    this.logsGoalStatus.value()?.find((goal) => goal.scope === GoalScope.DAY)
   );
 
   weeklyGoalStatus = computed(() =>
-    this.tasksGoalStatus.value()?.find((goal) => goal.scope === GoalScope.WEEK)
+    this.logsGoalStatus.value()?.find((goal) => goal.scope === GoalScope.WEEK)
   );
 
   monthlyGoalStatus = computed(() =>
-    this.tasksGoalStatus.value()?.find((goal) => goal.scope === GoalScope.MONTH)
+    this.logsGoalStatus.value()?.find((goal) => goal.scope === GoalScope.MONTH)
   );
 
   yearlyGoalStatus = computed(() =>
-    this.tasksGoalStatus.value()?.find((goal) => goal.scope === GoalScope.YEAR)
+    this.logsGoalStatus.value()?.find((goal) => goal.scope === GoalScope.YEAR)
   );
 
   constructor() {}
 
-  tasksGoalStatus = httpResource<GoalStatusResponse[]>({
+  logsGoalStatus = httpResource<GoalStatusResponse[]>({
     url: `${environment.baseUrl}/goals/status`,
     params: {
-      metric: GoalMetric.TASKS_COMPLETED,
+      metric: GoalMetric.LOGS_COMPLETED,
     },
   });
 

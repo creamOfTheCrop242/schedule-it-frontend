@@ -1,7 +1,7 @@
 {
-  "name": "The Guide Log - Task Management App",
+  "name": "The Guide Log - Life Log App",
   "short_name": "The Guide Log",
-  "description": "A modern task management and scheduling application",
+  "description": "A modern life log and reflection application",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",

@@ -30,7 +30,7 @@ export class AddGoalComponent {
   private readonly route = inject(ActivatedRoute);
 
   readonly form = new FormGroup({
-    metric: new FormControl<GoalMetric>(GoalMetric.TASKS_COMPLETED, [
+    metric: new FormControl<GoalMetric>(GoalMetric.LOGS_COMPLETED, [
       Validators.required,
     ]),
     scope: new FormControl<GoalScope>(GoalScope.DAY, [Validators.required]),
@@ -45,7 +45,7 @@ export class AddGoalComponent {
   readonly currentGoal = computed(() => {
     if (!this.id) return undefined;
 
-    const goals = this.goalsService.tasksGoalStatus.value();
+    const goals = this.goalsService.logsGoalStatus.value();
     if (!goals) return undefined;
 
     return goals.find((goal) => goal.goalId === this.id);
@@ -93,7 +93,7 @@ export class AddGoalComponent {
 
   private handleSuccess(): void {
     this.router.navigate(['/goals']);
-    this.goalsService.tasksGoalStatus.reload();
+    this.goalsService.logsGoalStatus.reload();
   }
 
   private handleError(error: unknown): void {

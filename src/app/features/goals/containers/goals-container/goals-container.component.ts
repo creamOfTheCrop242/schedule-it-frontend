@@ -13,8 +13,8 @@ export class GoalsContainerComponent {
 
   isLoaded = computed(() => {
     return (
-      this.goalsService.tasksGoalStatus.value() &&
-      !this.goalsService.tasksGoalStatus.isLoading()
+      this.goalsService.logsGoalStatus.value() &&
+      !this.goalsService.logsGoalStatus.isLoading()
     );
   });
   dailyGoalStatus = this.goalsService.dailyGoalStatus;

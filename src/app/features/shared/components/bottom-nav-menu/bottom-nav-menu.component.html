@@ -19,14 +19,14 @@
     </div>
     <div>
       <a
-        routerLink="/tasks"
+        routerLink="/logs"
         class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
       >
         <span
           class="material-icons text-[2rem]"
           [ngClass]="{
-            'text-purple-500 active-icon': isActiveRoute('/tasks'),
-            'text-gray-400': !isActiveRoute('/tasks')
+            'text-purple-500 active-icon': isActiveRoute('/logs'),
+            'text-gray-400': !isActiveRoute('/logs')
           }"
           >list</span
         >
@@ -34,14 +34,14 @@
     </div>
     <div>
       <a
-        routerLink="/tasks/add-task"
+        routerLink="/logs/add-log"
         class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
       >
         <span
           class="material-icons text-[2rem]"
           [ngClass]="{
-            'text-purple-500 active-icon': isActiveRoute('/tasks/add-task'),
-            'text-gray-400': !isActiveRoute('/tasks/add-task')
+            'text-purple-500 active-icon': isActiveRoute('/logs/add-log'),
+            'text-gray-400': !isActiveRoute('/logs/add-log')
           }"
           >add_circle</span
         >

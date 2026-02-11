@@ -1,5 +1,5 @@
 export enum GoalMetric {
-  TASKS_COMPLETED = 'TASKS_COMPLETED',
+  LOGS_COMPLETED = 'LOGS_COMPLETED',
 }
 
 export enum GoalScope {
