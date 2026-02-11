@@ -1,0 +1,76 @@
+<div
+  class="cotc-bg-dark rounded-2xl px-4 py-2 w-full text-left my-2 log-container relative overflow-hidden border-1"
+  [class.border-2]="isExpanded(log().id)"
+  [class.border-yellow-500]="
+    log().priority === LogPriority.MEDIUM &&
+    !isExpanded(log().id) &&
+    !log().completed
+  "
+  [class.border-red-500]="
+    log().priority === LogPriority.HIGH &&
+    !isExpanded(log().id) &&
+    !log().completed
+  "
+  [class.border-purple-500]="isExpanded(log().id) && !log().completed"
+  [class.border-green-500]="log().completed"
+  (click)="toggleDescription(log().id)"
+>
+  <div class="flex justify-between relative z-20">
+    <p class="w-full text-left">
+      {{ log().name }}
+    </p>
+
+    <div class="relative">
+      <input
+        type="checkbox"
+        id="completed"
+        class="mr-2 checkbox-animated"
+        (click)="completeLog(!log().completed, $event)"
+        [checked]="log().completed"
+      />
+      <div class="checkbox-ripple"></div>
+    </div>
+  </div>
+  @if (expandedLogId === log().id){
+  <hr class="my-2" />
+  }
+  <div
+    class="overflow-hidden transition-all duration-200"
+    [class.max-h-0]="!isExpanded(log().id)"
+    [class.max-h-40]="isExpanded(log().id)"
+    [class.overflow-y-auto]="isExpanded(log().id)"
+  >
+    <p class="py-2">{{ log().description }}</p>
+    <p class="py-2">
+      <span class="font-bold">Priority</span>: {{ log().priority }}
+    </p>
+    <p class="py-2">
+      <span class="font-bold">Start Date</span>: {{ log().startDate }}
+    </p>
+    <p class="py-2">
+      <span class="font-bold">Due Date</span>:
+      {{ log().dueDate | date : "MM/dd/yyyy HH:mm" }}
+    </p>
+
+    <p class="py-2">
+      <span class="font-bold">Notes</span>: {{ log().notes }}</p>
+    <hr class="my-2" />
+    <div class="flex gap-2">
+      <app-button
+        label="Edit"
+        background="purple"
+        link="/logs/edit-log/{{ log().id }}"
+        color="white"
+        [isInternal]="true"
+        class="w-full"
+      ></app-button>
+      <app-button
+        label="Delete"
+        background="red"
+        color="white"
+        (click)="deleteLog(log().id)"
+        class="w-full"
+      ></app-button>
+    </div>
+  </div>
+</div>

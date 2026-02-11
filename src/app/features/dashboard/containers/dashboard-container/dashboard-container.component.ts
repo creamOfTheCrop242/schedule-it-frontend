@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { TaskCardComponent } from '../../components/task-card/task-card.component';
-import { TaskProgressCardComponent } from '../../components/task-progress-card/task-progress-card.component';
+import { LogProgressCardComponent } from '../../components/log-progress-card/log-progress-card.component';
 
 @Component({
   selector: 'app-dashboard-container',
-  imports: [TaskProgressCardComponent],
+  imports: [LogProgressCardComponent],
   templateUrl: './dashboard-container.component.html',
   styleUrl: './dashboard-container.component.scss',
 })

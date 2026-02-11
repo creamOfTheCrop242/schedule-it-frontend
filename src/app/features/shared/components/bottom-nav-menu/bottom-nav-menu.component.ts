@@ -26,11 +26,11 @@ export class BottomNavMenuComponent {
     if (route === '/dashboard') {
       return url === '/dashboard';
     }
-    if (route === '/tasks') {
-      return url === '/tasks' || url.startsWith('/tasks/edit-task');
+    if (route === '/logs') {
+      return url === '/logs' || url.startsWith('/logs/edit-log');
     }
-    if (route === '/tasks/add-task') {
-      return url === '/tasks/add-task' || url.startsWith('/tasks/edit-task');
+    if (route === '/logs/add-log') {
+      return url === '/logs/add-log' || url.startsWith('/logs/edit-log');
     }
     if (route === '/goals') {
       return (

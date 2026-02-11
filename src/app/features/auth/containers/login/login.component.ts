@@ -41,6 +41,7 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     console.log(this.googleUrl);
     console.log(this.facebookUrl);
+    console.log('this is a test');
   }
 
   validateForm() {

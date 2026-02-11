@@ -4,11 +4,11 @@ import { LoginComponent } from './features/auth/containers/login/login.component
 import { RegisterComponent } from './features/auth/containers/register/register.component';
 import { DashboardContainerComponent } from './features/dashboard/containers/dashboard-container/dashboard-container.component';
 import { SendVerifyCodeComponent } from './features/auth/components/send-verify-code/send-verify-code.component';
-import { AddTaskComponent } from './features/tasks/components/add-task/add-task.component';
+import { AddLogComponent } from './features/logs/components/add-log/add-log.component';
 import { authGuard } from './features/auth/guards/auth.guard';
 import { loginGuard } from './features/auth/guards/login.guard';
-import { TasksComponent } from './features/tasks/components/tasks/tasks.component';
-import { TasksContainerComponent } from './features/tasks/containers/tasks-container/tasks-container.component';
+import { LogsComponent } from './features/logs/components/logs/logs.component';
+import { LogsContainerComponent } from './features/logs/containers/logs-container/logs-container.component';
 import { GoalsContainerComponent } from './features/goals/containers/goals-container/goals-container.component';
 import { AddGoalComponent } from './features/goals/components/add-goal/add-goal.component';
 import { SettingsComponent } from './features/account/components/settings/settings.component';
@@ -57,12 +57,12 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
-    path: 'tasks',
+    path: 'logs',
     canActivate: [authGuard],
     children: [
-      { path: '', component: TasksContainerComponent },
-      { path: 'add-task', component: AddTaskComponent },
-      { path: 'edit-task/:id', component: AddTaskComponent },
+      { path: '', component: LogsContainerComponent },
+      { path: 'add-log', component: AddLogComponent },
+      { path: 'edit-log/:id', component: AddLogComponent },
     ],
   },
   {
