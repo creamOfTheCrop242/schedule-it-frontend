@@ -1,36 +1,17 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LogService } from '../../services/log.service';
 import { LogComponent } from '../../components/log/log.component';
-import { InputComponent } from '../../../shared/components/input/input.component';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { GoalsService } from '../../../goals/services/goals.service';
 
 @Component({
   selector: 'app-logs-container',
-  imports: [RouterModule, LogComponent, InputComponent, ReactiveFormsModule],
+  imports: [RouterModule, LogComponent],
   templateUrl: './logs-container.component.html',
   styleUrl: './logs-container.component.scss',
 })
-export class LogsContainerComponent implements OnInit {
+export class LogsContainerComponent {
   logService = inject(LogService);
-  goalsService = inject(GoalsService);
-  isLoading = this.logService.incompleteLogs.isLoading;
-  hasError = this.logService.incompleteLogs.error;
-  completedLogs = this.logService.completeLogs;
-  incompleteLogs = this.logService.incompleteLogs;
-  form = new FormGroup({
-    date: new FormControl<Date | null>(null),
-  });
-  dailyGoalStatus = this.goalsService.dailyGoalStatus;
-  dailyGoalStatusLoading = this.goalsService.logsGoalStatus.isLoading;
-
-  constructor() {}
-
-  ngOnInit(): void {
-    this.form.controls.date.valueChanges.subscribe((value) => {
-      this.logService.selectedDate.set(value?.toString() ?? '');
-      this.completedLogs.reload();
-    });
-  }
+  allLogs = this.logService.allLogs;
+  isLoading = this.logService.allLogs.isLoading;
+  hasError = this.logService.allLogs.error;
 }

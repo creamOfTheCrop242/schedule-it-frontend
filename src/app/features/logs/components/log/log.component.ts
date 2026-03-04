@@ -36,11 +36,7 @@ export class LogComponent {
     if (confirm('Are you sure you want to delete this log?')) {
       this.logService.deleteLog(id).subscribe({
         next: () => {
-          if (this.log()?.completed) {
-            this.logService.completeLogs.reload();
-          } else {
-            this.logService.incompleteLogs.reload();
-          }
+          this.logService.allLogs.reload();
         },
       });
     }
@@ -58,8 +54,7 @@ export class LogComponent {
         .pipe(take(1))
         .subscribe({
           next: () => {
-            this.logService.incompleteLogs.reload();
-            this.logService.completeLogs.reload();
+            this.logService.allLogs.reload();
             this.goalsService.logsGoalStatus.reload();
           },
           error: (error) => {

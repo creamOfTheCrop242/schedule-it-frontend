@@ -1,5 +1,5 @@
 import { HttpClient, httpResource } from '@angular/common/http';
-import { effect, inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { AddLog, Log } from '../models/log.model';
 
@@ -8,11 +8,6 @@ import { AddLog, Log } from '../models/log.model';
 })
 export class LogService {
   httpClient = inject(HttpClient);
-  selectedDate = signal<string>('');
-
-  constructor() {
-    effect(() => {});
-  }
 
   addLog(log: AddLog) {
     return this.httpClient.post<Log>(`${environment.baseUrl}/logs`, log);
@@ -25,21 +20,9 @@ export class LogService {
     );
   }
 
-  incompleteLogs = httpResource<Log[]>({
+  allLogs = httpResource<Log[]>({
     url: `${environment.baseUrl}/logs`,
-    params: {
-      status: 'false',
-    },
   });
-
-  completeLogs = httpResource<Log[]>(() => ({
-    url: `${environment.baseUrl}/logs`,
-    params: {
-      status: 'true',
-      completedDate: this.selectedDate(),
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    },
-  }));
 
   toggleLogStatus(log: { id: string; completed: boolean }) {
     return this.httpClient.patch(

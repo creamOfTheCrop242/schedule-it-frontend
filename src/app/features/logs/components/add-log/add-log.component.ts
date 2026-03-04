@@ -42,23 +42,13 @@ export class AddLogComponent {
 
   readonly currentLog = computed(() => {
     if (!this.id) return undefined;
-
-    const incompleteLogs = this.logService.incompleteLogs.value();
-    if (incompleteLogs) {
-      const log = incompleteLogs.find((log) => log.id === this.id);
-      if (log) return log;
-    }
-
-    const completedLogs = this.logService.completeLogs.value();
-    if (completedLogs) {
-      return completedLogs.find((log) => log.id === this.id);
-    }
-
-    return undefined;
+    const logs = this.logService.allLogs.value();
+    if (!logs) return undefined;
+    return logs.find((log) => log.id === this.id);
   });
 
   readonly availableLogs = computed(() => {
-    const logs = this.logService.incompleteLogs.value();
+    const logs = this.logService.allLogs.value();
     if (!logs) return [];
     return logs.filter((log) => log.id !== this.id);
   });
@@ -119,8 +109,7 @@ export class AddLogComponent {
 
   private handleSuccess(): void {
     this.router.navigate(['/logs']);
-    this.logService.completeLogs.reload();
-    this.logService.incompleteLogs.reload();
+    this.logService.allLogs.reload();
     this.goalsService.logsGoalStatus.reload();
   }
 
