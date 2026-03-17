@@ -1,4 +1,5 @@
 export enum GoalMetric {
+  LOGS_ADDED = 'LOGS_ADDED',
   LOGS_COMPLETED = 'LOGS_COMPLETED',
 }
 

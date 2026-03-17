@@ -11,4 +11,5 @@ export class InputComponent {
   placeholder = input<string>('placeholder');
   name = input<FormControl>();
   type = input<string>('text');
+  id = input<string>();
 }

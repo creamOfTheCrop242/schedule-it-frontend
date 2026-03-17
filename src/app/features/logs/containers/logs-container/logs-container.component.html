@@ -3,6 +3,25 @@
     Logs
     <span>({{ allLogs.value()?.length }})</span>
   </h1>
+  <div class="mb-4 flex items-center gap-2">
+    <label for="log-date-filter" class="sr-only">Filter logs by date</label>
+    <input
+      id="log-date-filter"
+      type="date"
+      [value]="logService.selectedDate() ?? ''"
+      (change)="onDateChange($event)"
+      class="rounded border border-gray-300 px-3 py-2"
+    />
+    @if (logService.selectedDate()) {
+      <button
+        type="button"
+        (click)="clearDate()"
+        class="text-sm text-gray-600 underline hover:text-gray-900"
+      >
+        Clear
+      </button>
+    }
+  </div>
   <div>
     @if (allLogs.value() && allLogs.value().length > 0 && !isLoading()) {
       <div>

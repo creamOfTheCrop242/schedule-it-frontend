@@ -3,6 +3,12 @@
     {{ id ? "Edit Goal" : "Add New Goal" }}
   </h2>
 
+  @if (errorMessage()) {
+    <div class="mb-4 rounded-md bg-red-100 p-3 text-red-700">
+      {{ errorMessage() }}
+    </div>
+  }
+
   <form (ngSubmit)="onSubmit()" [formGroup]="form" class="space-y-4">
     <!-- Metric -->
     <div>
@@ -11,9 +17,9 @@
         formControlName="metric"
         class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
       >
-        <option *ngFor="let option of metricOptions" [value]="option">
-          {{ option }}
-        </option>
+        @for (option of metricOptions; track option) {
+          <option [value]="option">{{ option }}</option>
+        }
       </select>
     </div>
 
@@ -24,9 +30,9 @@
         formControlName="scope"
         class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
       >
-        <option *ngFor="let option of scopeOptions" [value]="option">
-          {{ option }}
-        </option>
+        @for (option of scopeOptions; track option) {
+          <option [value]="option">{{ option }}</option>
+        }
       </select>
     </div>
 

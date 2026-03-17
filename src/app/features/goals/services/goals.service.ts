@@ -35,7 +35,7 @@ export class GoalsService {
   logsGoalStatus = httpResource<GoalStatusResponse[]>({
     url: `${environment.baseUrl}/goals/status`,
     params: {
-      metric: GoalMetric.LOGS_COMPLETED,
+      metric: GoalMetric.LOGS_ADDED,
     },
   });
 
