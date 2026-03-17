@@ -6,13 +6,14 @@
       <a
         routerLink="/dashboard"
         class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
+        aria-label="Dashboard"
       >
         <span
           class="material-icons text-[2rem]"
-          [ngClass]="{
-            'text-purple-500 active-icon': isActiveRoute('/dashboard'),
-            'text-gray-400': !isActiveRoute('/dashboard')
-          }"
+          [class.text-purple-500]="isActiveRoute('/dashboard')"
+          [class.active-icon]="isActiveRoute('/dashboard')"
+          [class.text-gray-400]="!isActiveRoute('/dashboard')"
+          aria-hidden="true"
           >home</span
         >
       </a>
@@ -21,13 +22,14 @@
       <a
         routerLink="/logs"
         class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
+        aria-label="Logs"
       >
         <span
           class="material-icons text-[2rem]"
-          [ngClass]="{
-            'text-purple-500 active-icon': isActiveRoute('/logs'),
-            'text-gray-400': !isActiveRoute('/logs')
-          }"
+          [class.text-purple-500]="isActiveRoute('/logs')"
+          [class.active-icon]="isActiveRoute('/logs')"
+          [class.text-gray-400]="!isActiveRoute('/logs')"
+          aria-hidden="true"
           >list</span
         >
       </a>
@@ -36,13 +38,14 @@
       <a
         routerLink="/logs/add-log"
         class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
+        aria-label="Add log"
       >
         <span
           class="material-icons text-[2rem]"
-          [ngClass]="{
-            'text-purple-500 active-icon': isActiveRoute('/logs/add-log'),
-            'text-gray-400': !isActiveRoute('/logs/add-log')
-          }"
+          [class.text-purple-500]="isActiveRoute('/logs/add-log')"
+          [class.active-icon]="isActiveRoute('/logs/add-log')"
+          [class.text-gray-400]="!isActiveRoute('/logs/add-log')"
+          aria-hidden="true"
           >add_circle</span
         >
       </a>
@@ -51,13 +54,14 @@
       <a
         routerLink="/goals"
         class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
+        aria-label="Goals"
       >
         <span
           class="material-icons text-[2rem]"
-          [ngClass]="{
-            'text-purple-500 active-icon': isActiveRoute('/goals'),
-            'text-gray-400': !isActiveRoute('/goals')
-          }"
+          [class.text-purple-500]="isActiveRoute('/goals')"
+          [class.active-icon]="isActiveRoute('/goals')"
+          [class.text-gray-400]="!isActiveRoute('/goals')"
+          aria-hidden="true"
           >sports_score</span
         >
       </a>

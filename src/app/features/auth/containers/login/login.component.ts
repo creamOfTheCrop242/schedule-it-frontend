@@ -38,11 +38,7 @@ export class LoginComponent implements OnInit {
   googleUrl = `${environment.baseUrl}/auth/google`;
   facebookUrl = `${environment.baseUrl}/auth/facebook`;
 
-  ngOnInit(): void {
-    console.log(this.googleUrl);
-    console.log(this.facebookUrl);
-    console.log('this is a test');
-  }
+  ngOnInit(): void {}
 
   validateForm() {
     if (this.form.invalid) {

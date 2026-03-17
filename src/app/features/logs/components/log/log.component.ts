@@ -1,5 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { take } from 'rxjs';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { Log, LogPriority } from '../../models/log.model';
@@ -11,44 +17,54 @@ import { GoalsService } from '../../../goals/services/goals.service';
   imports: [CommonModule, ButtonComponent],
   templateUrl: './log.component.html',
   styleUrl: './log.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LogComponent {
   log = input<Log>();
-  expandedLogId: string | null = null;
+  expandedLogId = signal<string | null>(null);
   logService = inject(LogService);
   goalsService = inject(GoalsService);
 
   readonly LogPriority = LogPriority;
 
   toggleDescription(logId: string): void {
-    if (this.expandedLogId === logId) {
-      this.expandedLogId = null;
+    if (this.expandedLogId() === logId) {
+      this.expandedLogId.set(null);
     } else {
-      this.expandedLogId = logId;
+      this.expandedLogId.set(logId);
     }
   }
 
   isExpanded(logId: string): boolean {
-    return this.expandedLogId === logId;
+    return this.expandedLogId() === logId;
   }
+
+  deleteConfirmId = signal<string | null>(null);
 
   deleteLog(id: string) {
-    if (confirm('Are you sure you want to delete this log?')) {
-      this.logService.deleteLog(id).subscribe({
-        next: () => {
-          this.logService.allLogs.reload();
-        },
-      });
-    }
+    this.deleteConfirmId.set(id);
   }
 
-  completeLog(completed: boolean, event?: Event) {
+  cancelDelete() {
+    this.deleteConfirmId.set(null);
+  }
+
+  confirmDelete(id: string) {
+    this.logService.deleteLog(id).subscribe({
+      next: () => {
+        this.logService.allLogs.reload();
+        this.deleteConfirmId.set(null);
+      },
+    });
+  }
+
+  completeLog(logId: string, completed: boolean, event?: Event) {
     if (event) {
       event.stopPropagation();
 
       this.logService
         .toggleLogStatus({
-          id: this.log()!.id,
+          id: logId,
           completed,
         })
         .pipe(take(1))
@@ -57,9 +73,7 @@ export class LogComponent {
             this.logService.allLogs.reload();
             this.goalsService.logsGoalStatus.reload();
           },
-          error: (error) => {
-            console.error(error);
-          },
+          error: () => {},
         });
     }
   }

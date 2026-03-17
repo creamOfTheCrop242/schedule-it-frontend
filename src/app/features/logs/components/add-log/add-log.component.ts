@@ -1,4 +1,11 @@
-import { Component, computed, effect, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { InputComponent } from '../../../shared/components/input/input.component';
 import {
   FormControl,
@@ -18,6 +25,7 @@ import { GoalsService } from '../../../goals/services/goals.service';
   imports: [InputComponent, ReactiveFormsModule, CommonModule],
   templateUrl: './add-log.component.html',
   styleUrl: './add-log.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddLogComponent {
   private readonly logService = inject(LogService);
@@ -31,8 +39,8 @@ export class AddLogComponent {
     priority: new FormControl<LogPriority>(LogPriority.LOW, [
       Validators.required,
     ]),
-    startDate: new FormControl<Date | null>(null),
-    dueDate: new FormControl<Date | null>(null),
+    startTime: new FormControl<Date | null>(null),
+    endTime: new FormControl<Date | null>(null),
     completed: new FormControl(false),
     completedDate: new FormControl<Date | null>(null),
     dependencyLogId: new FormControl<string | null>(null),
@@ -55,6 +63,8 @@ export class AddLogComponent {
 
   readonly priorityOptions = Object.values(LogPriority);
 
+  readonly errorMessage = signal<string | null>(null);
+
   constructor() {
     effect(() => {
       const log = this.currentLog();
@@ -62,6 +72,15 @@ export class AddLogComponent {
         this.populateForm(log);
       }
     });
+
+    if (this.id) {
+      this.logService.getLog(this.id).pipe(take(1)).subscribe({
+        next: (log) => this.populateForm(log),
+        error: () => {
+          this.errorMessage.set('Failed to load log');
+        },
+      });
+    }
   }
 
   onSubmit(): void {
@@ -72,9 +91,10 @@ export class AddLogComponent {
       ? this.logService.updateLog({ ...baseLog, id: this.id })
       : this.logService.addLog(baseLog);
 
+    this.errorMessage.set(null);
     operation.pipe(take(1)).subscribe({
       next: () => this.handleSuccess(),
-      error: (error) => this.handleError(error),
+      error: () => this.handleError(),
     });
   }
 
@@ -83,8 +103,8 @@ export class AddLogComponent {
       name: this.form.value.name!,
       description: this.form.value.description || undefined,
       priority: this.form.value.priority!,
-      startDate: this.form.value.startDate || undefined,
-      dueDate: this.form.value.dueDate || undefined,
+      startTime: this.form.value.startTime || undefined,
+      endTime: this.form.value.endTime || undefined,
       completed: this.form.value.completed ?? false,
     };
   }
@@ -94,8 +114,8 @@ export class AddLogComponent {
       name: log.name,
       description: log.description || '',
       priority: log.priority,
-      startDate: this.toDate(log.startDate),
-      dueDate: this.toDate(log.dueDate),
+      startTime: this.toDate(log.startTime),
+      endTime: this.toDate(log.endTime),
       completed: log.completed,
       completedDate: this.toDate(log.completedDate),
       dependencyLogId: log.dependencyLog?.id || null,
@@ -113,7 +133,7 @@ export class AddLogComponent {
     this.goalsService.logsGoalStatus.reload();
   }
 
-  private handleError(error: unknown): void {
-    console.error('Log operation failed:', error);
+  private handleError(): void {
+    this.errorMessage.set('Failed to save log. Please try again.');
   }
 }

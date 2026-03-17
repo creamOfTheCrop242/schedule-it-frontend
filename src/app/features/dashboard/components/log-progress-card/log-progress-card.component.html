@@ -18,13 +18,13 @@
       >
         <div
           class="progress-bar-track h-full transition-all duration-300 ease-out rounded-full"
-          [ngClass]="getProgressBgColor(goal)"
+          [class]="getProgressBgColor(goal)"
           [style.width.%]="getProgressPercentage(goal)"
         ></div>
       </div>
       <div
         class="progress-bar-glow absolute top-1/2 left-0 -translate-y-1/2 h-4 rounded-full transition-all duration-300 ease-out"
-        [ngClass]="[getProgressColorClass(goal), getProgressBgColor(goal)]"
+        [class]="getProgressColorClass(goal) + ' ' + getProgressBgColor(goal)"
         [style.width.%]="getProgressPercentage(goal)"
       ></div>
     </div>

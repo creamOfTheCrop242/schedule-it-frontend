@@ -1,65 +1,63 @@
+@if (log(); as logData) {
 <div
   class="cotc-bg-dark rounded-2xl px-4 py-2 w-full text-left my-2 log-container relative overflow-hidden border-1"
-  [class.border-2]="isExpanded(log().id)"
+  [class.border-2]="isExpanded(logData.id)"
   [class.border-yellow-500]="
-    log().priority === LogPriority.MEDIUM &&
-    !isExpanded(log().id) &&
-    !log().completed
+    logData.priority === LogPriority.MEDIUM &&
+    !isExpanded(logData.id) &&
+    !logData.completed
   "
   [class.border-red-500]="
-    log().priority === LogPriority.HIGH &&
-    !isExpanded(log().id) &&
-    !log().completed
+    logData.priority === LogPriority.HIGH &&
+    !isExpanded(logData.id) &&
+    !logData.completed
   "
-  [class.border-purple-500]="isExpanded(log().id) && !log().completed"
-  [class.border-green-500]="log().completed"
-  (click)="toggleDescription(log().id)"
+  [class.border-purple-500]="isExpanded(logData.id) && !logData.completed"
+  [class.border-green-500]="logData.completed"
+  (click)="toggleDescription(logData.id)"
 >
   <div class="flex justify-between relative z-20">
     <p class="w-full text-left">
-      {{ log().name }}
+      {{ logData.name }}
     </p>
 
-    <div class="relative">
+    <div class="relative" (click)="$event.stopPropagation()">
       <input
         type="checkbox"
-        id="completed"
-        class="mr-2 checkbox-animated"
-        (click)="completeLog(!log().completed, $event)"
-        [checked]="log().completed"
+        [checked]="logData.completed"
+        (change)="completeLog(logData.id, !logData.completed, $event)"
+        [attr.aria-label]="'Mark log as ' + (logData.completed ? 'incomplete' : 'complete')"
       />
-      <div class="checkbox-ripple"></div>
     </div>
   </div>
-  @if (expandedLogId === log().id){
-  <hr class="my-2" />
+  @if (expandedLogId() === logData.id) {
+    <hr class="my-2" />
   }
   <div
     class="overflow-hidden transition-all duration-200"
-    [class.max-h-0]="!isExpanded(log().id)"
-    [class.max-h-40]="isExpanded(log().id)"
-    [class.overflow-y-auto]="isExpanded(log().id)"
+    [class.max-h-0]="!isExpanded(logData.id)"
+    [class.max-h-40]="isExpanded(logData.id)"
+    [class.overflow-y-auto]="isExpanded(logData.id)"
   >
-    <p class="py-2">{{ log().description }}</p>
+    <p class="py-2">{{ logData.description }}</p>
     <p class="py-2">
-      <span class="font-bold">Priority</span>: {{ log().priority }}
+      <span class="font-bold">Priority</span>: {{ logData.priority }}
     </p>
     <p class="py-2">
-      <span class="font-bold">Start Date</span>: {{ log().startDate }}
+      <span class="font-bold">Start Time</span>: {{ logData.startTime | date: "MM/dd/yyyy HH:mm" }}
     </p>
     <p class="py-2">
-      <span class="font-bold">Due Date</span>:
-      {{ log().dueDate | date : "MM/dd/yyyy HH:mm" }}
+      <span class="font-bold">End Time</span>:
+      {{ logData.endTime | date: "MM/dd/yyyy HH:mm" }}
     </p>
 
-    <p class="py-2">
-      <span class="font-bold">Notes</span>: {{ log().notes }}</p>
+    <p class="py-2"><span class="font-bold">Notes</span>: {{ logData.notes }}</p>
     <hr class="my-2" />
     <div class="flex gap-2">
       <app-button
         label="Edit"
         background="purple"
-        link="/logs/edit-log/{{ log().id }}"
+        link="/logs/edit-log/{{ logData.id }}"
         color="white"
         [isInternal]="true"
         class="w-full"
@@ -68,9 +66,39 @@
         label="Delete"
         background="red"
         color="white"
-        (click)="deleteLog(log().id)"
+        (click)="deleteLog(logData.id)"
         class="w-full"
       ></app-button>
     </div>
+    @if (deleteConfirmId() === logData.id) {
+    <div
+      class="mt-2 rounded-md border border-gray-600 bg-[#1a1a1a] p-3"
+      role="dialog"
+      aria-labelledby="delete-dialog-title"
+      aria-describedby="delete-dialog-desc"
+    >
+      <p id="delete-dialog-title" class="font-semibold">Delete this log?</p>
+      <p id="delete-dialog-desc" class="text-sm text-gray-400 mt-1">
+        This action cannot be undone.
+      </p>
+      <div class="mt-3 flex gap-2">
+        <button
+          type="button"
+          (click)="confirmDelete(logData.id)"
+          class="rounded-md bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700"
+        >
+          Yes, delete
+        </button>
+        <button
+          type="button"
+          (click)="cancelDelete()"
+          class="rounded-md border border-gray-500 px-3 py-1 text-sm hover:bg-gray-700"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+    }
   </div>
 </div>
+}

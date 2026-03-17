@@ -9,8 +9,8 @@ export interface Log {
   name: string;
   description?: string;
   priority: LogPriority;
-  startDate?: Date;
-  dueDate?: Date;
+  startTime?: Date;
+  endTime?: Date;
   completed: boolean;
   completedDate?: Date;
   dependencyLog?: Log;

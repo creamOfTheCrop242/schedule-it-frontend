@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { InputComponent } from '../../../shared/components/input/input.component';
 import {
   FormControl,
@@ -30,7 +30,7 @@ export class AddGoalComponent {
   private readonly route = inject(ActivatedRoute);
 
   readonly form = new FormGroup({
-    metric: new FormControl<GoalMetric>(GoalMetric.LOGS_COMPLETED, [
+    metric: new FormControl<GoalMetric>(GoalMetric.LOGS_ADDED, [
       Validators.required,
     ]),
     scope: new FormControl<GoalScope>(GoalScope.DAY, [Validators.required]),
@@ -53,6 +53,7 @@ export class AddGoalComponent {
 
   readonly metricOptions = Object.values(GoalMetric);
   readonly scopeOptions = Object.values(GoalScope);
+  readonly errorMessage = signal<string | null>(null);
 
   constructor() {
     effect(() => {
@@ -69,17 +70,19 @@ export class AddGoalComponent {
     const baseGoal = this.buildBaseGoal();
     const operation = this.goalsService.addGoal(baseGoal);
 
+    this.errorMessage.set(null);
     operation.pipe(take(1)).subscribe({
       next: () => this.handleSuccess(),
-      error: (error) => this.handleError(error),
+      error: () => this.handleError(),
     });
   }
 
   private buildBaseGoal(): AddGoal {
+    const target = this.form.value.target;
     return {
       metric: this.form.value.metric!,
       scope: this.form.value.scope!,
-      targetValue: this.form.value.target!,
+      targetValue: typeof target === 'number' ? target : Number(target),
     };
   }
 
@@ -96,7 +99,7 @@ export class AddGoalComponent {
     this.goalsService.logsGoalStatus.reload();
   }
 
-  private handleError(error: unknown): void {
-    console.error('Goal operation failed:', error);
+  private handleError(): void {
+    this.errorMessage.set('Failed to save goal. Please try again.');
   }
 }

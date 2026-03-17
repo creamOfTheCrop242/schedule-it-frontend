@@ -7,7 +7,6 @@ import { SendVerifyCodeComponent } from './features/auth/components/send-verify-
 import { AddLogComponent } from './features/logs/components/add-log/add-log.component';
 import { authGuard } from './features/auth/guards/auth.guard';
 import { loginGuard } from './features/auth/guards/login.guard';
-import { LogsComponent } from './features/logs/components/logs/logs.component';
 import { LogsContainerComponent } from './features/logs/containers/logs-container/logs-container.component';
 import { GoalsContainerComponent } from './features/goals/containers/goals-container/goals-container.component';
 import { AddGoalComponent } from './features/goals/components/add-goal/add-goal.component';

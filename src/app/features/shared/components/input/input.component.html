@@ -1,5 +1,6 @@
 @if (type() !== 'textarea') {
 <input
+  [id]="id()"
   [formControl]="name()"
   [type]="type()"
   class="bg-[#2c2c2c] autofill:bg-[#2c2c2c] p-3 w-full rounded-3xl text-white mt-3 placeholder-light"
@@ -7,7 +8,7 @@
 />
 } @else {
 <textarea
-  id="description"
+  [id]="id()"
   class="bg-[#2c2c2c] autofill:bg-[#2c2c2c] p-3 w-full rounded-3xl text-white mt-3 placeholder-light"
   [placeholder]="placeholder()"
   [formControl]="name()"

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GoalsService } from '../../../goals/services/goals.service';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
@@ -9,6 +9,7 @@ import { GoalStatusResponse } from '../../../goals/models/goals.models';
   imports: [CommonModule, ButtonComponent],
   templateUrl: './log-progress-card.component.html',
   styleUrl: './log-progress-card.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LogProgressCardComponent {
   private readonly goalsService = inject(GoalsService);
