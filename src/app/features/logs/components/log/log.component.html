@@ -3,32 +3,18 @@
   class="cotc-bg-dark rounded-2xl px-4 py-2 w-full text-left my-2 log-container relative overflow-hidden border-1"
   [class.border-2]="isExpanded(logData.id)"
   [class.border-yellow-500]="
-    logData.priority === LogPriority.MEDIUM &&
-    !isExpanded(logData.id) &&
-    !logData.completed
+    logData.priority === LogPriority.MEDIUM && !isExpanded(logData.id)
   "
   [class.border-red-500]="
-    logData.priority === LogPriority.HIGH &&
-    !isExpanded(logData.id) &&
-    !logData.completed
+    logData.priority === LogPriority.HIGH && !isExpanded(logData.id)
   "
-  [class.border-purple-500]="isExpanded(logData.id) && !logData.completed"
-  [class.border-green-500]="logData.completed"
+  [class.border-purple-500]="isExpanded(logData.id)"
   (click)="toggleDescription(logData.id)"
 >
   <div class="flex justify-between relative z-20">
     <p class="w-full text-left">
       {{ logData.name }}
     </p>
-
-    <div class="relative" (click)="$event.stopPropagation()">
-      <input
-        type="checkbox"
-        [checked]="logData.completed"
-        (change)="completeLog(logData.id, !logData.completed, $event)"
-        [attr.aria-label]="'Mark log as ' + (logData.completed ? 'incomplete' : 'complete')"
-      />
-    </div>
   </div>
   @if (expandedLogId() === logData.id) {
     <hr class="my-2" />
@@ -40,6 +26,16 @@
     [class.overflow-y-auto]="isExpanded(logData.id)"
   >
     <p class="py-2">{{ logData.description }}</p>
+    @if (logData.surroundings) {
+      <p class="py-2">
+        <span class="font-bold">Surroundings</span>: {{ logData.surroundings }}
+      </p>
+    }
+    @if (logData.mood) {
+      <p class="py-2">
+        <span class="font-bold">Mood</span>: {{ logData.mood }}
+      </p>
+    }
     <p class="py-2">
       <span class="font-bold">Priority</span>: {{ logData.priority }}
     </p>

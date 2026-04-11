@@ -6,11 +6,9 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { take } from 'rxjs';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { Log, LogPriority } from '../../models/log.model';
 import { LogService } from '../../services/log.service';
-import { GoalsService } from '../../../goals/services/goals.service';
 
 @Component({
   selector: 'app-log',
@@ -23,7 +21,6 @@ export class LogComponent {
   log = input<Log>();
   expandedLogId = signal<string | null>(null);
   logService = inject(LogService);
-  goalsService = inject(GoalsService);
 
   readonly LogPriority = LogPriority;
 
@@ -56,25 +53,5 @@ export class LogComponent {
         this.deleteConfirmId.set(null);
       },
     });
-  }
-
-  completeLog(logId: string, completed: boolean, event?: Event) {
-    if (event) {
-      event.stopPropagation();
-
-      this.logService
-        .toggleLogStatus({
-          id: logId,
-          completed,
-        })
-        .pipe(take(1))
-        .subscribe({
-          next: () => {
-            this.logService.allLogs.reload();
-            this.goalsService.logsGoalStatus.reload();
-          },
-          error: () => {},
-        });
-    }
   }
 }

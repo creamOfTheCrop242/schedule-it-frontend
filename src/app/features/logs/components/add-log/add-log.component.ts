@@ -15,7 +15,13 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { LogService } from '../../services/log.service';
-import { AddLog, Log, LogPriority } from '../../models/log.model';
+import {
+  AddLog,
+  Log,
+  LogPriority,
+  MOOD_PRESETS,
+  MOOD_CUSTOM,
+} from '../../models/log.model';
 import { take } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import { GoalsService } from '../../../goals/services/goals.service';
@@ -36,6 +42,9 @@ export class AddLogComponent {
   readonly form = new FormGroup({
     name: new FormControl('', [Validators.required]),
     description: new FormControl(''),
+    surroundings: new FormControl(''),
+    moodPreset: new FormControl<string>(''),
+    moodCustom: new FormControl(''),
     priority: new FormControl<LogPriority>(LogPriority.LOW, [
       Validators.required,
     ]),
@@ -62,6 +71,7 @@ export class AddLogComponent {
   });
 
   readonly priorityOptions = Object.values(LogPriority);
+  readonly moodPresetOptions = ['', ...MOOD_PRESETS, MOOD_CUSTOM];
 
   readonly errorMessage = signal<string | null>(null);
 
@@ -99,9 +109,17 @@ export class AddLogComponent {
   }
 
   private buildBaseLog(): AddLog {
+    const moodPreset = this.form.value.moodPreset ?? '';
+    const mood =
+      moodPreset === MOOD_CUSTOM
+        ? (this.form.value.moodCustom ?? '').trim() || undefined
+        : moodPreset || undefined;
+
     return {
       name: this.form.value.name!,
       description: this.form.value.description || undefined,
+      surroundings: this.form.value.surroundings || undefined,
+      mood,
       priority: this.form.value.priority!,
       startTime: this.form.value.startTime || undefined,
       endTime: this.form.value.endTime || undefined,
@@ -110,9 +128,15 @@ export class AddLogComponent {
   }
 
   private populateForm(log: Log): void {
+    const mood = log.mood || '';
+    const isPreset = mood && MOOD_PRESETS.includes(mood as (typeof MOOD_PRESETS)[number]);
+
     this.form.patchValue({
       name: log.name,
       description: log.description || '',
+      surroundings: log.surroundings || '',
+      moodPreset: isPreset ? mood : mood ? MOOD_CUSTOM : '',
+      moodCustom: isPreset ? '' : mood,
       priority: log.priority,
       startTime: this.toDate(log.startTime),
       endTime: this.toDate(log.endTime),

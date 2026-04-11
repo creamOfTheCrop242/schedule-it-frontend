@@ -38,13 +38,6 @@ export class LogService {
     };
   });
 
-  toggleLogStatus(log: { id: string; completed: boolean }) {
-    return this.httpClient.patch(
-      `${environment.baseUrl}/logs/${log.id}/toggle-status`,
-      log
-    );
-  }
-
   deleteLog(id: string) {
     return this.httpClient.delete(`${environment.baseUrl}/logs/${id}`);
   }
