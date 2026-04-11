@@ -31,6 +31,44 @@
     </div>
 
     <div>
+      <label for="log-surroundings" class="block text-sm font-medium mb-2">Surroundings</label>
+      <app-input
+        [id]="'log-surroundings'"
+        placeholder="e.g. Coffee shop, Home office"
+        [name]="form.controls['surroundings']"
+        type="textarea"
+      ></app-input>
+    </div>
+
+    <div>
+      <label for="log-mood" class="block text-sm font-medium mb-2">Mood</label>
+      <select
+        id="log-mood"
+        formControlName="moodPreset"
+        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+      >
+        <option value="">Select mood (optional)</option>
+        @for (option of moodPresetOptions; track option) {
+          @if (option) {
+            <option [value]="option">{{ option }}</option>
+          }
+        }
+      </select>
+    </div>
+
+    @if (form.get('moodPreset')?.value === 'Custom') {
+      <div>
+        <label for="log-mood-custom" class="block text-sm font-medium mb-2">Custom mood</label>
+        <app-input
+          [id]="'log-mood-custom'"
+          placeholder="How's your mood?"
+          [name]="form.controls['moodCustom']"
+          type="text"
+        ></app-input>
+      </div>
+    }
+
+    <div>
       <label class="block text-sm font-medium mb-2">Priority *</label>
       <select
         formControlName="priority"

@@ -4,10 +4,27 @@ export enum LogPriority {
   HIGH = 'High',
 }
 
+export const MOOD_PRESETS = [
+  'Happy',
+  'Calm',
+  'Anxious',
+  'Focused',
+  'Tired',
+  'Energized',
+  'Stressed',
+  'Peaceful',
+  'Motivated',
+  'Overwhelmed',
+  'Grateful',
+] as const;
+export const MOOD_CUSTOM = 'Custom';
+
 export interface Log {
   id: string;
   name: string;
   description?: string;
+  surroundings?: string;
+  mood?: string;
   priority: LogPriority;
   startTime?: Date;
   endTime?: Date;
