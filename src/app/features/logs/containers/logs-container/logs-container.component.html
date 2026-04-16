@@ -1,40 +1,97 @@
-<section class="p-5">
-  <h1 class="text-2xl">
-    Logs
-    <span>({{ allLogs.value()?.length }})</span>
-  </h1>
-  <div class="mb-4 flex items-center gap-2">
-    <label for="log-date-filter" class="sr-only">Filter logs by date</label>
-    <input
-      id="log-date-filter"
-      type="date"
-      [value]="logService.selectedDate() ?? ''"
-      (change)="onDateChange($event)"
-      class="rounded border border-gray-300 px-3 py-2"
-    />
+<section class="p-5" aria-label="Logs">
+  <header class="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <h1 id="logs-heading" class="text-2xl">
+      Logs
+      @if (logCount() !== undefined) {
+        <span class="text-lg font-normal text-gray-400">({{ logCount() }})</span>
+      }
+    </h1>
+    <a
+      routerLink="/logs/add-log"
+      class="rounded-lg border border-gray-600 bg-transparent px-4 py-2 text-sm text-white hover:bg-[#383838] focus:outline-none focus:ring-2 focus:ring-purple-500"
+    >
+      Add log
+    </a>
+  </header>
+
+  @if (filterHeadline()) {
+    <div
+      class="cotc-bg-dark mb-4 rounded-2xl border border-gray-600 px-4 py-3 text-sm text-gray-300"
+      aria-live="polite"
+    >
+      <p class="m-0 text-white">{{ filterHeadline() }}</p>
+      @if (timezoneHint()) {
+        <p class="mt-1 mb-0 text-xs text-gray-400">{{ timezoneHint() }}</p>
+      }
+    </div>
+  }
+
+  <div
+    class="cotc-bg-dark mb-4 flex flex-wrap items-center gap-3 rounded-2xl border border-gray-600 px-4 py-3"
+  >
+    <div class="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
+      <label for="log-date-filter" class="shrink-0 text-sm text-gray-300"
+        >Date</label
+      >
+      <input
+        id="log-date-filter"
+        type="date"
+        [value]="logService.selectedDate() ?? ''"
+        (change)="onDateChange($event)"
+        class="min-w-0 flex-1 rounded-md border border-gray-600 bg-[#1a1a1a] px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+      />
+    </div>
     @if (logService.selectedDate()) {
       <button
         type="button"
         (click)="clearDate()"
-        class="text-sm text-gray-600 underline hover:text-gray-900"
+        class="shrink-0 rounded-md border border-gray-500 px-3 py-2 text-sm text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
       >
         Clear
       </button>
     }
   </div>
-  <div>
-    @if (allLogs.value() && allLogs.value().length > 0 && !isLoading()) {
-      <div>
-        @for (log of allLogs.value(); track log.id) {
-          <app-log [log]="log" />
-        }
+
+  <main
+    class="min-h-[4rem]"
+    [attr.aria-busy]="isLoading()"
+    aria-live="polite"
+    aria-labelledby="logs-heading"
+  >
+    @if (hasLoadError()) {
+      <div role="alert" class="rounded-xl border border-red-900/60 bg-red-950/40 p-4 text-red-200">
+        Couldn’t load logs. Check your connection and try again.
       </div>
-    } @else if (allLogs.value()?.length === 0 && !isLoading()) {
-      <div class="my-2">No logs found</div>
     } @else if (isLoading()) {
-      <div>Loading...</div>
-    } @else if (hasError()) {
-      <div class="text-red-500">An error has occurred</div>
+      <div role="status" class="text-gray-400">Loading…</div>
+    } @else {
+      @if (allLogs.value(); as logs) {
+        @if (logs && logs.length > 0) {
+          <ul class="m-0 list-none p-0">
+            @for (log of logs; track log.id) {
+              <li class="m-0 p-0">
+                <app-log [log]="log" />
+              </li>
+            }
+          </ul>
+        } @else {
+          <div
+            class="rounded-xl border border-gray-600 bg-[#1a1a1a]/80 p-4 text-gray-300"
+          >
+            @if (logService.selectedDate()) {
+              <p class="m-0">No logs for this date.</p>
+              <p class="mt-2 mb-0 text-sm text-gray-400">
+                Try another date or clear the filter to see all logs.
+              </p>
+            } @else {
+              <p class="m-0">No logs yet.</p>
+              <p class="mt-2 mb-0 text-sm text-gray-400">
+                Use <span class="text-gray-200">Add log</span> to create your first entry.
+              </p>
+            }
+          </div>
+        }
+      }
     }
-  </div>
+  </main>
 </section>
