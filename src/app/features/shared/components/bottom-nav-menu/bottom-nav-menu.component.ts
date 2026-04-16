@@ -32,7 +32,11 @@ export class BottomNavMenuComponent {
       return url === '/dashboard';
     }
     if (route === '/logs') {
-      return url === '/logs' || url.startsWith('/logs/edit-log');
+      return (
+        url === '/logs' ||
+        url.startsWith('/logs/edit-log') ||
+        url.startsWith('/logs/log/')
+      );
     }
     if (route === '/logs/add-log') {
       return url === '/logs/add-log' || url.startsWith('/logs/edit-log');

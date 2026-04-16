@@ -1,19 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
-import { LogComponent } from './log.component';
+import { LogDetailComponent } from './log-detail.component';
 
-describe('LogComponent', () => {
-  let component: LogComponent;
-  let fixture: ComponentFixture<LogComponent>;
+describe('LogDetailComponent', () => {
+  let component: LogDetailComponent;
+  let fixture: ComponentFixture<LogDetailComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LogComponent],
+      imports: [LogDetailComponent, HttpClientTestingModule],
       providers: [provideRouter([])],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(LogComponent);
+    fixture = TestBed.createComponent(LogDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
