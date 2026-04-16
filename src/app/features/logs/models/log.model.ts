@@ -1,9 +1,3 @@
-export enum LogPriority {
-  LOW = 'Low',
-  MEDIUM = 'Medium',
-  HIGH = 'High',
-}
-
 export const MOOD_PRESETS = [
   'Happy',
   'Calm',
@@ -25,17 +19,16 @@ export interface Log {
   description?: string;
   surroundings?: string;
   mood?: string;
-  priority: LogPriority;
   startTime?: Date;
   endTime?: Date;
-  completed: boolean;
   completedDate?: Date;
   dependencyLog?: Log;
   notes?: Note[];
   deletedAt?: Date;
 }
 
-export interface AddLog extends Omit<Log, 'id'> {}
+/** POST/PATCH body fields (no relation graphs). */
+export type AddLog = Omit<Log, 'id' | 'dependencyLog' | 'notes'>;
 
 export interface Note {
   id: string;
@@ -43,7 +36,3 @@ export interface Note {
   log?: Log;
 }
 
-export interface CompleteLogModel {
-  id: string;
-  completed: boolean;
-}

@@ -7,7 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { Log, LogPriority } from '../../models/log.model';
+import { Log } from '../../models/log.model';
 import { LogService } from '../../services/log.service';
 
 @Component({
@@ -21,8 +21,6 @@ export class LogComponent {
   log = input<Log>();
   expandedLogId = signal<string | null>(null);
   logService = inject(LogService);
-
-  readonly LogPriority = LogPriority;
 
   toggleDescription(logId: string): void {
     if (this.expandedLogId() === logId) {

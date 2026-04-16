@@ -15,13 +15,7 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { LogService } from '../../services/log.service';
-import {
-  AddLog,
-  Log,
-  LogPriority,
-  MOOD_PRESETS,
-  MOOD_CUSTOM,
-} from '../../models/log.model';
+import { AddLog, Log, MOOD_PRESETS, MOOD_CUSTOM } from '../../models/log.model';
 import { take } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import { GoalsService } from '../../../goals/services/goals.service';
@@ -45,14 +39,9 @@ export class AddLogComponent {
     surroundings: new FormControl(''),
     moodPreset: new FormControl<string>(''),
     moodCustom: new FormControl(''),
-    priority: new FormControl<LogPriority>(LogPriority.LOW, [
-      Validators.required,
-    ]),
     startTime: new FormControl<Date | null>(null),
     endTime: new FormControl<Date | null>(null),
-    completed: new FormControl(false),
     completedDate: new FormControl<Date | null>(null),
-    dependencyLogId: new FormControl<string | null>(null),
   });
 
   readonly id = this.route.snapshot.paramMap.get('id');
@@ -64,16 +53,10 @@ export class AddLogComponent {
     return logs.find((log) => log.id === this.id);
   });
 
-  readonly availableLogs = computed(() => {
-    const logs = this.logService.allLogs.value();
-    if (!logs) return [];
-    return logs.filter((log) => log.id !== this.id);
-  });
-
-  readonly priorityOptions = Object.values(LogPriority);
   readonly moodPresetOptions = ['', ...MOOD_PRESETS, MOOD_CUSTOM];
 
   readonly errorMessage = signal<string | null>(null);
+  readonly scheduleOpen = signal(false);
 
   constructor() {
     effect(() => {
@@ -115,15 +98,16 @@ export class AddLogComponent {
         ? (this.form.value.moodCustom ?? '').trim() || undefined
         : moodPreset || undefined;
 
+    const completedDate = this.form.value.completedDate || undefined;
+
     return {
       name: this.form.value.name!,
       description: this.form.value.description || undefined,
       surroundings: this.form.value.surroundings || undefined,
       mood,
-      priority: this.form.value.priority!,
       startTime: this.form.value.startTime || undefined,
       endTime: this.form.value.endTime || undefined,
-      completed: this.form.value.completed ?? false,
+      completedDate,
     };
   }
 
@@ -137,13 +121,18 @@ export class AddLogComponent {
       surroundings: log.surroundings || '',
       moodPreset: isPreset ? mood : mood ? MOOD_CUSTOM : '',
       moodCustom: isPreset ? '' : mood,
-      priority: log.priority,
       startTime: this.toDate(log.startTime),
       endTime: this.toDate(log.endTime),
-      completed: log.completed,
       completedDate: this.toDate(log.completedDate),
-      dependencyLogId: log.dependencyLog?.id || null,
     });
+
+    if (log.startTime || log.endTime) {
+      this.scheduleOpen.set(true);
+    }
+  }
+
+  toggleSchedule(): void {
+    this.scheduleOpen.update((open) => !open);
   }
 
   private toDate(date: Date | string | undefined): Date | null {
