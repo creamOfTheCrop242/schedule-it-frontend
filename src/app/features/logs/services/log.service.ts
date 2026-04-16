@@ -15,7 +15,7 @@ export class LogService {
     return this.httpClient.post<Log>(`${environment.baseUrl}/logs`, log);
   }
 
-  updateLog(log: Log) {
+  updateLog(log: AddLog & { id: string }) {
     const { id, ...body } = log;
     return this.httpClient.patch<Log>(
       `${environment.baseUrl}/logs/${id}`,

@@ -2,12 +2,7 @@
 <div
   class="cotc-bg-dark rounded-2xl px-4 py-2 w-full text-left my-2 log-container relative overflow-hidden border-1"
   [class.border-2]="isExpanded(logData.id)"
-  [class.border-yellow-500]="
-    logData.priority === LogPriority.MEDIUM && !isExpanded(logData.id)
-  "
-  [class.border-red-500]="
-    logData.priority === LogPriority.HIGH && !isExpanded(logData.id)
-  "
+  [class.border-gray-600]="!isExpanded(logData.id)"
   [class.border-purple-500]="isExpanded(logData.id)"
   (click)="toggleDescription(logData.id)"
 >
@@ -36,9 +31,6 @@
         <span class="font-bold">Mood</span>: {{ logData.mood }}
       </p>
     }
-    <p class="py-2">
-      <span class="font-bold">Priority</span>: {{ logData.priority }}
-    </p>
     <p class="py-2">
       <span class="font-bold">Start Time</span>: {{ logData.startTime | date: "MM/dd/yyyy HH:mm" }}
     </p>

@@ -69,72 +69,79 @@
     }
 
     <div>
-      <label class="block text-sm font-medium mb-2">Priority *</label>
-      <select
-        formControlName="priority"
-        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+      <label for="log-completed-date" class="block text-sm font-medium mb-2"
+        >Completed date</label
       >
-        @for (option of priorityOptions; track option) {
-          <option [value]="option">{{ option }}</option>
-        }
-      </select>
-    </div>
-
-    <div>
-      <label for="log-start-time" class="block text-sm font-medium mb-2">Start Time</label>
-      <app-input
-        [id]="'log-start-time'"
-        placeholder="Select start time"
-        [name]="form.controls['startTime']"
-        type="datetime-local"
-      ></app-input>
-    </div>
-
-    <div>
-      <label for="log-end-time" class="block text-sm font-medium mb-2">End Time</label>
-      <app-input
-        [id]="'log-end-time'"
-        placeholder="Select end time"
-        [name]="form.controls['endTime']"
-        type="datetime-local"
-      ></app-input>
-    </div>
-
-    <div class="flex items-center">
-      <input
-        type="checkbox"
-        formControlName="completed"
-        id="completed"
-        class="mr-2"
-      />
-      <label for="completed" class="text-sm font-medium"
-        >Mark as completed</label
-      >
-    </div>
-
-    @if (form.get('completed')?.value) {
-    <div>
-      <label for="log-completed-date" class="block text-sm font-medium mb-2">Completed Date</label>
+      <p class="text-xs text-gray-500 mb-2">
+        Optional. Leave blank to use the current time when you save (useful if you are catching up on a past day).
+      </p>
       <app-input
         [id]="'log-completed-date'"
-        placeholder="Select completion date"
+        placeholder="When did you finish?"
         [name]="form.controls['completedDate']"
         type="datetime-local"
       ></app-input>
     </div>
-    }
 
     <div>
-      <label class="block text-sm font-medium mb-2">Dependency Log</label>
-      <select
-        formControlName="dependencyLogId"
-        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+      <button
+        type="button"
+        id="log-schedule-toggle"
+        (click)="toggleSchedule()"
+        [attr.aria-expanded]="scheduleOpen()"
+        aria-controls="log-schedule-panel"
+        class="cotc-bg-dark flex w-full items-center justify-between rounded-md border border-gray-600 px-3 py-2 text-left text-sm font-medium text-white shadow-sm hover:bg-[#383838] focus:outline-none focus:ring-2 focus:ring-purple-500"
       >
-        <option value="">No dependency (optional)</option>
-        @for (log of availableLogs(); track log.id) {
-        <option [value]="log.id">{{ log.name }}</option>
-        }
-      </select>
+        <span>Start &amp; end times</span>
+        <svg
+          class="h-5 w-5 shrink-0 text-gray-400 transition-transform duration-300 ease-in-out motion-reduce:transition-none"
+          [class.rotate-180]="scheduleOpen()"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </button>
+
+      <div
+        class="grid transition-[grid-template-rows] duration-300 ease-in-out motion-reduce:transition-none"
+        [style.grid-template-rows]="scheduleOpen() ? '1fr' : '0fr'"
+      >
+        <div class="min-h-0 overflow-hidden">
+          <div
+            id="log-schedule-panel"
+            role="region"
+            aria-labelledby="log-schedule-toggle"
+            class="space-y-4 pt-3"
+            [attr.inert]="scheduleOpen() ? null : ''"
+          >
+            <div>
+              <label for="log-start-time" class="block text-sm font-medium mb-2">Start time</label>
+              <app-input
+                [id]="'log-start-time'"
+                placeholder="Select start time"
+                [name]="form.controls['startTime']"
+                type="datetime-local"
+              ></app-input>
+            </div>
+
+            <div>
+              <label for="log-end-time" class="block text-sm font-medium mb-2">End time</label>
+              <app-input
+                [id]="'log-end-time'"
+                placeholder="Select end time"
+                [name]="form.controls['endTime']"
+                type="datetime-local"
+              ></app-input>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="pt-4">
