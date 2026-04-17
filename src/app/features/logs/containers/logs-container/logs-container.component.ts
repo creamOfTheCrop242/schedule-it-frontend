@@ -4,6 +4,7 @@ import {
   ResourceStatus,
   computed,
   inject,
+  signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LogService } from '../../services/log.service';
@@ -18,6 +19,9 @@ import { LogComponent } from '../../components/log/log.component';
 })
 export class LogsContainerComponent {
   logService = inject(LogService);
+  /** When false, date controls are collapsed (summary still visible on toggle). */
+  dateFilterExpanded = signal(false);
+
   allLogs = this.logService.allLogs;
   isLoading = this.logService.allLogs.isLoading;
   hasLoadError = computed(
@@ -55,6 +59,22 @@ export class LogsContainerComponent {
     })}`;
   });
 
+  /** One-line summary for the collapsible date filter header. */
+  dateFilterSummary = computed(() => {
+    const raw = this.logService.selectedDate();
+    if (!raw) {
+      return 'All dates';
+    }
+    const parts = raw.split('-').map(Number);
+    if (parts.length !== 3 || parts.some((n) => Number.isNaN(n))) {
+      return 'Date selected';
+    }
+    const [y, m, d] = parts;
+    return new Date(y, m - 1, d).toLocaleDateString(undefined, {
+      dateStyle: 'medium',
+    });
+  });
+
   /** Shown only when a date filter is active (matches API timeZone param). */
   timezoneHint = computed(() => {
     if (this.isLoading() || this.hasLoadError()) {
@@ -74,5 +94,9 @@ export class LogsContainerComponent {
 
   clearDate() {
     this.logService.selectedDate.set(null);
+  }
+
+  toggleDateFilter() {
+    this.dateFilterExpanded.update((v) => !v);
   }
 }

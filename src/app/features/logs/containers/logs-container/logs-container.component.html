@@ -1,55 +1,103 @@
-<section class="p-5" aria-label="Logs">
-  <header class="mb-4 flex flex-wrap items-center justify-between gap-3">
-    <h1 id="logs-heading" class="text-2xl">
+<section class="space-y-5 p-5" aria-label="Logs">
+  <header class="flex flex-wrap items-center justify-between gap-3">
+    <h1
+      id="logs-heading"
+      class="flex flex-wrap items-baseline gap-2 text-2xl font-semibold text-white"
+    >
       Logs
       @if (logCount() !== undefined) {
-        <span class="text-lg font-normal text-gray-400">({{ logCount() }})</span>
+        <span
+          class="inline-flex items-center rounded-full border border-purple-500/30 bg-purple-500/10 px-2.5 py-0.5 text-sm font-medium text-purple-200 transition-colors duration-300"
+          >{{ logCount() }}</span
+        >
       }
     </h1>
     <a
       routerLink="/logs/add-log"
-      class="rounded-lg border border-gray-600 bg-transparent px-4 py-2 text-sm text-white hover:bg-[#383838] focus:outline-none focus:ring-2 focus:ring-purple-500"
+      class="inline-flex items-center gap-2 rounded-lg border border-purple-500/40 bg-purple-500/10 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:border-purple-400 hover:bg-purple-500/20 hover:shadow-lg hover:shadow-purple-500/20 focus:outline-none focus:ring-2 focus:ring-purple-500 active:scale-[0.98] motion-reduce:transition-none"
     >
+      <span class="material-icons text-xl leading-none" aria-hidden="true"
+        >add</span
+      >
       Add log
     </a>
   </header>
 
   @if (filterHeadline()) {
     <div
-      class="cotc-bg-dark mb-4 rounded-2xl border border-gray-600 px-4 py-3 text-sm text-gray-300"
+      class="cotc-bg-dark rounded-2xl border border-gray-600 px-4 py-3 text-sm text-gray-300 transition-all duration-300 hover:border-purple-500/30 hover:shadow-md hover:shadow-purple-500/10 motion-reduce:transition-none"
       aria-live="polite"
     >
       <p class="m-0 text-white">{{ filterHeadline() }}</p>
       @if (timezoneHint()) {
-        <p class="mt-1 mb-0 text-xs text-gray-400">{{ timezoneHint() }}</p>
+        <p
+          class="mt-1 mb-0 text-xs text-gray-400 transition-colors duration-200"
+        >
+          {{ timezoneHint() }}
+        </p>
       }
     </div>
   }
 
   <div
-    class="cotc-bg-dark mb-4 flex flex-wrap items-center gap-3 rounded-2xl border border-gray-600 px-4 py-3"
+    class="cotc-bg-dark overflow-hidden rounded-2xl border border-gray-600 transition-all duration-300 motion-reduce:transition-none"
   >
-    <div class="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
-      <label for="log-date-filter" class="shrink-0 text-sm text-gray-300"
-        >Date</label
+    <button
+      type="button"
+      id="date-filter-toggle"
+      class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors"
+      [attr.aria-expanded]="dateFilterExpanded()"
+      aria-controls="date-filter-panel"
+      (click)="toggleDateFilter()"
+    >
+      <span class="flex min-w-0 flex-col gap-0.5">
+        <span class="text-sm font-medium text-white">Date filter</span>
+        <span class="truncate text-xs text-gray-400">{{
+          dateFilterSummary()
+        }}</span>
+      </span>
+      <span
+        class="material-icons shrink-0 text-gray-400 transition-transform duration-200 motion-reduce:transition-none"
+        [class.rotate-180]="dateFilterExpanded()"
+        aria-hidden="true"
+        >expand_more</span
       >
-      <input
-        id="log-date-filter"
-        type="date"
-        [value]="logService.selectedDate() ?? ''"
-        (change)="onDateChange($event)"
-        class="min-w-0 flex-1 rounded-md border border-gray-600 bg-[#1a1a1a] px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-      />
+    </button>
+    <div
+      id="date-filter-panel"
+      role="region"
+      class="overflow-hidden border-t border-gray-600 transition-[max-height] duration-300 ease-in-out motion-reduce:transition-none"
+      [class.max-h-0]="!dateFilterExpanded()"
+      [class.max-h-96]="dateFilterExpanded()"
+      [attr.aria-hidden]="!dateFilterExpanded()"
+      [inert]="!dateFilterExpanded()"
+    >
+      <div class="flex flex-wrap items-center gap-3 px-4 pb-4 pt-3">
+        <div
+          class="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:gap-3"
+        >
+          <label for="log-date-filter" class="shrink-0 text-sm text-gray-300"
+            >Date</label
+          >
+          <input
+            id="log-date-filter"
+            type="date"
+            [value]="logService.selectedDate() ?? ''"
+            (change)="onDateChange($event)"
+            class="min-w-0 flex-1 rounded-md border border-gray-600 bg-[#1a1a1a] px-3 py-2 text-white transition-shadow duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:shadow-md focus:shadow-purple-500/15"
+          />
+        </div>
+        @if (logService.selectedDate()) {
+          <button
+            type="button"
+            (click)="clearDate()"
+            class="shrink-0 rounded-md border border-gray-500 px-3 py-2 text-sm text-white transition-colors duration-200 hover:border-purple-400/60 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 active:scale-[0.98] motion-reduce:active:scale-100"
+          >
+            Clear
+          </button>
+        }
+      </div>
     </div>
-    @if (logService.selectedDate()) {
-      <button
-        type="button"
-        (click)="clearDate()"
-        class="shrink-0 rounded-md border border-gray-500 px-3 py-2 text-sm text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
-      >
-        Clear
-      </button>
-    }
   </div>
 
   <main
@@ -59,15 +107,37 @@
     aria-labelledby="logs-heading"
   >
     @if (hasLoadError()) {
-      <div role="alert" class="rounded-xl border border-red-900/60 bg-red-950/40 p-4 text-red-200">
+      <div
+        role="alert"
+        class="rounded-xl border border-red-500/40 bg-red-950/40 p-4 text-red-200 shadow-lg shadow-red-900/20 ring-1 ring-red-500/30 transition-shadow duration-300"
+      >
         Couldn’t load logs. Check your connection and try again.
       </div>
     } @else if (isLoading()) {
-      <div role="status" class="text-gray-400">Loading…</div>
+      <div role="status" class="inline-flex flex-col gap-3 text-gray-300">
+        <span class="inline-flex items-center gap-3">
+          <span
+            class="h-5 w-5 shrink-0 rounded-full border-2 border-gray-600 border-t-purple-500 motion-safe:animate-spin motion-reduce:animate-none"
+            aria-hidden="true"
+          ></span>
+          <span>Loading…</span>
+        </span>
+        <span class="inline-flex items-center gap-1.5 pl-8" aria-hidden="true">
+          <span
+            class="inline-block h-1.5 w-1.5 rounded-full bg-purple-400 motion-safe:animate-bounce motion-reduce:animate-none"
+          ></span>
+          <span
+            class="inline-block h-1.5 w-1.5 rounded-full bg-purple-400 motion-safe:animate-bounce motion-reduce:animate-none [animation-delay:75ms]"
+          ></span>
+          <span
+            class="inline-block h-1.5 w-1.5 rounded-full bg-purple-400 motion-safe:animate-bounce motion-reduce:animate-none [animation-delay:150ms]"
+          ></span>
+        </span>
+      </div>
     } @else {
       @if (allLogs.value(); as logs) {
         @if (logs && logs.length > 0) {
-          <ul class="m-0 list-none p-0">
+          <ul class="m-0 flex list-none flex-col gap-3 p-0">
             @for (log of logs; track log.id) {
               <li class="m-0 p-0">
                 <app-log [log]="log" />
@@ -76,17 +146,32 @@
           </ul>
         } @else {
           <div
-            class="rounded-xl border border-gray-600 bg-[#1a1a1a]/80 p-4 text-gray-300"
+            class="rounded-xl border border-gray-600 bg-[#1a1a1a]/80 p-6 text-center text-gray-300 transition-transform duration-300 hover:scale-[1.01] motion-reduce:transition-none motion-reduce:hover:scale-100"
           >
             @if (logService.selectedDate()) {
+              <div class="mb-3 flex justify-center">
+                <span
+                  class="material-icons text-4xl text-purple-400/80 motion-safe:animate-bounce motion-reduce:animate-none"
+                  aria-hidden="true"
+                  >event_busy</span
+                >
+              </div>
               <p class="m-0">No logs for this date.</p>
               <p class="mt-2 mb-0 text-sm text-gray-400">
                 Try another date or clear the filter to see all logs.
               </p>
             } @else {
+              <div class="mb-3 flex justify-center">
+                <span
+                  class="material-icons text-4xl text-purple-400/80 motion-safe:animate-bounce motion-reduce:animate-none"
+                  aria-hidden="true"
+                  >edit_note</span
+                >
+              </div>
               <p class="m-0">No logs yet.</p>
               <p class="mt-2 mb-0 text-sm text-gray-400">
-                Use <span class="text-gray-200">Add log</span> to create your first entry.
+                Use <span class="font-medium text-gray-200">Add log</span> to
+                create your first entry.
               </p>
             }
           </div>

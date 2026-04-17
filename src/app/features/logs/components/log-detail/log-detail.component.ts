@@ -10,13 +10,12 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { catchError, finalize, of, switchMap } from 'rxjs';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { Log } from '../../models/log.model';
 import { LogService } from '../../services/log.service';
 
 @Component({
   selector: 'app-log-detail',
-  imports: [CommonModule, RouterLink, ButtonComponent],
+  imports: [CommonModule, RouterLink],
   templateUrl: './log-detail.component.html',
   styleUrl: './log-detail.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,6 +30,8 @@ export class LogDetailComponent implements OnInit {
   isLoading = signal(true);
   loadError = signal(false);
   deleteConfirmId = signal<string | null>(null);
+  /** Edit / Delete overflow menu. */
+  actionsMenuOpen = signal(false);
 
   ngOnInit(): void {
     this.route.paramMap
@@ -54,18 +55,32 @@ export class LogDetailComponent implements OnInit {
         }),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((l) => this.log.set(l));
+      .subscribe((l) => {
+        this.actionsMenuOpen.set(false);
+        this.log.set(l);
+      });
+  }
+
+  toggleActionsMenu() {
+    this.actionsMenuOpen.update((open) => !open);
+  }
+
+  closeActionsMenu() {
+    this.actionsMenuOpen.set(false);
   }
 
   deleteLog(id: string) {
+    this.actionsMenuOpen.set(false);
     this.deleteConfirmId.set(id);
   }
 
   cancelDelete() {
     this.deleteConfirmId.set(null);
+    this.actionsMenuOpen.set(false);
   }
 
   confirmDelete(id: string) {
+    this.actionsMenuOpen.set(false);
     this.logService.deleteLog(id).subscribe({
       next: () => {
         this.logService.allLogs.reload();
