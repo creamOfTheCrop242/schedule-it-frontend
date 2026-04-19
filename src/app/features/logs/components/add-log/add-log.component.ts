@@ -39,9 +39,9 @@ export class AddLogComponent {
     surroundings: new FormControl(''),
     moodPreset: new FormControl<string>(''),
     moodCustom: new FormControl(''),
-    startTime: new FormControl<Date | null>(null),
-    endTime: new FormControl<Date | null>(null),
-    completedDate: new FormControl<Date | null>(null),
+    startTime: new FormControl<string | null>(null),
+    endTime: new FormControl<string | null>(null),
+    completedDate: new FormControl<string | null>(null),
   });
 
   readonly id = this.route.snapshot.paramMap.get('id');
@@ -98,16 +98,14 @@ export class AddLogComponent {
         ? (this.form.value.moodCustom ?? '').trim() || undefined
         : moodPreset || undefined;
 
-    const completedDate = this.form.value.completedDate || undefined;
-
     return {
       name: this.form.value.name!,
       description: this.form.value.description || undefined,
       surroundings: this.form.value.surroundings || undefined,
       mood,
-      startTime: this.form.value.startTime || undefined,
-      endTime: this.form.value.endTime || undefined,
-      completedDate,
+      startTime: this.parseDatetimeLocalInput(this.form.value.startTime),
+      endTime: this.parseDatetimeLocalInput(this.form.value.endTime),
+      completedDate: this.parseDatetimeLocalInput(this.form.value.completedDate),
     };
   }
 
@@ -121,9 +119,9 @@ export class AddLogComponent {
       surroundings: log.surroundings || '',
       moodPreset: isPreset ? mood : mood ? MOOD_CUSTOM : '',
       moodCustom: isPreset ? '' : mood,
-      startTime: this.toDate(log.startTime),
-      endTime: this.toDate(log.endTime),
-      completedDate: this.toDate(log.completedDate),
+      startTime: this.toDatetimeLocalInputValue(log.startTime),
+      endTime: this.toDatetimeLocalInputValue(log.endTime),
+      completedDate: this.toDatetimeLocalInputValue(log.completedDate),
     });
 
     if (log.startTime || log.endTime) {
@@ -138,6 +136,29 @@ export class AddLogComponent {
   private toDate(date: Date | string | undefined): Date | null {
     if (!date) return null;
     return date instanceof Date ? date : new Date(date);
+  }
+
+  /** Value for `<input type="datetime-local">` in local wall time (no timezone suffix). */
+  private toDatetimeLocalValue(d: Date): string {
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
+  private toDatetimeLocalInputValue(
+    date: Date | string | undefined | null,
+  ): string | null {
+    const d = this.toDate(date ?? undefined);
+    return d ? this.toDatetimeLocalValue(d) : null;
+  }
+
+  private parseDatetimeLocalInput(
+    value: string | null | undefined,
+  ): Date | undefined {
+    if (value == null || String(value).trim() === '') {
+      return undefined;
+    }
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? undefined : d;
   }
 
   private handleSuccess(): void {
