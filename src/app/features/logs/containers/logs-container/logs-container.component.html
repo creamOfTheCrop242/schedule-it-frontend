@@ -5,10 +5,10 @@
       class="flex flex-wrap items-baseline gap-2 text-2xl font-semibold text-white"
     >
       Logs
-      @if (logCount() !== undefined) {
+      @if (headerBadgeText() !== undefined) {
         <span
           class="inline-flex items-center rounded-full border border-purple-500/30 bg-purple-500/10 px-2.5 py-0.5 text-sm font-medium text-purple-200 transition-colors duration-300"
-          >{{ logCount() }}</span
+          >{{ headerBadgeText() }}</span
         >
       }
     </h1>
@@ -29,6 +29,13 @@
       aria-live="polite"
     >
       <p class="m-0 text-white">{{ filterHeadline() }}</p>
+      @if (clientFilterLine()) {
+        <p
+          class="mt-1 mb-0 text-xs text-gray-400 transition-colors duration-200"
+        >
+          {{ clientFilterLine() }}
+        </p>
+      }
       @if (timezoneHint()) {
         <p
           class="mt-1 mb-0 text-xs text-gray-400 transition-colors duration-200"
@@ -44,58 +51,123 @@
   >
     <button
       type="button"
-      id="date-filter-toggle"
+      id="log-filters-toggle"
       class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors"
-      [attr.aria-expanded]="dateFilterExpanded()"
-      aria-controls="date-filter-panel"
-      (click)="toggleDateFilter()"
+      [attr.aria-expanded]="filtersExpanded()"
+      aria-controls="log-filters-panel"
+      (click)="toggleFilters()"
     >
       <span class="flex min-w-0 flex-col gap-0.5">
-        <span class="text-sm font-medium text-white">Date filter</span>
+        <span class="text-sm font-medium text-white">Filters</span>
         <span class="truncate text-xs text-gray-400">{{
-          dateFilterSummary()
+          filtersPanelSummary()
         }}</span>
       </span>
       <span
         class="material-icons shrink-0 text-gray-400 transition-transform duration-200 motion-reduce:transition-none"
-        [class.rotate-180]="dateFilterExpanded()"
+        [class.rotate-180]="filtersExpanded()"
         aria-hidden="true"
         >expand_more</span
       >
     </button>
     <div
-      id="date-filter-panel"
+      id="log-filters-panel"
       role="region"
-      class="overflow-hidden border-t border-gray-600 transition-[max-height] duration-300 ease-in-out motion-reduce:transition-none"
-      [class.max-h-0]="!dateFilterExpanded()"
-      [class.max-h-96]="dateFilterExpanded()"
-      [attr.aria-hidden]="!dateFilterExpanded()"
-      [inert]="!dateFilterExpanded()"
+      class="border-t border-gray-600 transition-[max-height] duration-300 ease-in-out motion-reduce:transition-none"
+      [class.max-h-0]="!filtersExpanded()"
+      [class.max-h-96]="filtersExpanded()"
+      [class.overflow-hidden]="!filtersExpanded()"
+      [class.overflow-y-auto]="filtersExpanded()"
+      [attr.aria-hidden]="!filtersExpanded()"
+      [inert]="!filtersExpanded()"
     >
-      <div class="flex flex-wrap items-center gap-3 px-4 pb-4 pt-3">
-        <div
-          class="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:gap-3"
-        >
-          <label for="log-date-filter" class="shrink-0 text-sm text-gray-300"
-            >Date</label
+      <div class="px-4 pb-4 pt-3">
+        <div class="flex flex-col gap-5">
+          <div class="flex flex-col gap-3">
+            <span class="text-xs font-medium uppercase tracking-wide text-gray-500"
+              >Date</span
+            >
+            <div class="flex flex-wrap items-center gap-3">
+              <div
+                class="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:gap-3"
+              >
+                <label
+                  for="log-date-filter"
+                  class="shrink-0 text-sm text-gray-300"
+                  >Completed on</label
+                >
+                <input
+                  id="log-date-filter"
+                  type="date"
+                  [value]="logService.selectedDate() ?? ''"
+                  (change)="onDateChange($event)"
+                  class="min-w-0 flex-1 rounded-md border border-gray-600 bg-[#1a1a1a] px-3 py-2 text-white transition-shadow duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:shadow-md focus:shadow-purple-500/15"
+                />
+              </div>
+              @if (logService.selectedDate()) {
+                <button
+                  type="button"
+                  (click)="clearDate()"
+                  class="shrink-0 rounded-md border border-gray-500 px-3 py-2 text-sm text-white transition-colors duration-200 hover:border-purple-400/60 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 active:scale-[0.98] motion-reduce:active:scale-100"
+                >
+                  Clear date
+                </button>
+              }
+            </div>
+          </div>
+
+          <div
+            class="border-t border-gray-600 pt-4 flex flex-col gap-3"
           >
-          <input
-            id="log-date-filter"
-            type="date"
-            [value]="logService.selectedDate() ?? ''"
-            (change)="onDateChange($event)"
-            class="min-w-0 flex-1 rounded-md border border-gray-600 bg-[#1a1a1a] px-3 py-2 text-white transition-shadow duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:shadow-md focus:shadow-purple-500/15"
-          />
+            <span class="text-xs font-medium uppercase tracking-wide text-gray-500"
+              >Mood & search</span
+            >
+            <div
+              class="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-3"
+            >
+              <label for="log-mood-filter" class="shrink-0 text-sm text-gray-300"
+                >Mood</label
+              >
+              <select
+                id="log-mood-filter"
+                name="logMoodFilter"
+                [ngModel]="logService.filterMood() ?? ''"
+                (ngModelChange)="onMoodModelChange($event)"
+                class="min-w-0 flex-1 rounded-md border border-gray-600 bg-[#1a1a1a] px-3 py-2 text-white transition-shadow duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:shadow-md focus:shadow-purple-500/15"
+              >
+                <option value="">All moods</option>
+                @for (m of moodMenuOptions(); track m) {
+                  <option [value]="m">{{ m }}</option>
+                }
+              </select>
+            </div>
+            <div
+              class="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-3"
+            >
+              <label for="log-text-search" class="shrink-0 text-sm text-gray-300"
+                >Search</label
+              >
+              <input
+                id="log-text-search"
+                type="search"
+                autocomplete="off"
+                placeholder="Title or surroundings…"
+                [value]="logService.searchQuery()"
+                (input)="onSearchInput($event)"
+                class="min-w-0 flex-1 rounded-md border border-gray-600 bg-[#1a1a1a] px-3 py-2 text-white placeholder:text-gray-500 transition-shadow duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:shadow-md focus:shadow-purple-500/15"
+              />
+            </div>
+            @if (hasClientFiltersActive()) {
+              <button
+                type="button"
+                (click)="clearClientFilters()"
+                class="self-start rounded-md border border-gray-500 px-3 py-2 text-sm text-white transition-colors duration-200 hover:border-purple-400/60 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 active:scale-[0.98] motion-reduce:active:scale-100"
+              >
+                Clear search & mood
+              </button>
+            }
+          </div>
         </div>
-        @if (logService.selectedDate()) {
-          <button
-            type="button"
-            (click)="clearDate()"
-            class="shrink-0 rounded-md border border-gray-500 px-3 py-2 text-sm text-white transition-colors duration-200 hover:border-purple-400/60 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 active:scale-[0.98] motion-reduce:active:scale-100"
-          >
-            Clear
-          </button>
-        }
       </div>
     </div>
   </div>
@@ -113,28 +185,40 @@
       >
         Couldn’t load logs. Check your connection and try again.
       </div>
-    } @else if (isLoading()) {
-      <div role="status" class="inline-flex flex-col gap-3 text-gray-300">
-        <span class="inline-flex items-center gap-3">
+    } @else {
+      @if (isLoading() && !logService.allLogs.hasValue()) {
+        <div role="status" class="inline-flex flex-col gap-3 text-gray-300">
+          <span class="inline-flex items-center gap-3">
+            <span
+              class="h-5 w-5 shrink-0 rounded-full border-2 border-gray-600 border-t-purple-500 motion-safe:animate-spin motion-reduce:animate-none"
+              aria-hidden="true"
+            ></span>
+            <span>Loading…</span>
+          </span>
+          <span class="inline-flex items-center gap-1.5 pl-8" aria-hidden="true">
+            <span
+              class="inline-block h-1.5 w-1.5 rounded-full bg-purple-400 motion-safe:animate-bounce motion-reduce:animate-none"
+            ></span>
+            <span
+              class="inline-block h-1.5 w-1.5 rounded-full bg-purple-400 motion-safe:animate-bounce motion-reduce:animate-none [animation-delay:75ms]"
+            ></span>
+            <span
+              class="inline-block h-1.5 w-1.5 rounded-full bg-purple-400 motion-safe:animate-bounce motion-reduce:animate-none [animation-delay:150ms]"
+            ></span>
+          </span>
+        </div>
+      } @else if (isLoading() && hasAnyListFilter()) {
+        <div
+          role="status"
+          class="inline-flex items-center gap-3 rounded-xl border border-gray-600 bg-[#1a1a1a]/90 px-4 py-3 text-gray-300"
+        >
           <span
             class="h-5 w-5 shrink-0 rounded-full border-2 border-gray-600 border-t-purple-500 motion-safe:animate-spin motion-reduce:animate-none"
             aria-hidden="true"
           ></span>
-          <span>Loading…</span>
-        </span>
-        <span class="inline-flex items-center gap-1.5 pl-8" aria-hidden="true">
-          <span
-            class="inline-block h-1.5 w-1.5 rounded-full bg-purple-400 motion-safe:animate-bounce motion-reduce:animate-none"
-          ></span>
-          <span
-            class="inline-block h-1.5 w-1.5 rounded-full bg-purple-400 motion-safe:animate-bounce motion-reduce:animate-none [animation-delay:75ms]"
-          ></span>
-          <span
-            class="inline-block h-1.5 w-1.5 rounded-full bg-purple-400 motion-safe:animate-bounce motion-reduce:animate-none [animation-delay:150ms]"
-          ></span>
-        </span>
-      </div>
-    } @else {
+          <span>Updating list…</span>
+        </div>
+      } @else {
       @if (allLogs.value(); as logs) {
         @if (logs && logs.length > 0) {
           <ul class="m-0 flex list-none flex-col gap-3 p-0">
@@ -144,6 +228,29 @@
               </li>
             }
           </ul>
+        } @else if (hasClientFiltersActive()) {
+          <div
+            class="rounded-xl border border-gray-600 bg-[#1a1a1a]/80 p-6 text-center text-gray-300 transition-transform duration-300 hover:scale-[1.01] motion-reduce:transition-none motion-reduce:hover:scale-100"
+          >
+            <div class="mb-3 flex justify-center">
+              <span
+                class="material-icons text-4xl text-purple-400/80 motion-safe:animate-pulse motion-reduce:animate-none"
+                aria-hidden="true"
+                >manage_search</span
+              >
+            </div>
+            <p class="m-0">No logs match your filters.</p>
+            <p class="mt-2 mb-0 text-sm text-gray-400">
+              Try different search text or mood, or clear search & mood.
+            </p>
+            <button
+              type="button"
+              (click)="clearClientFilters()"
+              class="mt-4 rounded-md border border-purple-500/40 bg-purple-500/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-purple-400 hover:bg-purple-500/20 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            >
+              Clear search & mood
+            </button>
+          </div>
         } @else {
           <div
             class="rounded-xl border border-gray-600 bg-[#1a1a1a]/80 p-6 text-center text-gray-300 transition-transform duration-300 hover:scale-[1.01] motion-reduce:transition-none motion-reduce:hover:scale-100"
@@ -176,6 +283,7 @@
             }
           </div>
         }
+      }
       }
     }
   </main>
