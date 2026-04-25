@@ -5,7 +5,9 @@
   >
     <span class="flex items-start justify-between gap-2">
       <span class="flex min-w-0 flex-1 flex-col gap-1">
-        <span class="font-medium text-white">{{ logData.name }}</span>
+        <span class="min-w-0 block truncate font-medium text-white">{{
+          logData.name
+        }}</span>
         @if (logData.startTime || logData.endTime) {
           <span class="text-sm text-gray-400 tabular-nums">
             @if (logData.startTime) {
