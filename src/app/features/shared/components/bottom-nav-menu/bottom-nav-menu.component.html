@@ -1,71 +1,151 @@
-<nav
-  class="bg-[#2c2c2c] p-4 border-t border-[#404040] fixed bottom-0 left-0 right-0 z-50 pb-10"
->
-  <div class="text-white flex justify-between items-center">
-    <div>
-      <a
-        routerLink="/dashboard"
-        class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
-        aria-label="Dashboard"
-      >
-        <span
-          class="material-icons text-[2rem]"
-          [class.text-purple-500]="isActiveRoute('/dashboard')"
-          [class.active-icon]="isActiveRoute('/dashboard')"
-          [class.text-gray-400]="!isActiveRoute('/dashboard')"
-          aria-hidden="true"
-          >home</span
+<div>
+  <nav
+    class="bg-[#2c2c2c] p-4 border-t border-[#404040] fixed bottom-0 left-0 right-0 z-50 pb-10"
+  >
+    <div class="text-white flex justify-between items-center">
+      <div>
+        <a
+          routerLink="/dashboard"
+          class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
+          aria-label="Dashboard"
         >
-      </a>
-    </div>
-    <div>
-      <a
-        routerLink="/logs"
-        class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
-        aria-label="Logs"
-      >
-        <span
-          class="material-icons text-[2rem]"
-          [class.text-purple-500]="isActiveRoute('/logs')"
-          [class.active-icon]="isActiveRoute('/logs')"
-          [class.text-gray-400]="!isActiveRoute('/logs')"
-          aria-hidden="true"
-          >list</span
+          <span
+            class="material-icons text-[2rem]"
+            [class.text-purple-500]="isActiveRoute('/dashboard')"
+            [class.active-icon]="isActiveRoute('/dashboard')"
+            [class.text-gray-400]="!isActiveRoute('/dashboard')"
+            aria-hidden="true"
+            >home</span
+          >
+        </a>
+      </div>
+      <div>
+        <a
+          routerLink="/logs"
+          class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
+          aria-label="Logs"
         >
-      </a>
-    </div>
-    <div>
-      <a
-        routerLink="/logs/add-log"
-        class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
-        aria-label="Add log"
-      >
-        <span
-          class="material-icons text-[2rem]"
-          [class.text-purple-500]="isActiveRoute('/logs/add-log')"
-          [class.active-icon]="isActiveRoute('/logs/add-log')"
-          [class.text-gray-400]="!isActiveRoute('/logs/add-log')"
-          aria-hidden="true"
-          >add_circle</span
+          <span
+            class="material-icons text-[2rem]"
+            [class.text-purple-500]="isActiveRoute('/logs')"
+            [class.active-icon]="isActiveRoute('/logs')"
+            [class.text-gray-400]="!isActiveRoute('/logs')"
+            aria-hidden="true"
+            >list</span
+          >
+        </a>
+      </div>
+      <div>
+        <button
+          type="button"
+          class="bg-transparent border-none p-0 m-0 flex items-center justify-center cursor-pointer"
+          (click)="openAddChoiceModal()"
+          [attr.aria-expanded]="addChoiceModalOpen()"
+          aria-haspopup="dialog"
+          aria-controls="add-choice-dialog"
+          aria-label="Add log or task"
         >
-      </a>
-    </div>
-    <div>
-      <a
-        routerLink="/goals"
-        class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
-        aria-label="Goals"
-      >
-        <span
-          class="material-icons text-[2rem]"
-          [class.text-purple-500]="isActiveRoute('/goals')"
-          [class.active-icon]="isActiveRoute('/goals')"
-          [class.text-gray-400]="!isActiveRoute('/goals')"
-          aria-hidden="true"
-          >sports_score</span
+          <span
+            class="material-icons text-[2rem]"
+            [class.text-purple-500]="isActiveRoute('/logs/add-log')"
+            [class.active-icon]="isActiveRoute('/logs/add-log')"
+            [class.text-gray-400]="!isActiveRoute('/logs/add-log')"
+            aria-hidden="true"
+            >add_circle</span
+          >
+        </button>
+      </div>
+      <div>
+        <a
+          routerLink="/goals"
+          class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
+          aria-label="Goals"
         >
-      </a>
+          <span
+            class="material-icons text-[2rem]"
+            [class.text-purple-500]="isActiveRoute('/goals')"
+            [class.active-icon]="isActiveRoute('/goals')"
+            [class.text-gray-400]="!isActiveRoute('/goals')"
+            aria-hidden="true"
+            >sports_score</span
+          >
+        </a>
+      </div>
+      <div>
+        <a
+          routerLink="/tasks"
+          class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
+          aria-label="Tasks"
+        >
+          <span
+            class="material-icons text-[2rem]"
+            [class.text-purple-500]="isActiveRoute('/tasks')"
+            [class.active-icon]="isActiveRoute('/tasks')"
+            [class.text-gray-400]="!isActiveRoute('/tasks')"
+            aria-hidden="true"
+            >checklist</span
+          >
+        </a>
+      </div>
     </div>
-    <div>icon 5</div>
-  </div>
-</nav>
+  </nav>
+
+  @if (addChoiceModalOpen()) {
+    <div
+      class="add-choice-modal-root fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4"
+      [class.add-choice-modal-root--exiting]="addChoiceModalExiting()"
+      (click)="onBackdropClick($event)"
+      role="presentation"
+    >
+      <div
+        id="add-choice-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="add-choice-dialog-title"
+        aria-describedby="add-choice-dialog-desc"
+        class="add-choice-dialog-panel w-full max-w-sm rounded-xl border border-[#404040] bg-[#2c2c2c] p-5 text-white shadow-xl"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="flex items-start justify-between gap-3 mb-4">
+          <h2 id="add-choice-dialog-title" class="text-lg font-semibold pr-2">
+            What would you like to add?
+          </h2>
+          <button
+            type="button"
+            class="shrink-0 rounded-md p-1 text-gray-400 hover:bg-[#404040] hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            (click)="closeAddChoiceModal()"
+            aria-label="Close"
+          >
+            <span class="material-icons text-xl" aria-hidden="true">close</span>
+          </button>
+        </div>
+        <p id="add-choice-dialog-desc" class="text-sm text-gray-400 mb-5">
+          Choose whether to log an activity or create a standalone task.
+        </p>
+        <div class="flex flex-col gap-3">
+          <button
+            type="button"
+            class="w-full rounded-lg bg-purple-600 py-3 px-4 font-medium text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400"
+            (click)="navigateToAddLog()"
+          >
+            Add log
+          </button>
+          <button
+            type="button"
+            class="w-full rounded-lg border border-[#555] bg-transparent py-3 px-4 font-medium text-white hover:bg-[#404040] focus:outline-none focus:ring-2 focus:ring-purple-400"
+            (click)="navigateToAddTask()"
+          >
+            Add task
+          </button>
+          <button
+            type="button"
+            class="w-full rounded-lg py-2 text-sm text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+            (click)="closeAddChoiceModal()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

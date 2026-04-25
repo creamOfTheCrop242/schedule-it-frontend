@@ -12,6 +12,9 @@ import { LogDetailComponent } from './features/logs/components/log-detail/log-de
 import { GoalsContainerComponent } from './features/goals/containers/goals-container/goals-container.component';
 import { AddGoalComponent } from './features/goals/components/add-goal/add-goal.component';
 import { SettingsComponent } from './features/account/components/settings/settings.component';
+import { AddTaskComponent } from './features/tasks/components/add-task/add-task.component';
+import { TasksContainerComponent } from './features/tasks/containers/tasks-container/tasks-container.component';
+import { TaskDetailComponent } from './features/tasks/components/task-detail/task-detail.component';
 
 export const routes: Routes = [
   {
@@ -73,6 +76,15 @@ export const routes: Routes = [
       { path: '', component: GoalsContainerComponent },
       { path: 'add-goal', component: AddGoalComponent },
       { path: 'edit-goal/:id', component: AddGoalComponent },
+    ],
+  },
+  {
+    path: 'tasks',
+    canActivate: [authGuard],
+    children: [
+      { path: '', component: TasksContainerComponent },
+      { path: 'add-task', component: AddTaskComponent },
+      { path: ':id', component: TaskDetailComponent },
     ],
   },
   {

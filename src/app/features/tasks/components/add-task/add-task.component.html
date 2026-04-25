@@ -1,0 +1,45 @@
+<section class="p-4">
+  <h2 class="text-xl font-bold mb-4">Add task</h2>
+
+  @if (errorMessage()) {
+    <div class="mb-4 rounded-md bg-red-100 p-3 text-red-700">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <form (ngSubmit)="onSubmit()" [formGroup]="form" class="space-y-4">
+    <div>
+      <label for="task-title" class="block text-sm font-medium mb-2"
+        >Title *</label
+      >
+      <app-input
+        [id]="'task-title'"
+        placeholder="Task title"
+        [name]="form.controls['title']"
+        type="text"
+      ></app-input>
+    </div>
+
+    <div>
+      <label for="task-description" class="block text-sm font-medium mb-2"
+        >Description</label
+      >
+      <app-input
+        [id]="'task-description'"
+        placeholder="Optional details"
+        type="textarea"
+        [name]="form.controls['description']"
+      ></app-input>
+    </div>
+
+    <div class="pt-4">
+      <button
+        type="submit"
+        [disabled]="!form.valid"
+        class="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+      >
+        Create task
+      </button>
+    </div>
+  </form>
+</section>
