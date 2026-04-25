@@ -50,7 +50,10 @@ export class AddTaskComponent {
       })
       .pipe(take(1))
       .subscribe({
-        next: () => void this.router.navigate(['/dashboard']),
+        next: () => {
+          this.tasksService.allTasks.reload();
+          void this.router.navigate(['/tasks']);
+        },
         error: () =>
           this.errorMessage.set('Failed to create task. Please try again.'),
       });
