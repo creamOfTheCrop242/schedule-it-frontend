@@ -128,7 +128,8 @@ export class BottomNavMenuComponent implements OnDestroy {
       return (
         url === '/logs/add-log' ||
         url.startsWith('/logs/edit-log') ||
-        url === '/tasks/add-task'
+        url === '/tasks/add-task' ||
+        url.startsWith('/tasks/edit-task')
       );
     }
     if (route === '/goals') {
@@ -142,7 +143,9 @@ export class BottomNavMenuComponent implements OnDestroy {
     if (route === '/tasks') {
       return (
         url === '/tasks' ||
-        (url.startsWith('/tasks/') && !url.startsWith('/tasks/add-task'))
+        (url.startsWith('/tasks/') &&
+          !url.startsWith('/tasks/add-task') &&
+          !url.startsWith('/tasks/edit-task'))
       );
     }
     return url.startsWith(route);
