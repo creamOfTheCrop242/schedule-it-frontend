@@ -135,3 +135,73 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
       0 0 250px rgba(139, 21, 237, 0.9), 0 0 300px rgba(139, 21, 237, 0.7);
   }
 }
+
+/** Pulsing glow on log mood pills (list + detail), same idea as task status pills. */
+@keyframes cotc-mood-pill-glow-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 6px rgba(168, 85, 247, 0.4);
+  }
+  50% {
+    box-shadow:
+      0 0 12px rgba(192, 132, 252, 0.6),
+      0 0 20px rgba(139, 21, 237, 0.35);
+  }
+}
+
+.cotc-mood-pill-glow {
+  animation: cotc-mood-pill-glow-pulse 2.2s ease-in-out infinite;
+}
+
+/** Pulsing glow on task status pills (Done / Open). */
+@keyframes cotc-task-status-glow-green {
+  0%,
+  100% {
+    box-shadow: 0 0 6px rgba(74, 222, 128, 0.35);
+  }
+  50% {
+    box-shadow:
+      0 0 12px rgba(134, 239, 172, 0.55),
+      0 0 20px rgba(34, 197, 94, 0.35);
+  }
+}
+
+@keyframes cotc-task-status-glow-amber {
+  0%,
+  100% {
+    box-shadow: 0 0 6px rgba(251, 191, 36, 0.35);
+  }
+  50% {
+    box-shadow:
+      0 0 12px rgba(253, 224, 71, 0.55),
+      0 0 20px rgba(245, 158, 11, 0.35);
+  }
+}
+
+.cotc-task-status-glow--done {
+  animation: cotc-task-status-glow-green 2.2s ease-in-out infinite;
+}
+
+.cotc-task-status-glow--open {
+  animation: cotc-task-status-glow-amber 2.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cotc-mood-pill-glow,
+  .cotc-task-status-glow--done,
+  .cotc-task-status-glow--open {
+    animation: none;
+  }
+
+  .cotc-mood-pill-glow {
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+  }
+
+  .cotc-task-status-glow--done {
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
+  }
+
+  .cotc-task-status-glow--open {
+    box-shadow: 0 0 8px rgba(251, 191, 36, 0.4);
+  }
+}
