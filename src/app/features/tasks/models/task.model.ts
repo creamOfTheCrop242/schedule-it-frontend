@@ -15,6 +15,6 @@ export interface Task {
   completedDate: string | null;
   createdAt: string;
   updatedAt: string;
-  /** Present when the API includes the linked log relation. */
+  /** Completion log created when this task was marked complete (API includes `log` relation). */
   log?: { id: string; name?: string | null } | null;
 }

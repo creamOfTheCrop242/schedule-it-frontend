@@ -12,6 +12,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { catchError, finalize, of, switchMap } from 'rxjs';
 import { Log } from '../../models/log.model';
 import { LogService } from '../../services/log.service';
+import { moodPillThemeClass } from '../../utils/mood-pill.theme';
 
 @Component({
   selector: 'app-log-detail',
@@ -32,6 +33,8 @@ export class LogDetailComponent implements OnInit {
   deleteConfirmId = signal<string | null>(null);
   /** Edit / Delete overflow menu. */
   actionsMenuOpen = signal(false);
+
+  protected readonly moodPillClass = moodPillThemeClass;
 
   ngOnInit(): void {
     this.route.paramMap
