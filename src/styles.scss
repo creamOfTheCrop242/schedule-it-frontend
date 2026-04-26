@@ -1,3 +1,5 @@
+@use "sass:map";
+
 @import "tailwindcss";
 
 body {
@@ -136,21 +138,190 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   }
 }
 
-/** Pulsing glow on log mood pills (list + detail), same idea as task status pills. */
-@keyframes cotc-mood-pill-glow-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 6px rgba(168, 85, 247, 0.4);
-  }
-  50% {
-    box-shadow:
-      0 0 12px rgba(192, 132, 252, 0.6),
-      0 0 20px rgba(139, 21, 237, 0.35);
-  }
+/** Log mood pills: layout + per-mood border / fill / pulsing glow (closest color to the feeling). */
+.cotc-mood-pill {
+  display: inline-flex;
+  align-items: center;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 9999px;
+  padding: 0.125rem 0.625rem;
+  font-size: 0.75rem;
+  line-height: 1.25rem;
+  font-weight: 500;
 }
 
-.cotc-mood-pill-glow {
-  animation: cotc-mood-pill-glow-pulse 2.2s ease-in-out infinite;
+.cotc-mood-pill--list {
+  align-self: flex-start;
+  max-width: 100%;
+}
+
+$mood-skins: (
+  default: (
+    border: rgba(168, 85, 247, 0.38),
+    bg: rgba(88, 28, 135, 0.22),
+    text: #e9d5ff,
+    g0: rgba(168, 85, 247, 0.42),
+    g1: rgba(192, 132, 252, 0.58),
+    g2: rgba(109, 40, 217, 0.38),
+    static: rgba(168, 85, 247, 0.48),
+  ),
+  custom: (
+    border: rgba(148, 163, 184, 0.35),
+    bg: rgba(51, 65, 85, 0.35),
+    text: #e2e8f0,
+    g0: rgba(148, 163, 184, 0.35),
+    g1: rgba(203, 213, 225, 0.45),
+    g2: rgba(100, 116, 139, 0.35),
+    static: rgba(148, 163, 184, 0.42),
+  ),
+  happy: (
+    border: rgba(250, 204, 21, 0.45),
+    bg: rgba(113, 63, 18, 0.28),
+    text: #fef9c3,
+    g0: rgba(250, 204, 21, 0.45),
+    g1: rgba(253, 224, 71, 0.62),
+    g2: rgba(217, 119, 6, 0.38),
+    static: rgba(250, 204, 21, 0.5),
+  ),
+  calm: (
+    border: rgba(34, 211, 238, 0.4),
+    bg: rgba(14, 116, 144, 0.22),
+    text: #cffafe,
+    g0: rgba(34, 211, 238, 0.4),
+    g1: rgba(103, 232, 249, 0.55),
+    g2: rgba(8, 145, 178, 0.35),
+    static: rgba(34, 211, 238, 0.48),
+  ),
+  anxious: (
+    border: rgba(251, 146, 60, 0.45),
+    bg: rgba(124, 45, 18, 0.25),
+    text: #ffedd5,
+    g0: rgba(251, 146, 60, 0.45),
+    g1: rgba(253, 186, 116, 0.58),
+    g2: rgba(234, 88, 12, 0.38),
+    static: rgba(251, 146, 60, 0.5),
+  ),
+  focused: (
+    border: rgba(129, 140, 248, 0.45),
+    bg: rgba(49, 46, 129, 0.28),
+    text: #e0e7ff,
+    g0: rgba(129, 140, 248, 0.42),
+    g1: rgba(165, 180, 252, 0.58),
+    g2: rgba(79, 70, 229, 0.38),
+    static: rgba(129, 140, 248, 0.48),
+  ),
+  tired: (
+    border: rgba(148, 163, 184, 0.4),
+    bg: rgba(51, 65, 85, 0.35),
+    text: #e2e8f0,
+    g0: rgba(148, 163, 184, 0.38),
+    g1: rgba(203, 213, 225, 0.48),
+    g2: rgba(71, 85, 105, 0.35),
+    static: rgba(148, 163, 184, 0.45),
+  ),
+  energized: (
+    border: rgba(74, 222, 128, 0.45),
+    bg: rgba(20, 83, 45, 0.28),
+    text: #dcfce7,
+    g0: rgba(74, 222, 128, 0.42),
+    g1: rgba(134, 239, 172, 0.58),
+    g2: rgba(22, 163, 74, 0.38),
+    static: rgba(74, 222, 128, 0.48),
+  ),
+  stressed: (
+    border: rgba(251, 113, 133, 0.45),
+    bg: rgba(136, 19, 55, 0.25),
+    text: #ffe4e6,
+    g0: rgba(251, 113, 133, 0.42),
+    g1: rgba(253, 164, 175, 0.55),
+    g2: rgba(225, 29, 72, 0.38),
+    static: rgba(251, 113, 133, 0.48),
+  ),
+  angry: (
+    border: rgba(248, 113, 113, 0.5),
+    bg: rgba(127, 29, 29, 0.35),
+    text: #fecaca,
+    g0: rgba(248, 113, 113, 0.48),
+    g1: rgba(252, 165, 165, 0.62),
+    g2: rgba(220, 38, 38, 0.45),
+    static: rgba(248, 113, 113, 0.52),
+  ),
+  sad: (
+    border: rgba(96, 165, 250, 0.45),
+    bg: rgba(30, 58, 138, 0.3),
+    text: #dbeafe,
+    g0: rgba(96, 165, 250, 0.42),
+    g1: rgba(147, 197, 253, 0.55),
+    g2: rgba(37, 99, 235, 0.4),
+    static: rgba(96, 165, 250, 0.48),
+  ),
+  numb: (
+    border: rgba(161, 161, 170, 0.35),
+    bg: rgba(63, 63, 70, 0.45),
+    text: #d4d4d8,
+    g0: rgba(161, 161, 170, 0.32),
+    g1: rgba(212, 212, 216, 0.4),
+    g2: rgba(82, 82, 91, 0.35),
+    static: rgba(161, 161, 170, 0.4),
+  ),
+  peaceful: (
+    border: rgba(45, 212, 191, 0.42),
+    bg: rgba(17, 94, 89, 0.25),
+    text: #ccfbf1,
+    g0: rgba(45, 212, 191, 0.4),
+    g1: rgba(94, 234, 212, 0.55),
+    g2: rgba(13, 148, 136, 0.35),
+    static: rgba(45, 212, 191, 0.48),
+  ),
+  motivated: (
+    border: rgba(56, 189, 248, 0.45),
+    bg: rgba(12, 74, 110, 0.28),
+    text: #e0f2fe,
+    g0: rgba(56, 189, 248, 0.42),
+    g1: rgba(125, 211, 252, 0.58),
+    g2: rgba(2, 132, 199, 0.38),
+    static: rgba(56, 189, 248, 0.48),
+  ),
+  overwhelmed: (
+    border: rgba(167, 139, 250, 0.45),
+    bg: rgba(76, 29, 149, 0.3),
+    text: #ede9fe,
+    g0: rgba(167, 139, 250, 0.42),
+    g1: rgba(196, 181, 253, 0.55),
+    g2: rgba(109, 40, 217, 0.4),
+    static: rgba(167, 139, 250, 0.48),
+  ),
+  grateful: (
+    border: rgba(244, 114, 182, 0.42),
+    bg: rgba(131, 24, 67, 0.22),
+    text: #fce7f3,
+    g0: rgba(244, 114, 182, 0.4),
+    g1: rgba(249, 168, 212, 0.55),
+    g2: rgba(219, 39, 119, 0.35),
+    static: rgba(244, 114, 182, 0.48),
+  ),
+);
+
+@each $name, $skin in $mood-skins {
+  @keyframes cotc-mood-#{$name}-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 6px map.get($skin, g0);
+    }
+    50% {
+      box-shadow:
+        0 0 12px map.get($skin, g1),
+        0 0 20px map.get($skin, g2);
+    }
+  }
+
+  .cotc-mood-pill--#{$name} {
+    border-color: map.get($skin, border);
+    background-color: map.get($skin, bg);
+    color: map.get($skin, text);
+    animation: cotc-mood-#{$name}-pulse 2.2s ease-in-out infinite;
+  }
 }
 
 /** Pulsing glow on task status pills (Done / Open). */
@@ -187,14 +358,16 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cotc-mood-pill-glow,
   .cotc-task-status-glow--done,
   .cotc-task-status-glow--open {
     animation: none;
   }
 
-  .cotc-mood-pill-glow {
-    box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+  @each $name, $skin in $mood-skins {
+    .cotc-mood-pill--#{$name} {
+      animation: none;
+      box-shadow: 0 0 10px map.get($skin, static);
+    }
   }
 
   .cotc-task-status-glow--done {

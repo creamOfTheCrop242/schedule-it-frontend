@@ -6,6 +6,9 @@ export const MOOD_PRESETS = [
   'Tired',
   'Energized',
   'Stressed',
+  'Angry',
+  'Sad',
+  'Numb',
   'Peaceful',
   'Motivated',
   'Overwhelmed',
@@ -25,6 +28,8 @@ export interface Log {
   dependencyLog?: Log;
   notes?: Note[];
   deletedAt?: Date;
+  /** Set on GET log detail when this log was created by completing a task. */
+  sourceTask?: { id: string; title: string } | null;
 }
 
 /** POST/PATCH body fields (no relation graphs). */

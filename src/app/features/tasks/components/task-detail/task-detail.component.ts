@@ -10,6 +10,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { catchError, finalize, of, switchMap, take } from 'rxjs';
+import { LogService } from '../../../logs/services/log.service';
 import { Task } from '../../models/task.model';
 import { TasksService } from '../../services/tasks.service';
 
@@ -24,6 +25,7 @@ export class TaskDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly tasksService = inject(TasksService);
+  private readonly logService = inject(LogService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly task = signal<Task | undefined>(undefined);
@@ -119,6 +121,9 @@ export class TaskDetailComponent implements OnInit {
       next: (updated) => {
         this.task.set(updated);
         this.tasksService.allTasks.reload();
+        if (updated.completedDate) {
+          this.logService.allLogs.reload();
+        }
       },
       error: () =>
         this.actionError.set(

@@ -26,10 +26,9 @@
         }
 
         @if (logData.mood) {
-          <span
-            class="cotc-mood-pill-glow inline-flex max-w-full self-start rounded-full border border-purple-500/30 bg-purple-500/10 px-2.5 py-0.5 text-xs font-medium text-purple-200"
-            >{{ logData.mood }}</span
-          >
+          <span [class]="moodPillClass(logData.mood, { listItem: true })">{{
+            logData.mood
+          }}</span>
         }
         @if (logData.completedDate) {
           <span class="text-xs text-gray-400 tabular-nums">
