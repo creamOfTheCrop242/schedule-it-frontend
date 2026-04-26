@@ -44,6 +44,37 @@
       ></app-input>
     </div>
 
+    <div>
+      <label
+        for="habit-cadence"
+        class="block text-sm font-medium mb-2 text-gray-200"
+        >Cadence *</label
+      >
+      <select
+        id="habit-cadence"
+        formControlName="cadence"
+        class="w-full rounded-md border border-gray-600 bg-[#2c2c2c] px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+      >
+        @for (option of cadenceOptions; track option) {
+          <option [value]="option">{{ option }}</option>
+        }
+      </select>
+    </div>
+
+    <div>
+      <label
+        for="habit-target"
+        class="block text-sm font-medium mb-2 text-gray-200"
+        >Logs per period *</label
+      >
+      <app-input
+        [id]="'habit-target'"
+        placeholder="e.g. 1 for once per day"
+        [name]="form.controls['targetPerPeriod']"
+        type="number"
+      ></app-input>
+    </div>
+
     <div class="pt-4">
       <button
         type="submit"

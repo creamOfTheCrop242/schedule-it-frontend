@@ -33,9 +33,23 @@
           @if (h.description) {
             <span class="mt-1 block text-sm text-gray-400">{{ h.description }}</span>
           }
+          <span class="mt-2 block text-xs text-gray-500"
+            >{{ h.cadence }} · {{ h.targetPerPeriod }} log{{
+              h.targetPerPeriod === 1 ? '' : 's'
+            }}
+            per period</span
+          >
+          @if (h.currentStreak !== undefined) {
+            <span class="mt-1 block text-xs text-amber-200/90 tabular-nums">
+              Streak: {{ h.currentStreak }}
+              @if (h.longestStreak !== undefined) {
+                <span> · Best: {{ h.longestStreak }}</span>
+              }
+            </span>
+          }
           @if (h.logCount !== undefined) {
-            <span class="mt-2 block text-xs text-gray-500 tabular-nums"
-              >{{ h.logCount }} log{{ h.logCount === 1 ? '' : 's' }}</span
+            <span class="mt-1 block text-xs text-gray-500 tabular-nums"
+              >{{ h.logCount }} total log{{ h.logCount === 1 ? '' : 's' }}</span
             >
           }
         </li>

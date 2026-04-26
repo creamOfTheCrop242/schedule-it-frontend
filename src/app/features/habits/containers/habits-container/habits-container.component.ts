@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -24,7 +24,11 @@ export class HabitsContainerComponent {
   readonly error = signal(false);
 
   constructor() {
-    this.http.get<HabitRow[]>(`${environment.baseUrl}/habits`).subscribe({
+    const params = new HttpParams().set(
+      'timeZone',
+      Intl.DateTimeFormat().resolvedOptions().timeZone,
+    );
+    this.http.get<HabitRow[]>(`${environment.baseUrl}/habits`, { params }).subscribe({
       next: (rows) => {
         this.habits.set(rows);
         this.loading.set(false);
