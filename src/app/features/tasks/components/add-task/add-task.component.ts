@@ -97,7 +97,7 @@ export class AddTaskComponent {
   }
 
   private handleSuccess(editId: string | null): void {
-    this.tasksService.allTasks.reload();
+    this.tasksService.reloadTasksList();
     if (editId) {
       void this.router.navigate(['/tasks', editId]);
     } else {

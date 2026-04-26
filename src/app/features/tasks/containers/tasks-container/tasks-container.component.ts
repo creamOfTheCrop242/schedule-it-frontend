@@ -1,10 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ResourceStatus,
   computed,
+  effect,
   inject,
   signal,
+  untracked,
+  OnDestroy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -19,11 +21,12 @@ import { TasksService } from '../../services/tasks.service';
   styleUrl: './tasks-container.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TasksContainerComponent {
+export class TasksContainerComponent implements OnDestroy {
   readonly tasksService = inject(TasksService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private searchUrlDebounce?: ReturnType<typeof setTimeout>;
+  private scrollObserver: IntersectionObserver | null = null;
 
   private readonly _hydrateListFiltersFromUrl = (() => {
     const q = inject(ActivatedRoute).snapshot.queryParamMap;
@@ -36,15 +39,21 @@ export class TasksContainerComponent {
     return undefined;
   })();
 
-  /** When false, filter controls are collapsed. */
   filtersExpanded = signal(false);
 
-  readonly allTasks = this.tasksService.allTasks;
-  readonly isLoading = this.allTasks.isLoading;
-  readonly hasLoadError = computed(
-    () => this.allTasks.status() === ResourceStatus.Error,
+  readonly initialListLoading = computed(
+    () =>
+      this.tasksService.tasksListLoading() &&
+      this.tasksService.tasksList().length === 0,
   );
-  readonly tasks = computed(() => this.allTasks.value() ?? []);
+
+  readonly hasLoadError = computed(() => this.tasksService.tasksListError());
+
+  readonly listRefreshingWithContent = computed(
+    () =>
+      this.tasksService.tasksListLoading() &&
+      this.tasksService.tasksList().length > 0,
+  );
 
   readonly hasClientFiltersActive = computed(
     () =>
@@ -59,10 +68,12 @@ export class TasksContainerComponent {
   );
 
   readonly headerBadgeText = computed(() => {
-    if (this.isLoading() || this.hasLoadError()) {
+    if (this.initialListLoading() || this.hasLoadError()) {
       return undefined;
     }
-    return String(this.tasks().length);
+    const n = this.tasksService.tasksList().length;
+    const more = this.tasksService.tasksHasMore();
+    return more && n > 0 ? `${n}+` : String(n);
   });
 
   readonly filtersPanelSummary = computed(() => {
@@ -81,7 +92,7 @@ export class TasksContainerComponent {
   });
 
   readonly clientFilterLine = computed(() => {
-    if (this.isLoading() || this.hasLoadError()) {
+    if (this.initialListLoading() || this.hasLoadError()) {
       return null;
     }
     if (!this.hasClientFiltersActive()) {
@@ -102,25 +113,28 @@ export class TasksContainerComponent {
   });
 
   readonly filterHeadline = computed(() => {
-    if (this.isLoading() || this.hasLoadError()) {
+    if (this.initialListLoading() || this.hasLoadError()) {
       return null;
     }
+    const n = this.tasksService.tasksList().length;
+    const taskWord = n === 1 ? 'task' : 'tasks';
     const raw = this.tasksService.selectedDate();
     if (!raw) {
-      return 'Showing all tasks';
+      return `Showing ${n} ${taskWord} (all dates)`;
     }
     const parts = raw.split('-').map(Number);
-    if (parts.length !== 3 || parts.some((n) => Number.isNaN(n))) {
-      return 'Filtered by date';
+    if (parts.length !== 3 || parts.some((p) => Number.isNaN(p))) {
+      return `Showing ${n} ${taskWord} (date filter active)`;
     }
     const [y, m, d] = parts;
     const localDay = new Date(y, m - 1, d);
-    return `Filtered to ${localDay.toLocaleDateString(undefined, {
+    const dateLabel = localDay.toLocaleDateString(undefined, {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric',
-    })}`;
+    });
+    return `Showing ${n} ${taskWord} for ${dateLabel}`;
   });
 
   readonly dateFilterSummary = computed(() => {
@@ -129,7 +143,7 @@ export class TasksContainerComponent {
       return 'All dates';
     }
     const parts = raw.split('-').map(Number);
-    if (parts.length !== 3 || parts.some((n) => Number.isNaN(n))) {
+    if (parts.length !== 3 || parts.some((p) => Number.isNaN(p))) {
       return 'Date selected';
     }
     const [y, m, d] = parts;
@@ -139,7 +153,7 @@ export class TasksContainerComponent {
   });
 
   readonly timezoneHint = computed(() => {
-    if (this.isLoading() || this.hasLoadError()) {
+    if (this.initialListLoading() || this.hasLoadError()) {
       return null;
     }
     if (!this.tasksService.selectedDate()) {
@@ -158,7 +172,56 @@ export class TasksContainerComponent {
         c === 'open' || c === 'done' ? c : null,
       );
       this.tasksService.searchQuery.set(q.get('search') ?? '');
+      this.tasksService.reloadTasksList();
     });
+
+    effect(() => {
+      this.tasksService.tasksList();
+      this.tasksService.tasksHasMore();
+      this.tasksService.tasksListLoading();
+      this.tasksService.tasksListLoadingMore();
+      untracked(() => queueMicrotask(() => this.setupScrollObserver()));
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.scrollObserver?.disconnect();
+    this.scrollObserver = null;
+  }
+
+  private setupScrollObserver(): void {
+    this.scrollObserver?.disconnect();
+    this.scrollObserver = null;
+
+    if (
+      !this.tasksService.tasksHasMore() ||
+      this.tasksService.tasksListLoading() ||
+      this.tasksService.tasksListLoadingMore()
+    ) {
+      return;
+    }
+
+    const el = document.getElementById('tasks-scroll-sentinel');
+    if (!el) {
+      return;
+    }
+
+    this.scrollObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (
+            entry.isIntersecting &&
+            this.tasksService.tasksHasMore() &&
+            !this.tasksService.tasksListLoading() &&
+            !this.tasksService.tasksListLoadingMore()
+          ) {
+            this.tasksService.loadTasksPage(false);
+          }
+        }
+      },
+      { root: null, rootMargin: '120px', threshold: 0 },
+    );
+    this.scrollObserver.observe(el);
   }
 
   onDateChange(event: Event): void {
@@ -207,7 +270,10 @@ export class TasksContainerComponent {
       (event.target as HTMLInputElement).value,
     );
     clearTimeout(this.searchUrlDebounce);
-    this.searchUrlDebounce = setTimeout(() => this.syncListQueryToUrl(), 300);
+    this.searchUrlDebounce = setTimeout(() => {
+      this.syncListQueryToUrl();
+      this.tasksService.reloadTasksList();
+    }, 300);
   }
 
   clearClientFilters(): void {
