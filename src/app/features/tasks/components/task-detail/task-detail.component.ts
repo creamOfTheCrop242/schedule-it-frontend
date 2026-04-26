@@ -94,7 +94,7 @@ export class TaskDetailComponent implements OnInit {
     this.actionsMenuOpen.set(false);
     this.tasksService.deleteTask(id).pipe(take(1)).subscribe({
       next: () => {
-        this.tasksService.allTasks.reload();
+        this.tasksService.reloadTasksList();
         this.deleteConfirmId.set(null);
         void this.router.navigate(['/tasks']);
       },
@@ -120,7 +120,7 @@ export class TaskDetailComponent implements OnInit {
     ).subscribe({
       next: (updated) => {
         this.task.set(updated);
-        this.tasksService.allTasks.reload();
+        this.tasksService.reloadTasksList();
         if (updated.completedDate) {
           this.logService.reloadLogsList();
         }

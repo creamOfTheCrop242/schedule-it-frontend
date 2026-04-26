@@ -43,7 +43,7 @@ describe('TaskDetailComponent', () => {
                 createdAt: '2026-01-01T00:00:00.000Z',
                 updatedAt: '2026-01-01T00:00:00.000Z',
               }),
-            allTasks: { reload: (): void => undefined },
+            reloadTasksList: (): void => undefined,
             deleteTask: () => of(undefined),
             completeTask: () => of({}),
             reopenTask: () => of({}),
