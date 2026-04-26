@@ -114,40 +114,41 @@ export class BottomNavMenuComponent implements OnDestroy {
 
   isActiveRoute(route: string): boolean {
     const url = this.currentUrl();
+    const path = url.split('?')[0];
     if (route === '/dashboard') {
-      return url === '/dashboard';
+      return path === '/dashboard';
     }
     if (route === '/logs') {
       return (
-        url === '/logs' ||
-        url.startsWith('/logs/edit-log') ||
-        url.startsWith('/logs/log/')
+        path === '/logs' ||
+        path.startsWith('/logs/edit-log') ||
+        path.startsWith('/logs/log/')
       );
     }
     if (route === '/logs/add-log') {
       return (
-        url === '/logs/add-log' ||
-        url.startsWith('/logs/edit-log') ||
-        url === '/tasks/add-task' ||
-        url.startsWith('/tasks/edit-task')
+        path === '/logs/add-log' ||
+        path.startsWith('/logs/edit-log') ||
+        path === '/tasks/add-task' ||
+        path.startsWith('/tasks/edit-task')
       );
     }
     if (route === '/goals') {
       return (
-        url === '/goals' ||
-        (url.startsWith('/goals/') &&
-          !url.includes('/add-goal') &&
-          !url.includes('/edit-goal'))
+        path === '/goals' ||
+        (path.startsWith('/goals/') &&
+          !path.includes('/add-goal') &&
+          !path.includes('/edit-goal'))
       );
     }
     if (route === '/tasks') {
       return (
-        url === '/tasks' ||
-        (url.startsWith('/tasks/') &&
-          !url.startsWith('/tasks/add-task') &&
-          !url.startsWith('/tasks/edit-task'))
+        path === '/tasks' ||
+        (path.startsWith('/tasks/') &&
+          !path.startsWith('/tasks/add-task') &&
+          !path.startsWith('/tasks/edit-task'))
       );
     }
-    return url.startsWith(route);
+    return path.startsWith(route);
   }
 }

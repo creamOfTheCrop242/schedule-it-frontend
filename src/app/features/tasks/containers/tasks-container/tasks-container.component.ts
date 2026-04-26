@@ -4,38 +4,214 @@ import {
   ResourceStatus,
   computed,
   inject,
+  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TasksService } from '../../services/tasks.service';
 
 @Component({
   selector: 'app-tasks-container',
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './tasks-container.component.html',
   styleUrl: './tasks-container.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TasksContainerComponent {
   readonly tasksService = inject(TasksService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private searchUrlDebounce?: ReturnType<typeof setTimeout>;
+
+  private readonly _hydrateListFiltersFromUrl = (() => {
+    const q = inject(ActivatedRoute).snapshot.queryParamMap;
+    const tasks = inject(TasksService);
+    const d = q.get('completedDate');
+    tasks.selectedDate.set(d && d.length > 0 ? d : null);
+    const c = q.get('completion');
+    tasks.filterCompletion.set(c === 'open' || c === 'done' ? c : null);
+    tasks.searchQuery.set(q.get('search') ?? '');
+    return undefined;
+  })();
+
+  /** When false, filter controls are collapsed. */
+  filtersExpanded = signal(false);
 
   readonly allTasks = this.tasksService.allTasks;
   readonly isLoading = this.allTasks.isLoading;
-  readonly showInitialLoading = computed(
-    () => this.isLoading() && !this.allTasks.hasValue(),
-  );
   readonly hasLoadError = computed(
     () => this.allTasks.status() === ResourceStatus.Error,
   );
   readonly tasks = computed(() => this.allTasks.value() ?? []);
-  readonly showEmpty = computed(
+
+  readonly hasClientFiltersActive = computed(
     () =>
-      this.allTasks.status() === ResourceStatus.Resolved &&
-      this.tasks().length === 0,
+      this.tasksService.filterCompletion() !== null ||
+      this.tasksService.searchQuery().trim().length > 0,
   );
-  readonly showList = computed(
+
+  readonly hasAnyListFilter = computed(
     () =>
-      this.allTasks.status() === ResourceStatus.Resolved &&
-      this.tasks().length > 0,
+      this.tasksService.selectedDate() !== null ||
+      this.hasClientFiltersActive(),
   );
+
+  readonly headerBadgeText = computed(() => {
+    if (this.isLoading() || this.hasLoadError()) {
+      return undefined;
+    }
+    return String(this.tasks().length);
+  });
+
+  readonly filtersPanelSummary = computed(() => {
+    const c = this.tasksService.filterCompletion();
+    const completionPart =
+      c === 'open' ? 'Open' : c === 'done' ? 'Done' : 'All statuses';
+    const q = this.tasksService.searchQuery().trim();
+    const searchPart =
+      q.length === 0
+        ? 'No search'
+        : q.length > 20
+          ? `${q.slice(0, 20)}…`
+          : q;
+    const searchSegment = q.length === 0 ? 'No search' : `"${searchPart}"`;
+    return `${this.dateFilterSummary()} · ${completionPart} · ${searchSegment}`;
+  });
+
+  readonly clientFilterLine = computed(() => {
+    if (this.isLoading() || this.hasLoadError()) {
+      return null;
+    }
+    if (!this.hasClientFiltersActive()) {
+      return null;
+    }
+    const parts: string[] = [];
+    const c = this.tasksService.filterCompletion();
+    if (c === 'open') {
+      parts.push('Status: Open');
+    } else if (c === 'done') {
+      parts.push('Status: Done');
+    }
+    const q = this.tasksService.searchQuery().trim();
+    if (q) {
+      parts.push('Search matches title or description');
+    }
+    return parts.join(' · ');
+  });
+
+  readonly filterHeadline = computed(() => {
+    if (this.isLoading() || this.hasLoadError()) {
+      return null;
+    }
+    const raw = this.tasksService.selectedDate();
+    if (!raw) {
+      return 'Showing all tasks';
+    }
+    const parts = raw.split('-').map(Number);
+    if (parts.length !== 3 || parts.some((n) => Number.isNaN(n))) {
+      return 'Filtered by date';
+    }
+    const [y, m, d] = parts;
+    const localDay = new Date(y, m - 1, d);
+    return `Filtered to ${localDay.toLocaleDateString(undefined, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })}`;
+  });
+
+  readonly dateFilterSummary = computed(() => {
+    const raw = this.tasksService.selectedDate();
+    if (!raw) {
+      return 'All dates';
+    }
+    const parts = raw.split('-').map(Number);
+    if (parts.length !== 3 || parts.some((n) => Number.isNaN(n))) {
+      return 'Date selected';
+    }
+    const [y, m, d] = parts;
+    return new Date(y, m - 1, d).toLocaleDateString(undefined, {
+      dateStyle: 'medium',
+    });
+  });
+
+  readonly timezoneHint = computed(() => {
+    if (this.isLoading() || this.hasLoadError()) {
+      return null;
+    }
+    if (!this.tasksService.selectedDate()) {
+      return null;
+    }
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    return `Dates use your local time zone: ${tz}`;
+  });
+
+  constructor() {
+    this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((q) => {
+      const d = q.get('completedDate');
+      this.tasksService.selectedDate.set(d && d.length > 0 ? d : null);
+      const c = q.get('completion');
+      this.tasksService.filterCompletion.set(
+        c === 'open' || c === 'done' ? c : null,
+      );
+      this.tasksService.searchQuery.set(q.get('search') ?? '');
+    });
+  }
+
+  onDateChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.tasksService.selectedDate.set(input.value || null);
+    this.syncListQueryToUrl();
+  }
+
+  clearDate(): void {
+    this.tasksService.selectedDate.set(null);
+    this.syncListQueryToUrl();
+  }
+
+  toggleFilters(): void {
+    this.filtersExpanded.update((v) => !v);
+  }
+
+  private syncListQueryToUrl(): void {
+    const date = this.tasksService.selectedDate();
+    const completion = this.tasksService.filterCompletion();
+    const search = this.tasksService.searchQuery().trim();
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      replaceUrl: true,
+      queryParams: {
+        completedDate: date ?? undefined,
+        timeZone: date ? tz : undefined,
+        completion: completion ?? undefined,
+        search: search || undefined,
+      },
+    });
+  }
+
+  onCompletionModelChange(value: string): void {
+    if (value === 'open' || value === 'done') {
+      this.tasksService.filterCompletion.set(value);
+    } else {
+      this.tasksService.filterCompletion.set(null);
+    }
+    this.syncListQueryToUrl();
+  }
+
+  onSearchInput(event: Event): void {
+    this.tasksService.searchQuery.set(
+      (event.target as HTMLInputElement).value,
+    );
+    clearTimeout(this.searchUrlDebounce);
+    this.searchUrlDebounce = setTimeout(() => this.syncListQueryToUrl(), 300);
+  }
+
+  clearClientFilters(): void {
+    this.tasksService.clearCompletionAndSearch();
+    this.syncListQueryToUrl();
+  }
 }
