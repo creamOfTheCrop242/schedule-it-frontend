@@ -122,7 +122,7 @@ export class TaskDetailComponent implements OnInit {
         this.task.set(updated);
         this.tasksService.allTasks.reload();
         if (updated.completedDate) {
-          this.logService.allLogs.reload();
+          this.logService.reloadLogsList();
         }
       },
       error: () =>

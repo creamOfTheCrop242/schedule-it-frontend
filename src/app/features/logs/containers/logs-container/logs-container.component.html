@@ -23,32 +23,35 @@
     </a>
   </header>
 
-  @if (filterHeadline()) {
-    <div
-      class="cotc-bg-dark rounded-2xl border border-gray-600 px-4 py-3 text-sm text-gray-300 transition-all duration-300 hover:border-purple-500/30 hover:shadow-md hover:shadow-purple-500/10 motion-reduce:transition-none"
-      aria-live="polite"
-    >
-      <p class="m-0 text-white">{{ filterHeadline() }}</p>
-      @if (clientFilterLine()) {
-        <p
-          class="mt-1 mb-0 text-xs text-gray-400 transition-colors duration-200"
-        >
-          {{ clientFilterLine() }}
-        </p>
-      }
-      @if (timezoneHint()) {
-        <p
-          class="mt-1 mb-0 text-xs text-gray-400 transition-colors duration-200"
-        >
-          {{ timezoneHint() }}
-        </p>
-      }
-    </div>
-  }
-
   <div
-    class="cotc-bg-dark overflow-hidden rounded-2xl border border-gray-600 transition-all duration-300 motion-reduce:transition-none"
+    class="sticky top-0 z-20 -mx-5 mb-5 flex flex-col gap-5 border-b border-gray-800/70 bg-[#161616] px-5 pb-5 pt-0 shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
   >
+    @if (filterHeadline()) {
+      <div
+        class="cotc-bg-dark rounded-2xl border border-gray-600 px-4 py-3 text-sm text-gray-300 transition-all duration-300 hover:border-purple-500/30 hover:shadow-md hover:shadow-purple-500/10 motion-reduce:transition-none"
+        aria-live="polite"
+      >
+        <p class="m-0 text-white">{{ filterHeadline() }}</p>
+        @if (clientFilterLine()) {
+          <p
+            class="mt-1 mb-0 text-xs text-gray-400 transition-colors duration-200"
+          >
+            {{ clientFilterLine() }}
+          </p>
+        }
+        @if (timezoneHint()) {
+          <p
+            class="mt-1 mb-0 text-xs text-gray-400 transition-colors duration-200"
+          >
+            {{ timezoneHint() }}
+          </p>
+        }
+      </div>
+    }
+
+    <div
+      class="cotc-bg-dark overflow-hidden rounded-2xl border border-gray-600 transition-all duration-300 motion-reduce:transition-none"
+    >
     <button
       type="button"
       id="log-filters-toggle"
@@ -170,11 +173,16 @@
         </div>
       </div>
     </div>
+    </div>
   </div>
 
   <main
     class="min-h-[4rem]"
-    [attr.aria-busy]="isLoading()"
+    [attr.aria-busy]="
+      initialListLoading() ||
+      listRefreshingWithContent() ||
+      logService.logsListLoadingMore()
+    "
     aria-live="polite"
     aria-labelledby="logs-heading"
   >
@@ -186,7 +194,7 @@
         Couldn’t load logs. Check your connection and try again.
       </div>
     } @else {
-      @if (isLoading() && !logService.allLogs.hasValue()) {
+      @if (initialListLoading()) {
         <div role="status" class="inline-flex flex-col gap-3 text-gray-300">
           <span class="inline-flex items-center gap-3">
             <span
@@ -207,55 +215,74 @@
             ></span>
           </span>
         </div>
-      } @else if (isLoading() && hasAnyListFilter()) {
-        <div
-          role="status"
-          class="inline-flex items-center gap-3 rounded-xl border border-gray-600 bg-[#1a1a1a]/90 px-4 py-3 text-gray-300"
-        >
-          <span
-            class="h-5 w-5 shrink-0 rounded-full border-2 border-gray-600 border-t-purple-500 motion-safe:animate-spin motion-reduce:animate-none"
-            aria-hidden="true"
-          ></span>
-          <span>Updating list…</span>
-        </div>
       } @else {
-      @if (allLogs.value(); as logs) {
-        @if (logs && logs.length > 0) {
-          <ul class="m-0 flex list-none flex-col gap-3 p-0">
-            @for (log of logs; track log.id) {
-              <li class="m-0 p-0">
-                <app-log [log]="log" />
-              </li>
-            }
-          </ul>
-        } @else if (hasClientFiltersActive()) {
-          <div
-            class="rounded-xl border border-gray-600 bg-[#1a1a1a]/80 p-6 text-center text-gray-300 transition-transform duration-300 hover:scale-[1.01] motion-reduce:transition-none motion-reduce:hover:scale-100"
-          >
-            <div class="mb-3 flex justify-center">
-              <span
-                class="material-icons text-4xl text-purple-400/80 motion-safe:animate-pulse motion-reduce:animate-none"
-                aria-hidden="true"
-                >manage_search</span
-              >
-            </div>
-            <p class="m-0">No logs match your filters.</p>
-            <p class="mt-2 mb-0 text-sm text-gray-400">
-              Try different search text or mood, or clear search & mood.
-            </p>
-            <button
-              type="button"
-              (click)="clearClientFilters()"
-              class="mt-4 rounded-md border border-purple-500/40 bg-purple-500/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-purple-400 hover:bg-purple-500/20 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        @if (logService.logsList(); as logs) {
+          @if (listRefreshingWithContent() && logs.length > 0) {
+            <div
+              role="status"
+              class="mb-3 inline-flex items-center gap-3 rounded-xl border border-gray-600 bg-[#1a1a1a]/90 px-4 py-2 text-sm text-gray-300"
             >
-              Clear search & mood
-            </button>
-          </div>
-        } @else {
-          <div
-            class="rounded-xl border border-gray-600 bg-[#1a1a1a]/80 p-6 text-center text-gray-300 transition-transform duration-300 hover:scale-[1.01] motion-reduce:transition-none motion-reduce:hover:scale-100"
-          >
-            @if (logService.selectedDate()) {
+              <span
+                class="h-4 w-4 shrink-0 rounded-full border-2 border-gray-600 border-t-purple-500 motion-safe:animate-spin motion-reduce:animate-none"
+                aria-hidden="true"
+              ></span>
+              <span>Updating list…</span>
+            </div>
+          }
+          @if (logs.length > 0) {
+            <ul class="m-0 flex list-none flex-col gap-3 p-0">
+              @for (log of logs; track log.id) {
+                <li class="m-0 p-0">
+                  <app-log [log]="log" />
+                </li>
+              }
+            </ul>
+            @if (logService.logsHasMore()) {
+              <div
+                id="logs-scroll-sentinel"
+                class="h-4 w-full shrink-0"
+                aria-hidden="true"
+              ></div>
+            }
+            @if (logService.logsListLoadingMore()) {
+              <div
+                role="status"
+                class="mt-3 flex items-center justify-center gap-2 text-sm text-gray-400"
+              >
+                <span
+                  class="h-4 w-4 shrink-0 rounded-full border-2 border-gray-600 border-t-purple-500 motion-safe:animate-spin motion-reduce:animate-none"
+                  aria-hidden="true"
+                ></span>
+                <span>Loading more…</span>
+              </div>
+            }
+          } @else if (hasClientFiltersActive()) {
+            <div
+              class="rounded-xl border border-gray-600 bg-[#1a1a1a]/80 p-6 text-center text-gray-300 transition-transform duration-300 hover:scale-[1.01] motion-reduce:transition-none motion-reduce:hover:scale-100"
+            >
+              <div class="mb-3 flex justify-center">
+                <span
+                  class="material-icons text-4xl text-purple-400/80 motion-safe:animate-pulse motion-reduce:animate-none"
+                  aria-hidden="true"
+                  >manage_search</span
+                >
+              </div>
+              <p class="m-0">No logs match your filters.</p>
+              <p class="mt-2 mb-0 text-sm text-gray-400">
+                Try different search text or mood, or clear search & mood.
+              </p>
+              <button
+                type="button"
+                (click)="clearClientFilters()"
+                class="mt-4 rounded-md border border-purple-500/40 bg-purple-500/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-purple-400 hover:bg-purple-500/20 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                Clear search & mood
+              </button>
+            </div>
+          } @else if (logService.selectedDate()) {
+            <div
+              class="rounded-xl border border-gray-600 bg-[#1a1a1a]/80 p-6 text-center text-gray-300 transition-transform duration-300 hover:scale-[1.01] motion-reduce:transition-none motion-reduce:hover:scale-100"
+            >
               <div class="mb-3 flex justify-center">
                 <span
                   class="material-icons text-4xl text-purple-400/80 motion-safe:animate-bounce motion-reduce:animate-none"
@@ -267,7 +294,11 @@
               <p class="mt-2 mb-0 text-sm text-gray-400">
                 Try another date or clear the filter to see all logs.
               </p>
-            } @else {
+            </div>
+          } @else {
+            <div
+              class="rounded-xl border border-gray-600 bg-[#1a1a1a]/80 p-6 text-center text-gray-300 transition-transform duration-300 hover:scale-[1.01] motion-reduce:transition-none motion-reduce:hover:scale-100"
+            >
               <div class="mb-3 flex justify-center">
                 <span
                   class="material-icons text-4xl text-purple-400/80 motion-safe:animate-bounce motion-reduce:animate-none"
@@ -280,10 +311,9 @@
                 Use <span class="font-medium text-gray-200">Add log</span> to
                 create your first entry.
               </p>
-            }
-          </div>
+            </div>
+          }
         }
-      }
       }
     }
   </main>
