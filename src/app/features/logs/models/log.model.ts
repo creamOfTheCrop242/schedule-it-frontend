@@ -22,6 +22,7 @@ export interface Log {
   description?: string;
   surroundings?: string;
   mood?: string;
+  category?: string;
   startTime?: Date;
   endTime?: Date;
   completedDate?: Date;

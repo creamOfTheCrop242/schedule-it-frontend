@@ -170,6 +170,18 @@
           </div>
         }
 
+        @if (taskData.category) {
+          <section class="mt-4">
+            <h2 class="mb-2 text-sm font-medium text-gray-400">Category</h2>
+            <p class="m-0">
+              <span
+                class="inline-flex max-w-full items-center rounded-full border border-sky-400/35 bg-sky-500/10 px-2.5 py-0.5 text-xs font-medium text-sky-100"
+                >{{ taskData.category }}</span
+              >
+            </p>
+          </section>
+        }
+
         @if (taskData.description) {
           <section class="mt-4">
             <h2 class="mb-2 text-sm font-medium text-gray-400">Description</h2>

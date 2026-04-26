@@ -16,6 +16,8 @@ export class LogService {
   selectedDate = signal<string | null>(null);
   /** Exact mood match for GET /logs; null = all moods. */
   filterMood = signal<string | null>(null);
+  /** Exact category match for GET /logs; null = all categories. */
+  filterCategory = signal<string | null>(null);
   /** Substring search on log title and surroundings (server-side). */
   searchQuery = signal('');
 
@@ -43,6 +45,10 @@ export class LogService {
     const mood = this.filterMood();
     if (mood) {
       params = params.set('mood', mood);
+    }
+    const category = this.filterCategory();
+    if (category) {
+      params = params.set('category', category);
     }
     const search = this.searchQuery().trim();
     if (search) {
@@ -145,8 +151,9 @@ export class LogService {
     return this.httpClient.get<Log>(`${environment.baseUrl}/logs/${id}`);
   }
 
-  clearMoodAndSearch() {
+  clearMoodCategoryAndSearch() {
     this.filterMood.set(null);
+    this.filterCategory.set(null);
     this.searchQuery.set('');
   }
 }

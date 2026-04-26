@@ -1,17 +1,20 @@
 export interface CreateTaskPayload {
   title: string;
   description?: string;
+  category?: string;
 }
 
 export interface UpdateTaskPayload {
   title?: string;
   description?: string;
+  category?: string;
 }
 
 export interface Task {
   id: string;
   title: string;
   description: string | null;
+  category?: string | null;
   completedDate: string | null;
   createdAt: string;
   updatedAt: string;

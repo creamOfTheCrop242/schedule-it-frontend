@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ResourceStatus,
   computed,
   effect,
   inject,
@@ -12,6 +13,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CATEGORY_PRESETS } from '../../../shared/models/category.model';
+import { CategoryOptionsService } from '../../../shared/services/category-options.service';
 import { TasksService } from '../../services/tasks.service';
 
 @Component({
@@ -23,6 +26,7 @@ import { TasksService } from '../../services/tasks.service';
 })
 export class TasksContainerComponent implements OnDestroy {
   readonly tasksService = inject(TasksService);
+  private readonly categoryOptionsService = inject(CategoryOptionsService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private searchUrlDebounce?: ReturnType<typeof setTimeout>;
@@ -35,6 +39,8 @@ export class TasksContainerComponent implements OnDestroy {
     tasks.selectedDate.set(d && d.length > 0 ? d : null);
     const c = q.get('completion');
     tasks.filterCompletion.set(c === 'open' || c === 'done' ? c : null);
+    const cat = q.get('category');
+    tasks.filterCategory.set(cat && cat.length > 0 ? cat : null);
     tasks.searchQuery.set(q.get('search') ?? '');
     return undefined;
   })();
@@ -55,9 +61,26 @@ export class TasksContainerComponent implements OnDestroy {
       this.tasksService.tasksList().length > 0,
   );
 
+  readonly categoryMenuOptions = computed(() => {
+    const presetList = [...CATEGORY_PRESETS];
+    const presetSet = new Set<string>(presetList);
+    const extras = new Set<string>();
+    const res = this.categoryOptionsService.categoryOptions;
+    if (res.status() === ResourceStatus.Resolved && res.value()) {
+      for (const c of res.value() ?? []) {
+        if (c && !presetSet.has(c)) {
+          extras.add(c);
+        }
+      }
+    }
+    const extraSorted = [...extras].sort((a, b) => a.localeCompare(b));
+    return [...presetList, ...extraSorted];
+  });
+
   readonly hasClientFiltersActive = computed(
     () =>
       this.tasksService.filterCompletion() !== null ||
+      this.tasksService.filterCategory() !== null ||
       this.tasksService.searchQuery().trim().length > 0,
   );
 
@@ -80,6 +103,12 @@ export class TasksContainerComponent implements OnDestroy {
     const c = this.tasksService.filterCompletion();
     const completionPart =
       c === 'open' ? 'Open' : c === 'done' ? 'Done' : 'All statuses';
+    const cat = this.tasksService.filterCategory();
+    const categoryPart = cat
+      ? cat.length > 24
+        ? `${cat.slice(0, 24)}…`
+        : cat
+      : 'All categories';
     const q = this.tasksService.searchQuery().trim();
     const searchPart =
       q.length === 0
@@ -88,7 +117,7 @@ export class TasksContainerComponent implements OnDestroy {
           ? `${q.slice(0, 20)}…`
           : q;
     const searchSegment = q.length === 0 ? 'No search' : `"${searchPart}"`;
-    return `${this.dateFilterSummary()} · ${completionPart} · ${searchSegment}`;
+    return `${this.dateFilterSummary()} · ${completionPart} · ${categoryPart} · ${searchSegment}`;
   });
 
   readonly clientFilterLine = computed(() => {
@@ -104,6 +133,10 @@ export class TasksContainerComponent implements OnDestroy {
       parts.push('Status: Open');
     } else if (c === 'done') {
       parts.push('Status: Done');
+    }
+    const cat = this.tasksService.filterCategory();
+    if (cat) {
+      parts.push(`Category: ${cat}`);
     }
     const q = this.tasksService.searchQuery().trim();
     if (q) {
@@ -171,6 +204,8 @@ export class TasksContainerComponent implements OnDestroy {
       this.tasksService.filterCompletion.set(
         c === 'open' || c === 'done' ? c : null,
       );
+      const cat = q.get('category');
+      this.tasksService.filterCategory.set(cat && cat.length > 0 ? cat : null);
       this.tasksService.searchQuery.set(q.get('search') ?? '');
       this.tasksService.reloadTasksList();
     });
@@ -242,6 +277,7 @@ export class TasksContainerComponent implements OnDestroy {
   private syncListQueryToUrl(): void {
     const date = this.tasksService.selectedDate();
     const completion = this.tasksService.filterCompletion();
+    const category = this.tasksService.filterCategory();
     const search = this.tasksService.searchQuery().trim();
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     void this.router.navigate([], {
@@ -251,6 +287,7 @@ export class TasksContainerComponent implements OnDestroy {
         completedDate: date ?? undefined,
         timeZone: date ? tz : undefined,
         completion: completion ?? undefined,
+        category: category ?? undefined,
         search: search || undefined,
       },
     });
@@ -262,6 +299,11 @@ export class TasksContainerComponent implements OnDestroy {
     } else {
       this.tasksService.filterCompletion.set(null);
     }
+    this.syncListQueryToUrl();
+  }
+
+  onCategoryModelChange(value: string): void {
+    this.tasksService.filterCategory.set(value || null);
     this.syncListQueryToUrl();
   }
 
@@ -277,7 +319,7 @@ export class TasksContainerComponent implements OnDestroy {
   }
 
   clearClientFilters(): void {
-    this.tasksService.clearCompletionAndSearch();
+    this.tasksService.clearCompletionSearchAndCategory();
     this.syncListQueryToUrl();
   }
 }

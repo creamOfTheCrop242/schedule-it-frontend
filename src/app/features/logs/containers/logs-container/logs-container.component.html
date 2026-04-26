@@ -123,7 +123,7 @@
             class="border-t border-gray-600 pt-4 flex flex-col gap-3"
           >
             <span class="text-xs font-medium uppercase tracking-wide text-gray-500"
-              >Mood & search</span
+              >Mood, category &amp; search</span
             >
             <div
               class="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-3"
@@ -141,6 +141,27 @@
                 <option value="">All moods</option>
                 @for (m of moodMenuOptions(); track m) {
                   <option [value]="m">{{ m }}</option>
+                }
+              </select>
+            </div>
+            <div
+              class="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-3"
+            >
+              <label
+                for="log-category-filter"
+                class="shrink-0 text-sm text-gray-300"
+                >Category</label
+              >
+              <select
+                id="log-category-filter"
+                name="logCategoryFilter"
+                [ngModel]="logService.filterCategory() ?? ''"
+                (ngModelChange)="onCategoryModelChange($event)"
+                class="min-w-0 flex-1 rounded-md border border-gray-600 bg-[#1a1a1a] px-3 py-2 text-white transition-shadow duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:shadow-md focus:shadow-purple-500/15"
+              >
+                <option value="">All categories</option>
+                @for (c of categoryMenuOptions(); track c) {
+                  <option [value]="c">{{ c }}</option>
                 }
               </select>
             </div>
@@ -166,7 +187,7 @@
                 (click)="clearClientFilters()"
                 class="self-start rounded-md border border-gray-500 px-3 py-2 text-sm text-white transition-colors duration-200 hover:border-purple-400/60 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 active:scale-[0.98] motion-reduce:active:scale-100"
               >
-                Clear search & mood
+                Clear search, mood & category
               </button>
             }
           </div>
@@ -269,14 +290,14 @@
               </div>
               <p class="m-0">No logs match your filters.</p>
               <p class="mt-2 mb-0 text-sm text-gray-400">
-                Try different search text or mood, or clear search & mood.
+                Try different search text, mood, or category, or clear filters.
               </p>
               <button
                 type="button"
                 (click)="clearClientFilters()"
                 class="mt-4 rounded-md border border-purple-500/40 bg-purple-500/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-purple-400 hover:bg-purple-500/20 focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
-                Clear search & mood
+                Clear search, mood & category
               </button>
             </div>
           } @else if (logService.selectedDate()) {

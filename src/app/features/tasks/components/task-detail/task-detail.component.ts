@@ -12,6 +12,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { catchError, finalize, of, switchMap, take } from 'rxjs';
 import { GoalsService } from '../../../goals/services/goals.service';
 import { LogService } from '../../../logs/services/log.service';
+import { CategoryOptionsService } from '../../../shared/services/category-options.service';
 import { Task } from '../../models/task.model';
 import { TasksService } from '../../services/tasks.service';
 
@@ -28,6 +29,7 @@ export class TaskDetailComponent implements OnInit {
   private readonly tasksService = inject(TasksService);
   private readonly logService = inject(LogService);
   private readonly goalsService = inject(GoalsService);
+  private readonly categoryOptionsService = inject(CategoryOptionsService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly task = signal<Task | undefined>(undefined);
@@ -126,6 +128,7 @@ export class TaskDetailComponent implements OnInit {
         this.goalsService.logsGoalStatus.reload();
         if (updated.completedDate) {
           this.logService.reloadLogsList();
+          this.categoryOptionsService.categoryOptions.reload();
         }
       },
       error: () =>

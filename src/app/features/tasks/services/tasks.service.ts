@@ -21,6 +21,8 @@ export class TasksService {
   selectedDate = signal<string | null>(null);
   /** `open` | `done` | null (all). */
   filterCompletion = signal<'open' | 'done' | null>(null);
+  /** Exact category match for GET /tasks; null = all categories. */
+  filterCategory = signal<string | null>(null);
   /** Substring on title and description (server-side). */
   searchQuery = signal('');
 
@@ -44,6 +46,10 @@ export class TasksService {
     const completion = this.filterCompletion();
     if (completion) {
       params = params.set('completion', completion);
+    }
+    const category = this.filterCategory();
+    if (category) {
+      params = params.set('category', category);
     }
     const search = this.searchQuery().trim();
     if (search) {
@@ -112,8 +118,9 @@ export class TasksService {
     this.loadTasksPage(true);
   }
 
-  clearCompletionAndSearch(): void {
+  clearCompletionSearchAndCategory(): void {
     this.filterCompletion.set(null);
+    this.filterCategory.set(null);
     this.searchQuery.set('');
   }
 
