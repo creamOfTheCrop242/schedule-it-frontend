@@ -29,12 +29,17 @@ export interface Log {
   dependencyLog?: Log;
   notes?: Note[];
   deletedAt?: Date;
+  habitId?: string;
+  habit?: { id: string; name: string; description?: string | null } | null;
   /** Set on GET log detail when this log was created by completing a task. */
   sourceTask?: { id: string; title: string } | null;
 }
 
 /** POST/PATCH body fields (no relation graphs). */
-export type AddLog = Omit<Log, 'id' | 'dependencyLog' | 'notes'>;
+export type AddLog = Omit<
+  Log,
+  'id' | 'dependencyLog' | 'notes' | 'habit' | 'sourceTask'
+>;
 
 export interface Note {
   id: string;

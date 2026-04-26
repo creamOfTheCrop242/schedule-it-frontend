@@ -15,6 +15,8 @@ import { SettingsComponent } from './features/account/components/settings/settin
 import { AddTaskComponent } from './features/tasks/components/add-task/add-task.component';
 import { TasksContainerComponent } from './features/tasks/containers/tasks-container/tasks-container.component';
 import { TaskDetailComponent } from './features/tasks/components/task-detail/task-detail.component';
+import { HabitsContainerComponent } from './features/habits/containers/habits-container/habits-container.component';
+import { AddHabitComponent } from './features/habits/components/add-habit/add-habit.component';
 
 export const routes: Routes = [
   {
@@ -76,6 +78,14 @@ export const routes: Routes = [
       { path: '', component: GoalsContainerComponent },
       { path: 'add-goal', component: AddGoalComponent },
       { path: 'edit-goal/:id', component: AddGoalComponent },
+    ],
+  },
+  {
+    path: 'habits',
+    canActivate: [authGuard],
+    children: [
+      { path: '', component: HabitsContainerComponent },
+      { path: 'add-habit', component: AddHabitComponent },
     ],
   },
   {

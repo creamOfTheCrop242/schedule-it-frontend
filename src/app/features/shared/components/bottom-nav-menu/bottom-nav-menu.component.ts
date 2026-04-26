@@ -24,9 +24,12 @@ export class BottomNavMenuComponent implements OnDestroy {
   currentUrl = signal(this.router.url);
   readonly addChoiceModalOpen = signal(false);
   readonly addChoiceModalExiting = signal(false);
+  readonly goalsHabitsModalOpen = signal(false);
+  readonly goalsHabitsModalExiting = signal(false);
 
   private readonly exitFadeMs = 300;
   private exitTimer: ReturnType<typeof setTimeout> | null = null;
+  private goalsHabitsExitTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     this.router.events
@@ -38,6 +41,7 @@ export class BottomNavMenuComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.clearExitTimer();
+    this.clearGoalsHabitsExitTimer();
   }
 
   openAddChoiceModal(): void {
@@ -58,8 +62,38 @@ export class BottomNavMenuComponent implements OnDestroy {
   }
 
   onEscape(): void {
-    if (!this.addChoiceModalOpen() || this.addChoiceModalExiting()) return;
-    this.closeAddChoiceModal();
+    if (this.addChoiceModalOpen() && !this.addChoiceModalExiting()) {
+      this.closeAddChoiceModal();
+      return;
+    }
+    if (this.goalsHabitsModalOpen() && !this.goalsHabitsModalExiting()) {
+      this.closeGoalsHabitsModal();
+    }
+  }
+
+  openGoalsHabitsModal(): void {
+    this.clearGoalsHabitsExitTimer();
+    this.goalsHabitsModalExiting.set(false);
+    this.goalsHabitsModalOpen.set(true);
+  }
+
+  closeGoalsHabitsModal(): void {
+    this.beginGoalsHabitsModalExit();
+  }
+
+  onGoalsHabitsBackdropClick(event: MouseEvent): void {
+    if (this.goalsHabitsModalExiting()) return;
+    if (event.target === event.currentTarget) {
+      this.closeGoalsHabitsModal();
+    }
+  }
+
+  navigateToGoals(): void {
+    this.beginGoalsHabitsModalExit(() => void this.router.navigate(['/goals']));
+  }
+
+  navigateToHabits(): void {
+    this.beginGoalsHabitsModalExit(() => void this.router.navigate(['/habits']));
   }
 
   navigateToAddLog(): void {
@@ -112,6 +146,41 @@ export class BottomNavMenuComponent implements OnDestroy {
     }
   }
 
+  private beginGoalsHabitsModalExit(after?: () => void): void {
+    if (!this.goalsHabitsModalOpen()) {
+      after?.();
+      return;
+    }
+    if (this.goalsHabitsModalExiting()) return;
+
+    this.goalsHabitsModalExiting.set(true);
+    this.clearGoalsHabitsExitTimer();
+
+    const delayMs = this.exitAnimationDelayMs();
+    if (delayMs <= 0) {
+      queueMicrotask(() => this.finishGoalsHabitsModalExit(after));
+      return;
+    }
+    this.goalsHabitsExitTimer = setTimeout(
+      () => this.finishGoalsHabitsModalExit(after),
+      delayMs,
+    );
+  }
+
+  private finishGoalsHabitsModalExit(after?: () => void): void {
+    this.goalsHabitsExitTimer = null;
+    this.goalsHabitsModalOpen.set(false);
+    this.goalsHabitsModalExiting.set(false);
+    after?.();
+  }
+
+  private clearGoalsHabitsExitTimer(): void {
+    if (this.goalsHabitsExitTimer !== null) {
+      clearTimeout(this.goalsHabitsExitTimer);
+      this.goalsHabitsExitTimer = null;
+    }
+  }
+
   isActiveRoute(route: string): boolean {
     const url = this.currentUrl();
     const path = url.split('?')[0];
@@ -135,6 +204,8 @@ export class BottomNavMenuComponent implements OnDestroy {
     }
     if (route === '/goals') {
       return (
+        path === '/habits' ||
+        path.startsWith('/habits/') ||
         path === '/goals' ||
         (path.startsWith('/goals/') &&
           !path.includes('/add-goal') &&

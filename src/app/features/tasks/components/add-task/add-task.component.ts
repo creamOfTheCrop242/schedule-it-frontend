@@ -24,6 +24,8 @@ import {
   CATEGORY_PRESETS,
 } from '../../../shared/models/category.model';
 import { CategoryOptionsService } from '../../../shared/services/category-options.service';
+import { HabitsService } from '../../../habits/services/habits.service';
+import { HabitRow } from '../../../habits/models/habit.model';
 
 @Component({
   selector: 'app-add-task',
@@ -37,12 +39,14 @@ export class AddTaskComponent {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly categoryOptionsService = inject(CategoryOptionsService);
+  private readonly habitsService = inject(HabitsService);
 
   readonly form = new FormGroup({
     title: new FormControl('', [Validators.required]),
     description: new FormControl(''),
     categoryPreset: new FormControl<string>(''),
     categoryCustom: new FormControl(''),
+    habitId: new FormControl<string>(''),
   });
 
   readonly categorySelectOptions = computed(() => {
@@ -59,6 +63,16 @@ export class AddTaskComponent {
     }
     const extraSorted = [...extras].sort((a, b) => a.localeCompare(b));
     return ['', ...presetList, CATEGORY_CUSTOM, ...extraSorted];
+  });
+
+  readonly habitsForSelect = computed((): HabitRow[] => {
+    const res = this.habitsService.habitsOptions;
+    if (res.status() !== ResourceStatus.Resolved || !res.value()) {
+      return [];
+    }
+    return [...(res.value() ?? [])].sort((a, b) =>
+      a.name.localeCompare(b.name),
+    );
   });
 
   readonly errorMessage = signal<string | null>(null);
@@ -86,6 +100,7 @@ export class AddTaskComponent {
             description: '',
             categoryPreset: '',
             categoryCustom: '',
+            habitId: '',
           });
         }
       });
@@ -104,6 +119,8 @@ export class AddTaskComponent {
         ? (this.form.value.categoryCustom ?? '').trim()
         : catPreset.trim();
 
+    const habitIdRaw = (this.form.value.habitId ?? '').trim();
+
     this.errorMessage.set(null);
 
     const id = this.editTaskId();
@@ -112,11 +129,13 @@ export class AddTaskComponent {
           title,
           description: description ?? '',
           category: rawCategory.length > 0 ? rawCategory : '',
+          habitId: habitIdRaw || '',
         })
       : this.tasksService.create({
           title,
           ...(description ? { description } : {}),
           ...(rawCategory.length > 0 ? { category: rawCategory } : {}),
+          ...(habitIdRaw ? { habitId: habitIdRaw } : {}),
         });
 
     operation.pipe(take(1)).subscribe({
@@ -139,12 +158,14 @@ export class AddTaskComponent {
       description: task.description ?? '',
       categoryPreset: isCatPreset ? category : category ? CATEGORY_CUSTOM : '',
       categoryCustom: isCatPreset ? '' : category,
+      habitId: task.habit?.id ?? task.habitId ?? '',
     });
   }
 
   private handleSuccess(editId: string | null): void {
     this.tasksService.reloadTasksList();
     this.categoryOptionsService.categoryOptions.reload();
+    this.habitsService.habitsOptions.reload();
     if (editId) {
       void this.router.navigate(['/tasks', editId]);
     } else {
