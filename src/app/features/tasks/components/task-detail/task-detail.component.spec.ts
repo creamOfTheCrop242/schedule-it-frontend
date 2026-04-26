@@ -6,6 +6,7 @@ import {
 } from '@angular/router';
 import { of } from 'rxjs';
 
+import { GoalsService } from '../../../goals/services/goals.service';
 import { LogService } from '../../../logs/services/log.service';
 import { TaskDetailComponent } from './task-detail.component';
 import { TasksService } from '../../services/tasks.service';
@@ -23,6 +24,12 @@ describe('TaskDetailComponent', () => {
           provide: ActivatedRoute,
           useValue: {
             paramMap: of(convertToParamMap({ id: 'task-id-1' })),
+          },
+        },
+        {
+          provide: GoalsService,
+          useValue: {
+            logsGoalStatus: { reload: (): void => undefined },
           },
         },
         {
