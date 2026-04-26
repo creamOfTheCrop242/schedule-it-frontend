@@ -86,7 +86,7 @@ export class LogDetailComponent implements OnInit {
     this.actionsMenuOpen.set(false);
     this.logService.deleteLog(id).subscribe({
       next: () => {
-        this.logService.allLogs.reload();
+        this.logService.reloadLogsList();
         this.deleteConfirmId.set(null);
         void this.router.navigate(['/logs']);
       },

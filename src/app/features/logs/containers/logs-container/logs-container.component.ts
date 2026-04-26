@@ -3,8 +3,11 @@ import {
   Component,
   ResourceStatus,
   computed,
+  effect,
   inject,
   signal,
+  untracked,
+  OnDestroy,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -20,13 +23,15 @@ import { LogComponent } from '../../components/log/log.component';
   styleUrl: './logs-container.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LogsContainerComponent {
+export class LogsContainerComponent implements OnDestroy {
   logService = inject(LogService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private searchUrlDebounce?: ReturnType<typeof setTimeout>;
+  private scrollObserver: IntersectionObserver | null = null;
+
   /**
-   * Apply query params before `allLogs` runs its first GET; the constructor subscription runs too late.
+   * Apply query params before the first list fetch; the constructor subscription runs too late.
    */
   private readonly _hydrateListFiltersFromUrl = (() => {
     const q = inject(ActivatedRoute).snapshot.queryParamMap;
@@ -38,13 +43,21 @@ export class LogsContainerComponent {
     log.searchQuery.set(q.get('search') ?? '');
     return undefined;
   })();
+
   /** When false, filter controls (date, mood, search) are collapsed. */
   filtersExpanded = signal(false);
 
-  allLogs = this.logService.allLogs;
-  isLoading = this.logService.allLogs.isLoading;
-  hasLoadError = computed(
-    () => this.allLogs.status() === ResourceStatus.Error,
+  /** True during first full load (no rows yet). */
+  readonly initialListLoading = computed(
+    () => this.logService.logsListLoading() && this.logService.logsList().length === 0,
+  );
+
+  readonly hasLoadError = computed(() => this.logService.logsListError());
+
+  /** True while replacing list after filter change but rows still visible. */
+  readonly listRefreshingWithContent = computed(
+    () =>
+      this.logService.logsListLoading() && this.logService.logsList().length > 0,
   );
 
   /** Preset moods plus distinct moods from the server for the current date/search slice. */
@@ -76,12 +89,14 @@ export class LogsContainerComponent {
       this.logService.selectedDate() !== null || this.hasClientFiltersActive(),
   );
 
-  /** Header badge: count returned from the server for the active filters. */
+  /** Header badge: number of logs loaded so far. */
   headerBadgeText = computed(() => {
-    if (this.isLoading() || this.hasLoadError()) {
+    if (this.initialListLoading() || this.hasLoadError()) {
       return undefined;
     }
-    return String(this.allLogs.value()?.length ?? 0);
+    const n = this.logService.logsList().length;
+    const more = this.logService.logsHasMore();
+    return more && n > 0 ? `${n}+` : String(n);
   });
 
   /** One-line summary for the combined filters toggle (date · mood · search). */
@@ -101,7 +116,7 @@ export class LogsContainerComponent {
 
   /** Extra context when mood or search filters are active; shown under date headline. */
   clientFilterLine = computed(() => {
-    if (this.isLoading() || this.hasLoadError()) {
+    if (this.initialListLoading() || this.hasLoadError()) {
       return null;
     }
     if (!this.hasClientFiltersActive()) {
@@ -121,25 +136,28 @@ export class LogsContainerComponent {
 
   /** Human-readable list context; hidden while loading or on error. */
   filterHeadline = computed(() => {
-    if (this.isLoading() || this.hasLoadError()) {
+    if (this.initialListLoading() || this.hasLoadError()) {
       return null;
     }
+    const n = this.logService.logsList().length;
+    const logWord = n === 1 ? 'log' : 'logs';
     const raw = this.logService.selectedDate();
     if (!raw) {
-      return 'Showing all logs';
+      return `Showing ${n} ${logWord} (all dates)`;
     }
     const parts = raw.split('-').map(Number);
-    if (parts.length !== 3 || parts.some((n) => Number.isNaN(n))) {
-      return 'Filtered by date';
+    if (parts.length !== 3 || parts.some((p) => Number.isNaN(p))) {
+      return `Showing ${n} ${logWord} (date filter active)`;
     }
     const [y, m, d] = parts;
     const localDay = new Date(y, m - 1, d);
-    return `Filtered to ${localDay.toLocaleDateString(undefined, {
+    const dateLabel = localDay.toLocaleDateString(undefined, {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric',
-    })}`;
+    });
+    return `Showing ${n} ${logWord} for ${dateLabel}`;
   });
 
   /** Date segment of the filters summary (also used in the combined line). */
@@ -160,7 +178,7 @@ export class LogsContainerComponent {
 
   /** Shown only when a date filter is active (matches API timeZone param). */
   timezoneHint = computed(() => {
-    if (this.isLoading() || this.hasLoadError()) {
+    if (this.initialListLoading() || this.hasLoadError()) {
       return null;
     }
     if (!this.logService.selectedDate()) {
@@ -186,18 +204,65 @@ export class LogsContainerComponent {
   }
 
   constructor() {
-    this.route.queryParamMap
-      .pipe(takeUntilDestroyed())
-      .subscribe((q) => {
-        const d = q.get('completedDate');
-        this.logService.selectedDate.set(d && d.length > 0 ? d : null);
-        const m = q.get('mood');
-        this.logService.filterMood.set(m && m.length > 0 ? m : null);
-        this.logService.searchQuery.set(q.get('search') ?? '');
-      });
+    this.route.queryParamMap.pipe(takeUntilDestroyed()).subscribe((q) => {
+      const d = q.get('completedDate');
+      this.logService.selectedDate.set(d && d.length > 0 ? d : null);
+      const m = q.get('mood');
+      this.logService.filterMood.set(m && m.length > 0 ? m : null);
+      this.logService.searchQuery.set(q.get('search') ?? '');
+      this.logService.reloadLogsList();
+    });
+
+    effect(() => {
+      this.logService.logsList();
+      this.logService.logsHasMore();
+      this.logService.logsListLoading();
+      this.logService.logsListLoadingMore();
+      untracked(() => queueMicrotask(() => this.setupScrollObserver()));
+    });
   }
 
-  /** Keeps the address bar aligned with what GET /logs sends (httpResource uses signals, not the URL). */
+  ngOnDestroy(): void {
+    this.scrollObserver?.disconnect();
+    this.scrollObserver = null;
+  }
+
+  private setupScrollObserver(): void {
+    this.scrollObserver?.disconnect();
+    this.scrollObserver = null;
+
+    if (
+      !this.logService.logsHasMore() ||
+      this.logService.logsListLoading() ||
+      this.logService.logsListLoadingMore()
+    ) {
+      return;
+    }
+
+    const el = document.getElementById('logs-scroll-sentinel');
+    if (!el) {
+      return;
+    }
+
+    this.scrollObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (
+            entry.isIntersecting &&
+            this.logService.logsHasMore() &&
+            !this.logService.logsListLoading() &&
+            !this.logService.logsListLoadingMore()
+          ) {
+            this.logService.loadLogsPage(false);
+          }
+        }
+      },
+      { root: null, rootMargin: '120px', threshold: 0 },
+    );
+    this.scrollObserver.observe(el);
+  }
+
+  /** Keeps the address bar aligned with what GET /logs sends. */
   private syncListQueryToUrl(): void {
     const date = this.logService.selectedDate();
     const mood = this.logService.filterMood();
@@ -223,7 +288,10 @@ export class LogsContainerComponent {
   onSearchInput(event: Event) {
     this.logService.searchQuery.set((event.target as HTMLInputElement).value);
     clearTimeout(this.searchUrlDebounce);
-    this.searchUrlDebounce = setTimeout(() => this.syncListQueryToUrl(), 300);
+    this.searchUrlDebounce = setTimeout(() => {
+      this.syncListQueryToUrl();
+      this.logService.reloadLogsList();
+    }, 300);
   }
 
   clearClientFilters() {

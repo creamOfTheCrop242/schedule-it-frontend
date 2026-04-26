@@ -28,7 +28,7 @@ describe('TaskDetailComponent', () => {
         {
           provide: LogService,
           useValue: {
-            allLogs: { reload: (): void => undefined },
+            reloadLogsList: (): void => undefined,
           },
         },
         {

@@ -1,8 +1,6 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  computed,
-  effect,
   inject,
   signal,
 } from '@angular/core';
@@ -46,26 +44,12 @@ export class AddLogComponent {
 
   readonly id = this.route.snapshot.paramMap.get('id');
 
-  readonly currentLog = computed(() => {
-    if (!this.id) return undefined;
-    const logs = this.logService.allLogs.value();
-    if (!logs) return undefined;
-    return logs.find((log) => log.id === this.id);
-  });
-
   readonly moodPresetOptions = ['', ...MOOD_PRESETS, MOOD_CUSTOM];
 
   readonly errorMessage = signal<string | null>(null);
   readonly scheduleOpen = signal(false);
 
   constructor() {
-    effect(() => {
-      const log = this.currentLog();
-      if (log) {
-        this.populateForm(log);
-      }
-    });
-
     if (this.id) {
       this.logService.getLog(this.id).pipe(take(1)).subscribe({
         next: (log) => this.populateForm(log),
@@ -163,7 +147,7 @@ export class AddLogComponent {
 
   private handleSuccess(): void {
     this.router.navigate(['/logs']);
-    this.logService.allLogs.reload();
+    this.logService.reloadLogsList();
     this.goalsService.logsGoalStatus.reload();
   }
 
