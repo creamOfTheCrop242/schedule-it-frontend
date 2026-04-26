@@ -97,6 +97,20 @@
     }
 
     <div>
+      <label for="log-habit" class="block text-sm font-medium mb-2">Habit</label>
+      <select
+        id="log-habit"
+        formControlName="habitId"
+        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+      >
+        <option value="">No habit (optional)</option>
+        @for (h of habitsForSelect(); track h.id) {
+          <option [value]="h.id">{{ h.name }}</option>
+        }
+      </select>
+    </div>
+
+    <div>
       <label for="log-completed-date" class="block text-sm font-medium mb-2"
         >Completed date &amp; time</label
       >

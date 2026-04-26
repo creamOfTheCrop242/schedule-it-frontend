@@ -56,10 +56,14 @@
         </button>
       </div>
       <div>
-        <a
-          routerLink="/goals"
-          class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
-          aria-label="Goals"
+        <button
+          type="button"
+          class="bg-transparent border-none p-0 m-0 flex items-center justify-center cursor-pointer"
+          (click)="openGoalsHabitsModal()"
+          [attr.aria-expanded]="goalsHabitsModalOpen()"
+          aria-haspopup="dialog"
+          aria-controls="goals-habits-dialog"
+          aria-label="View goals or habits"
         >
           <span
             class="material-icons text-[2rem]"
@@ -69,7 +73,7 @@
             aria-hidden="true"
             >sports_score</span
           >
-        </a>
+        </button>
       </div>
       <div>
         <a
@@ -141,6 +145,65 @@
             type="button"
             class="w-full rounded-lg py-2 text-sm text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-400"
             (click)="closeAddChoiceModal()"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (goalsHabitsModalOpen()) {
+    <div
+      class="add-choice-modal-root fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4"
+      [class.add-choice-modal-root--exiting]="goalsHabitsModalExiting()"
+      (click)="onGoalsHabitsBackdropClick($event)"
+      role="presentation"
+    >
+      <div
+        id="goals-habits-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="goals-habits-dialog-title"
+        aria-describedby="goals-habits-dialog-desc"
+        class="add-choice-dialog-panel w-full max-w-sm rounded-xl border border-[#404040] bg-[#2c2c2c] p-5 text-white shadow-xl"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="flex items-start justify-between gap-3 mb-4">
+          <h2 id="goals-habits-dialog-title" class="text-lg font-semibold pr-2">
+            View goals or habits
+          </h2>
+          <button
+            type="button"
+            class="shrink-0 rounded-md p-1 text-gray-400 hover:bg-[#404040] hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            (click)="closeGoalsHabitsModal()"
+            aria-label="Close"
+          >
+            <span class="material-icons text-xl" aria-hidden="true">close</span>
+          </button>
+        </div>
+        <p id="goals-habits-dialog-desc" class="text-sm text-gray-400 mb-5">
+          Open your goals dashboard or your habits list.
+        </p>
+        <div class="flex flex-col gap-3">
+          <button
+            type="button"
+            class="w-full rounded-lg bg-purple-600 py-3 px-4 font-medium text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400"
+            (click)="navigateToGoals()"
+          >
+            View goals
+          </button>
+          <button
+            type="button"
+            class="w-full rounded-lg border border-[#555] bg-transparent py-3 px-4 font-medium text-white hover:bg-[#404040] focus:outline-none focus:ring-2 focus:ring-purple-400"
+            (click)="navigateToHabits()"
+          >
+            View habits
+          </button>
+          <button
+            type="button"
+            class="w-full rounded-lg py-2 text-sm text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-400"
+            (click)="closeGoalsHabitsModal()"
           >
             Cancel
           </button>

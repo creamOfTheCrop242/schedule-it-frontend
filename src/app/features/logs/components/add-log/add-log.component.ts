@@ -24,6 +24,8 @@ import {
   CATEGORY_PRESETS,
 } from '../../../shared/models/category.model';
 import { CategoryOptionsService } from '../../../shared/services/category-options.service';
+import { HabitsService } from '../../../habits/services/habits.service';
+import { HabitRow } from '../../../habits/models/habit.model';
 
 @Component({
   selector: 'app-add-log',
@@ -38,6 +40,7 @@ export class AddLogComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly goalsService = inject(GoalsService);
   private readonly categoryOptionsService = inject(CategoryOptionsService);
+  private readonly habitsService = inject(HabitsService);
 
   readonly form = new FormGroup({
     name: new FormControl('', [Validators.required]),
@@ -47,6 +50,7 @@ export class AddLogComponent {
     moodCustom: new FormControl(''),
     categoryPreset: new FormControl<string>(''),
     categoryCustom: new FormControl(''),
+    habitId: new FormControl<string>(''),
     startTime: new FormControl<string | null>(null),
     endTime: new FormControl<string | null>(null),
     completedDate: new FormControl<string | null>(null),
@@ -75,6 +79,17 @@ export class AddLogComponent {
     }
     const extraSorted = [...extras].sort((a, b) => a.localeCompare(b));
     return ['', ...presetList, CATEGORY_CUSTOM, ...extraSorted];
+  });
+
+  /** Habits sorted by name for the dropdown (when GET /habits has resolved). */
+  readonly habitsForSelect = computed((): HabitRow[] => {
+    const res = this.habitsService.habitsOptions;
+    if (res.status() !== ResourceStatus.Resolved || !res.value()) {
+      return [];
+    }
+    return [...(res.value() ?? [])].sort((a, b) =>
+      a.name.localeCompare(b.name),
+    );
   });
 
   readonly errorMessage = signal<string | null>(null);
@@ -119,7 +134,9 @@ export class AddLogComponent {
         ? (this.form.value.categoryCustom ?? '').trim() || undefined
         : catPreset || undefined;
 
-    return {
+    const habitIdRaw = (this.form.value.habitId ?? '').trim();
+
+    const base: AddLog = {
       name: this.form.value.name!,
       description: this.form.value.description || undefined,
       surroundings: this.form.value.surroundings || undefined,
@@ -129,6 +146,11 @@ export class AddLogComponent {
       endTime: this.parseDatetimeLocalInput(this.form.value.endTime),
       completedDate: this.parseDatetimeLocalInput(this.form.value.completedDate),
     };
+
+    if (this.id) {
+      return { ...base, habitId: habitIdRaw || '' };
+    }
+    return habitIdRaw ? { ...base, habitId: habitIdRaw } : base;
   }
 
   private populateForm(log: Log): void {
@@ -148,6 +170,7 @@ export class AddLogComponent {
       moodCustom: isPreset ? '' : mood,
       categoryPreset: isCatPreset ? category : category ? CATEGORY_CUSTOM : '',
       categoryCustom: isCatPreset ? '' : category,
+      habitId: log.habit?.id ?? log.habitId ?? '',
       startTime: this.toDatetimeLocalInputValue(log.startTime),
       endTime: this.toDatetimeLocalInputValue(log.endTime),
       completedDate: this.toDatetimeLocalInputValue(log.completedDate),
@@ -195,6 +218,7 @@ export class AddLogComponent {
     this.logService.reloadLogsList();
     this.goalsService.logsGoalStatus.reload();
     this.categoryOptionsService.categoryOptions.reload();
+    this.habitsService.habitsOptions.reload();
   }
 
   private handleError(): void {
