@@ -172,6 +172,23 @@
               </dd>
             </div>
           }
+          @if (logData.category) {
+            <div
+              class="rounded-lg border border-gray-600/60 bg-[#1a1a1a]/50 px-3 py-2 sm:grid sm:grid-cols-[minmax(0,7rem)_1fr] sm:items-center sm:gap-3"
+            >
+              <dt
+                class="text-xs font-medium uppercase tracking-wide text-gray-500"
+              >
+                Category
+              </dt>
+              <dd class="mt-1 sm:mt-0">
+                <span
+                  class="inline-flex max-w-full items-center rounded-full border border-sky-400/35 bg-sky-500/10 px-2.5 py-0.5 text-xs font-medium text-sky-100"
+                  >{{ logData.category }}</span
+                >
+              </dd>
+            </div>
+          }
           @if (logData.startTime) {
             <div
               class="rounded-lg border border-gray-600/60 bg-[#1a1a1a]/50 px-3 py-2 sm:grid sm:grid-cols-[minmax(0,7rem)_1fr] sm:items-start sm:gap-3"

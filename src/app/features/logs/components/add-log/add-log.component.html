@@ -69,6 +69,34 @@
     }
 
     <div>
+      <label for="log-category" class="block text-sm font-medium mb-2">Category</label>
+      <select
+        id="log-category"
+        formControlName="categoryPreset"
+        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+      >
+        <option value="">Select category (optional)</option>
+        @for (option of categorySelectOptions(); track option) {
+          @if (option) {
+            <option [value]="option">{{ option }}</option>
+          }
+        }
+      </select>
+    </div>
+
+    @if (form.get('categoryPreset')?.value === 'Custom') {
+      <div>
+        <label for="log-category-custom" class="block text-sm font-medium mb-2">Custom category</label>
+        <app-input
+          [id]="'log-category-custom'"
+          placeholder="e.g. Client project"
+          [name]="form.controls['categoryCustom']"
+          type="text"
+        ></app-input>
+      </div>
+    }
+
+    <div>
       <label for="log-completed-date" class="block text-sm font-medium mb-2"
         >Completed date &amp; time</label
       >

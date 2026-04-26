@@ -128,7 +128,7 @@
             <div class="flex flex-col gap-3 border-t border-gray-600 pt-4">
               <span
                 class="text-xs font-medium uppercase tracking-wide text-gray-500"
-                >Status &amp; search</span
+                >Status, category &amp; search</span
               >
               <div
                 class="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-3"
@@ -148,6 +148,27 @@
                   <option value="">All statuses</option>
                   <option value="open">Open</option>
                   <option value="done">Done</option>
+                </select>
+              </div>
+              <div
+                class="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-center sm:gap-3"
+              >
+                <label
+                  for="task-category-filter"
+                  class="shrink-0 text-sm text-gray-300"
+                  >Category</label
+                >
+                <select
+                  id="task-category-filter"
+                  name="taskCategoryFilter"
+                  [ngModel]="tasksService.filterCategory() ?? ''"
+                  (ngModelChange)="onCategoryModelChange($event)"
+                  class="min-w-0 flex-1 rounded-md border border-gray-600 bg-[#1a1a1a] px-3 py-2 text-white transition-shadow duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:shadow-md focus:shadow-purple-500/15"
+                >
+                  <option value="">All categories</option>
+                  @for (opt of categoryMenuOptions(); track opt) {
+                    <option [value]="opt">{{ opt }}</option>
+                  }
                 </select>
               </div>
               <div
@@ -174,7 +195,7 @@
                   (click)="clearClientFilters()"
                   class="self-start rounded-md border border-gray-500 px-3 py-2 text-sm text-white transition-colors duration-200 hover:border-purple-400/60 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 active:scale-[0.98] motion-reduce:active:scale-100"
                 >
-                  Clear status &amp; search
+                  Clear status, category & search
                 </button>
               }
             </div>
@@ -267,6 +288,12 @@
                           >
                         }
                       </span>
+                      @if (task.category) {
+                        <span
+                          class="inline-flex max-w-full items-center self-start rounded-full border border-sky-400/35 bg-sky-500/10 px-2 py-0.5 text-xs font-medium text-sky-100"
+                          >{{ task.category }}</span
+                        >
+                      }
                       <span class="text-xs text-gray-400 tabular-nums">
                         Created
                         {{ task.createdAt | date: 'MMM d, y · h:mm a' }}
@@ -336,15 +363,14 @@
               </div>
               <p class="m-0">No tasks match your filters.</p>
               <p class="mt-2 mb-0 text-sm text-gray-400">
-                Try different search text or status, or clear status &amp;
-                search.
+                Try different search text, status, or category, or clear filters.
               </p>
               <button
                 type="button"
                 (click)="clearClientFilters()"
                 class="mt-4 rounded-md border border-purple-500/40 bg-purple-500/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-purple-400 hover:bg-purple-500/20 focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
-                Clear status &amp; search
+                Clear status, category & search
               </button>
             </div>
           } @else if (tasksService.selectedDate()) {

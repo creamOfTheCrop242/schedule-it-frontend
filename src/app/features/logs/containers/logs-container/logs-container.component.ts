@@ -12,6 +12,8 @@ import {
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CATEGORY_PRESETS } from '../../../shared/models/category.model';
+import { CategoryOptionsService } from '../../../shared/services/category-options.service';
 import { MOOD_PRESETS } from '../../models/log.model';
 import { LogService } from '../../services/log.service';
 import { LogComponent } from '../../components/log/log.component';
@@ -25,6 +27,7 @@ import { LogComponent } from '../../components/log/log.component';
 })
 export class LogsContainerComponent implements OnDestroy {
   logService = inject(LogService);
+  private readonly categoryOptionsService = inject(CategoryOptionsService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private searchUrlDebounce?: ReturnType<typeof setTimeout>;
@@ -40,6 +43,8 @@ export class LogsContainerComponent implements OnDestroy {
     log.selectedDate.set(d && d.length > 0 ? d : null);
     const m = q.get('mood');
     log.filterMood.set(m && m.length > 0 ? m : null);
+    const cat = q.get('category');
+    log.filterCategory.set(cat && cat.length > 0 ? cat : null);
     log.searchQuery.set(q.get('search') ?? '');
     return undefined;
   })();
@@ -77,9 +82,27 @@ export class LogsContainerComponent implements OnDestroy {
     return [...presetList, ...extraSorted];
   });
 
+  /** Preset categories plus distinct labels from logs/tasks for this account. */
+  categoryMenuOptions = computed(() => {
+    const presetList = [...CATEGORY_PRESETS];
+    const presetSet = new Set<string>(presetList);
+    const extras = new Set<string>();
+    const res = this.categoryOptionsService.categoryOptions;
+    if (res.status() === ResourceStatus.Resolved && res.value()) {
+      for (const c of res.value() ?? []) {
+        if (c && !presetSet.has(c)) {
+          extras.add(c);
+        }
+      }
+    }
+    const extraSorted = [...extras].sort((a, b) => a.localeCompare(b));
+    return [...presetList, ...extraSorted];
+  });
+
   hasClientFiltersActive = computed(
     () =>
       this.logService.filterMood() !== null ||
+      this.logService.filterCategory() !== null ||
       this.logService.searchQuery().trim().length > 0,
   );
 
@@ -99,11 +122,13 @@ export class LogsContainerComponent implements OnDestroy {
     return more && n > 0 ? `${n}+` : String(n);
   });
 
-  /** One-line summary for the combined filters toggle (date · mood · search). */
+  /** One-line summary for the combined filters toggle (date · mood · category · search). */
   filtersPanelSummary = computed(() => {
     const mood = this.logService.filterMood();
+    const category = this.logService.filterCategory();
     const q = this.logService.searchQuery().trim();
     const moodPart = mood ?? 'All moods';
+    const categoryPart = category ?? 'All categories';
     const searchPart =
       q.length === 0
         ? 'No search'
@@ -111,7 +136,7 @@ export class LogsContainerComponent implements OnDestroy {
           ? `${q.slice(0, 20)}…`
           : q;
     const searchSegment = q.length === 0 ? 'No search' : `"${searchPart}"`;
-    return `${this.dateFilterSummary()} · ${moodPart} · ${searchSegment}`;
+    return `${this.dateFilterSummary()} · ${moodPart} · ${categoryPart} · ${searchSegment}`;
   });
 
   /** Extra context when mood or search filters are active; shown under date headline. */
@@ -126,6 +151,10 @@ export class LogsContainerComponent implements OnDestroy {
     const mood = this.logService.filterMood();
     if (mood) {
       parts.push(`Mood: ${mood}`);
+    }
+    const category = this.logService.filterCategory();
+    if (category) {
+      parts.push(`Category: ${category}`);
     }
     const q = this.logService.searchQuery().trim();
     if (q) {
@@ -209,6 +238,8 @@ export class LogsContainerComponent implements OnDestroy {
       this.logService.selectedDate.set(d && d.length > 0 ? d : null);
       const m = q.get('mood');
       this.logService.filterMood.set(m && m.length > 0 ? m : null);
+      const cat = q.get('category');
+      this.logService.filterCategory.set(cat && cat.length > 0 ? cat : null);
       this.logService.searchQuery.set(q.get('search') ?? '');
       this.logService.reloadLogsList();
     });
@@ -266,6 +297,7 @@ export class LogsContainerComponent implements OnDestroy {
   private syncListQueryToUrl(): void {
     const date = this.logService.selectedDate();
     const mood = this.logService.filterMood();
+    const category = this.logService.filterCategory();
     const search = this.logService.searchQuery().trim();
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     void this.router.navigate([], {
@@ -275,6 +307,7 @@ export class LogsContainerComponent implements OnDestroy {
         completedDate: date ?? undefined,
         timeZone: date ? tz : undefined,
         mood: mood ?? undefined,
+        category: category ?? undefined,
         search: search || undefined,
       },
     });
@@ -282,6 +315,11 @@ export class LogsContainerComponent implements OnDestroy {
 
   onMoodModelChange(value: string) {
     this.logService.filterMood.set(value || null);
+    this.syncListQueryToUrl();
+  }
+
+  onCategoryModelChange(value: string) {
+    this.logService.filterCategory.set(value || null);
     this.syncListQueryToUrl();
   }
 
@@ -295,7 +333,7 @@ export class LogsContainerComponent implements OnDestroy {
   }
 
   clearClientFilters() {
-    this.logService.clearMoodAndSearch();
+    this.logService.clearMoodCategoryAndSearch();
     this.syncListQueryToUrl();
   }
 }

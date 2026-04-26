@@ -1,6 +1,8 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ResourceStatus,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -17,6 +19,11 @@ import { AddLog, Log, MOOD_PRESETS, MOOD_CUSTOM } from '../../models/log.model';
 import { take } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import { GoalsService } from '../../../goals/services/goals.service';
+import {
+  CATEGORY_CUSTOM,
+  CATEGORY_PRESETS,
+} from '../../../shared/models/category.model';
+import { CategoryOptionsService } from '../../../shared/services/category-options.service';
 
 @Component({
   selector: 'app-add-log',
@@ -30,6 +37,7 @@ export class AddLogComponent {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly goalsService = inject(GoalsService);
+  private readonly categoryOptionsService = inject(CategoryOptionsService);
 
   readonly form = new FormGroup({
     name: new FormControl('', [Validators.required]),
@@ -37,6 +45,8 @@ export class AddLogComponent {
     surroundings: new FormControl(''),
     moodPreset: new FormControl<string>(''),
     moodCustom: new FormControl(''),
+    categoryPreset: new FormControl<string>(''),
+    categoryCustom: new FormControl(''),
     startTime: new FormControl<string | null>(null),
     endTime: new FormControl<string | null>(null),
     completedDate: new FormControl<string | null>(null),
@@ -45,6 +55,27 @@ export class AddLogComponent {
   readonly id = this.route.snapshot.paramMap.get('id');
 
   readonly moodPresetOptions = ['', ...MOOD_PRESETS, MOOD_CUSTOM];
+
+  /** Presets, Custom, then distinct labels from the server (excluding preset duplicates). */
+  readonly categorySelectOptions = computed(() => {
+    const presetList = [...CATEGORY_PRESETS];
+    const presetSet = new Set<string>(presetList);
+    const extras = new Set<string>();
+    const res = this.categoryOptionsService.categoryOptions;
+    if (res.status() === ResourceStatus.Resolved && res.value()) {
+      for (const c of res.value() ?? []) {
+        if (
+          c &&
+          c !== CATEGORY_CUSTOM &&
+          !presetSet.has(c)
+        ) {
+          extras.add(c);
+        }
+      }
+    }
+    const extraSorted = [...extras].sort((a, b) => a.localeCompare(b));
+    return ['', ...presetList, CATEGORY_CUSTOM, ...extraSorted];
+  });
 
   readonly errorMessage = signal<string | null>(null);
   readonly scheduleOpen = signal(false);
@@ -82,11 +113,18 @@ export class AddLogComponent {
         ? (this.form.value.moodCustom ?? '').trim() || undefined
         : moodPreset || undefined;
 
+    const catPreset = this.form.value.categoryPreset ?? '';
+    const category =
+      catPreset === CATEGORY_CUSTOM
+        ? (this.form.value.categoryCustom ?? '').trim() || undefined
+        : catPreset || undefined;
+
     return {
       name: this.form.value.name!,
       description: this.form.value.description || undefined,
       surroundings: this.form.value.surroundings || undefined,
       mood,
+      category,
       startTime: this.parseDatetimeLocalInput(this.form.value.startTime),
       endTime: this.parseDatetimeLocalInput(this.form.value.endTime),
       completedDate: this.parseDatetimeLocalInput(this.form.value.completedDate),
@@ -97,12 +135,19 @@ export class AddLogComponent {
     const mood = log.mood || '';
     const isPreset = mood && MOOD_PRESETS.includes(mood as (typeof MOOD_PRESETS)[number]);
 
+    const category = log.category || '';
+    const isCatPreset =
+      !!category &&
+      CATEGORY_PRESETS.includes(category as (typeof CATEGORY_PRESETS)[number]);
+
     this.form.patchValue({
       name: log.name,
       description: log.description || '',
       surroundings: log.surroundings || '',
       moodPreset: isPreset ? mood : mood ? MOOD_CUSTOM : '',
       moodCustom: isPreset ? '' : mood,
+      categoryPreset: isCatPreset ? category : category ? CATEGORY_CUSTOM : '',
+      categoryCustom: isCatPreset ? '' : category,
       startTime: this.toDatetimeLocalInputValue(log.startTime),
       endTime: this.toDatetimeLocalInputValue(log.endTime),
       completedDate: this.toDatetimeLocalInputValue(log.completedDate),
@@ -149,6 +194,7 @@ export class AddLogComponent {
     this.router.navigate(['/logs']);
     this.logService.reloadLogsList();
     this.goalsService.logsGoalStatus.reload();
+    this.categoryOptionsService.categoryOptions.reload();
   }
 
   private handleError(): void {
