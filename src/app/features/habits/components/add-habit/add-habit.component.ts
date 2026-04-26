@@ -13,6 +13,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { take } from 'rxjs';
+import { GoalScope } from '../../../goals/models/goals.models';
 import { InputComponent } from '../../../shared/components/input/input.component';
 import { HabitsService } from '../../services/habits.service';
 
@@ -30,7 +31,14 @@ export class AddHabitComponent {
   readonly form = new FormGroup({
     name: new FormControl('', [Validators.required]),
     description: new FormControl(''),
+    cadence: new FormControl<GoalScope>(GoalScope.DAY, [Validators.required]),
+    targetPerPeriod: new FormControl(1, [
+      Validators.required,
+      Validators.min(1),
+    ]),
   });
+
+  readonly cadenceOptions = Object.values(GoalScope);
 
   readonly errorMessage = signal<string | null>(null);
 
@@ -41,11 +49,19 @@ export class AddHabitComponent {
     if (!name) return;
 
     const desc = this.form.value.description?.trim();
+    const cadence = this.form.value.cadence ?? GoalScope.DAY;
+    const targetRaw = this.form.value.targetPerPeriod;
+    const targetPerPeriod =
+      typeof targetRaw === 'number' && Number.isFinite(targetRaw)
+        ? Math.max(1, Math.floor(targetRaw))
+        : 1;
     this.errorMessage.set(null);
 
     this.habitsService
       .create({
         name,
+        cadence,
+        targetPerPeriod,
         ...(desc ? { description: desc } : {}),
       })
       .pipe(take(1))

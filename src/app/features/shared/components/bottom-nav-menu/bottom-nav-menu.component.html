@@ -56,6 +56,22 @@
         </button>
       </div>
       <div>
+        <a
+          routerLink="/tasks"
+          class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
+          aria-label="Tasks"
+        >
+          <span
+            class="material-icons text-[2rem]"
+            [class.text-purple-500]="isActiveRoute('/tasks')"
+            [class.active-icon]="isActiveRoute('/tasks')"
+            [class.text-gray-400]="!isActiveRoute('/tasks')"
+            aria-hidden="true"
+            >checklist</span
+          >
+        </a>
+      </div>
+      <div>
         <button
           type="button"
           class="bg-transparent border-none p-0 m-0 flex items-center justify-center cursor-pointer"
@@ -74,22 +90,6 @@
             >sports_score</span
           >
         </button>
-      </div>
-      <div>
-        <a
-          routerLink="/tasks"
-          class="bg-transparent border-none p-0 m-0 flex items-center justify-center"
-          aria-label="Tasks"
-        >
-          <span
-            class="material-icons text-[2rem]"
-            [class.text-purple-500]="isActiveRoute('/tasks')"
-            [class.active-icon]="isActiveRoute('/tasks')"
-            [class.text-gray-400]="!isActiveRoute('/tasks')"
-            aria-hidden="true"
-            >checklist</span
-          >
-        </a>
       </div>
     </div>
   </nav>
