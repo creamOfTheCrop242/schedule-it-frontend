@@ -125,7 +125,7 @@ export class TaskDetailComponent implements OnInit {
       next: (updated) => {
         this.task.set(updated);
         this.tasksService.reloadTasksList();
-        this.goalsService.logsGoalStatus.reload();
+        this.goalsService.reloadAllGoalStatus();
         if (updated.completedDate) {
           this.logService.reloadLogsList();
           this.categoryOptionsService.categoryOptions.reload();

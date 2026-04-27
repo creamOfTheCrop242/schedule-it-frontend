@@ -29,7 +29,7 @@ describe('TaskDetailComponent', () => {
         {
           provide: GoalsService,
           useValue: {
-            logsGoalStatus: { reload: (): void => undefined },
+            reloadAllGoalStatus: (): void => undefined,
           },
         },
         {

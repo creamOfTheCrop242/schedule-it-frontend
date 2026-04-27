@@ -6,7 +6,6 @@ import {
   GoalMetric,
   GoalScope,
   GoalStatusResponse,
-  UpdateGoal,
 } from '../models/goals.models';
 
 @Injectable({
@@ -38,6 +37,19 @@ export class GoalsService {
       metric: GoalMetric.LOGS_ADDED,
     },
   });
+
+  logsCompletedGoalStatus = httpResource<GoalStatusResponse[]>({
+    url: `${environment.baseUrl}/goals/status`,
+    params: {
+      metric: GoalMetric.LOGS_COMPLETED,
+    },
+  });
+
+  /** Call after mutations that affect goal progress (logs, tasks, goal definitions). */
+  reloadAllGoalStatus(): void {
+    this.logsGoalStatus.reload();
+    this.logsCompletedGoalStatus.reload();
+  }
 
   addGoal(goal: AddGoal) {
     return this.httpClient.post<GoalStatusResponse>(

@@ -17,6 +17,7 @@ import { TasksContainerComponent } from './features/tasks/containers/tasks-conta
 import { TaskDetailComponent } from './features/tasks/components/task-detail/task-detail.component';
 import { HabitsContainerComponent } from './features/habits/containers/habits-container/habits-container.component';
 import { AddHabitComponent } from './features/habits/components/add-habit/add-habit.component';
+import { HabitDetailComponent } from './features/habits/components/habit-detail/habit-detail.component';
 
 export const routes: Routes = [
   {
@@ -86,6 +87,8 @@ export const routes: Routes = [
     children: [
       { path: '', component: HabitsContainerComponent },
       { path: 'add-habit', component: AddHabitComponent },
+      { path: 'edit-habit/:id', component: AddHabitComponent },
+      { path: ':id', component: HabitDetailComponent },
     ],
   },
   {
