@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  OnInit,
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -11,7 +12,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { take } from 'rxjs';
 import { GoalScope } from '../../../goals/models/goals.models';
 import { InputComponent } from '../../../shared/components/input/input.component';
@@ -24,9 +25,14 @@ import { HabitsService } from '../../services/habits.service';
   styleUrl: './add-habit.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddHabitComponent {
+export class AddHabitComponent implements OnInit {
   private readonly habitsService = inject(HabitsService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+
+  /** Present when route is `habits/edit-habit/:id`. */
+  readonly editId = this.route.snapshot.paramMap.get('id');
+  readonly isEditMode = this.editId !== null && this.editId.length > 0;
 
   readonly form = new FormGroup({
     name: new FormControl('', [Validators.required]),
@@ -41,14 +47,39 @@ export class AddHabitComponent {
   readonly cadenceOptions = Object.values(GoalScope);
 
   readonly errorMessage = signal<string | null>(null);
+  readonly loadError = signal(false);
+  readonly isLoadingHabit = signal(this.isEditMode);
+
+  ngOnInit(): void {
+    const id = this.editId;
+    if (!id) {
+      this.isLoadingHabit.set(false);
+      return;
+    }
+    this.habitsService.getHabit(id).pipe(take(1)).subscribe({
+      next: (h) => {
+        this.isLoadingHabit.set(false);
+        this.form.patchValue({
+          name: h.name,
+          description: h.description ?? '',
+          cadence: h.cadence,
+          targetPerPeriod: h.targetPerPeriod,
+        });
+      },
+      error: () => {
+        this.isLoadingHabit.set(false);
+        this.loadError.set(true);
+      },
+    });
+  }
 
   onSubmit(): void {
-    if (!this.form.valid) return;
+    if (!this.form.valid || this.isLoadingHabit()) return;
 
     const name = this.form.value.name?.trim() ?? '';
     if (!name) return;
 
-    const desc = this.form.value.description?.trim();
+    const descTrimmed = this.form.value.description?.trim() ?? '';
     const cadence = this.form.value.cadence ?? GoalScope.DAY;
     const targetRaw = this.form.value.targetPerPeriod;
     const targetPerPeriod =
@@ -57,12 +88,33 @@ export class AddHabitComponent {
         : 1;
     this.errorMessage.set(null);
 
+    const id = this.editId;
+    if (id) {
+      this.habitsService
+        .updateHabit(id, {
+          name,
+          cadence,
+          targetPerPeriod,
+          description: descTrimmed,
+        })
+        .pipe(take(1))
+        .subscribe({
+          next: () => {
+            this.habitsService.habitsOptions.reload();
+            void this.router.navigate(['/habits', id]);
+          },
+          error: () =>
+            this.errorMessage.set('Failed to update habit. Please try again.'),
+        });
+      return;
+    }
+
     this.habitsService
       .create({
         name,
         cadence,
         targetPerPeriod,
-        ...(desc ? { description: desc } : {}),
+        ...(descTrimmed.length > 0 ? { description: descTrimmed } : {}),
       })
       .pipe(take(1))
       .subscribe({

@@ -9,4 +9,6 @@ export interface HabitRow {
   logCount?: number;
   currentStreak?: number;
   longestStreak?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }

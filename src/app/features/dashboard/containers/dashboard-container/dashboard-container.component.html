@@ -1,3 +1,235 @@
-<section class="p-4">
-  <app-log-progress-card></app-log-progress-card>
+<section class="mx-auto max-w-2xl space-y-6 p-4 pb-24" aria-label="Dashboard">
+  <header class="space-y-1">
+    <h1 class="text-2xl font-semibold tracking-tight text-white">Home</h1>
+    <p class="text-sm text-gray-400">{{ headerDate() }}</p>
+  </header>
+
+  <section aria-label="Quick actions">
+    <h2 class="mb-3 text-xs font-medium uppercase tracking-wide text-gray-500">
+      Quick actions
+    </h2>
+    <div class="flex flex-wrap gap-2">
+      <a
+        routerLink="/logs/add-log"
+        class="inline-flex items-center gap-1.5 rounded-lg border border-purple-500/40 bg-purple-500/10 px-3 py-2 text-sm font-medium text-white transition-colors hover:border-purple-400 hover:bg-purple-500/20 focus:outline-none focus:ring-2 focus:ring-purple-500"
+      >
+        <span class="material-icons text-lg leading-none" aria-hidden="true"
+          >post_add</span
+        >
+        Add log
+      </a>
+      <a
+        routerLink="/tasks/add-task"
+        class="inline-flex items-center gap-1.5 rounded-lg border border-gray-600 bg-[#2c2c2c] px-3 py-2 text-sm font-medium text-white transition-colors hover:border-purple-500/40 focus:outline-none focus:ring-2 focus:ring-purple-500"
+      >
+        <span class="material-icons text-lg leading-none" aria-hidden="true"
+          >add_task</span
+        >
+        Add task
+      </a>
+      <a
+        routerLink="/habits"
+        class="inline-flex items-center gap-1.5 rounded-lg border border-gray-600 bg-[#2c2c2c] px-3 py-2 text-sm font-medium text-white transition-colors hover:border-purple-500/40 focus:outline-none focus:ring-2 focus:ring-purple-500"
+      >
+        <span class="material-icons text-lg leading-none" aria-hidden="true"
+          >sports_score</span
+        >
+        Habits
+      </a>
+      <a
+        routerLink="/goals"
+        class="inline-flex items-center gap-1.5 rounded-lg border border-gray-600 bg-[#2c2c2c] px-3 py-2 text-sm font-medium text-white transition-colors hover:border-purple-500/40 focus:outline-none focus:ring-2 focus:ring-purple-500"
+      >
+        <span class="material-icons text-lg leading-none" aria-hidden="true"
+          >flag</span
+        >
+        Goals
+      </a>
+    </div>
+  </section>
+
+  <div class="space-y-6">
+    <app-log-progress-card
+      heading="Log goals — added"
+      [goals]="goalsService.logsGoalStatus"
+      valueLabel="added"
+      ctaLabel="Browse logs"
+      ctaLink="/logs"
+    />
+
+    <section
+      class="rounded-3xl border border-gray-600 bg-[#2c2c2c] p-4 shadow-lg shadow-black/10"
+      aria-label="Habits"
+    >
+      <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <h2 class="text-xl font-semibold text-white">Habits</h2>
+        <a
+          routerLink="/habits"
+          class="text-sm font-medium text-purple-300 hover:text-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500 rounded"
+          >View all</a
+        >
+      </div>
+
+      @if (habitsLoading()) {
+        <div class="flex items-center gap-3 py-4 text-gray-400" role="status">
+          <span
+            class="h-5 w-5 shrink-0 rounded-full border-2 border-gray-600 border-t-purple-500 motion-safe:animate-spin motion-reduce:animate-none"
+            aria-hidden="true"
+          ></span>
+          <span>Loading habits…</span>
+        </div>
+      } @else if (habitsError()) {
+        <p class="text-sm text-red-300" role="alert">Could not load habits.</p>
+      } @else if (habitsPreview().length === 0) {
+        <p class="text-sm text-gray-400">
+          No habits yet.
+          <a
+            routerLink="/habits/add-habit"
+            class="ml-1 text-purple-300 underline-offset-2 hover:underline focus:outline-none focus:ring-2 focus:ring-purple-500 rounded"
+            >Create one</a
+          >
+        </p>
+      } @else {
+        <ul class="m-0 list-none space-y-2 p-0" role="list">
+          @for (h of habitsPreview(); track h.id) {
+            <li>
+              <a
+                [routerLink]="['/habits', h.id]"
+                class="block rounded-xl border border-gray-600/80 bg-[#1a1a1a]/60 px-3 py-2 no-underline transition-colors hover:border-purple-500/35 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <span class="block font-medium text-white">{{ h.name }}</span>
+                <span class="mt-0.5 block text-xs text-gray-400">
+                  {{ h.cadence }} · Streak
+                  @if (h.currentStreak !== undefined) {
+                    {{ h.currentStreak }}
+                  } @else {
+                    —
+                  }
+                  @if (h.logCount !== undefined) {
+                    <span class="text-gray-500">
+                      · {{ h.logCount }} log{{
+                        h.logCount === 1 ? "" : "s"
+                      }}</span
+                    >
+                  }
+                </span>
+              </a>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <section
+      class="rounded-3xl border border-gray-600 bg-[#2c2c2c] p-4 shadow-lg shadow-black/10"
+      aria-label="Open tasks"
+    >
+      <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <h2 class="text-xl font-semibold text-white">Open tasks</h2>
+        <a
+          routerLink="/tasks"
+          class="text-sm font-medium text-purple-300 hover:text-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500 rounded"
+          >View all</a
+        >
+      </div>
+
+      @if (tasksLoading()) {
+        <div class="flex items-center gap-3 py-4 text-gray-400" role="status">
+          <span
+            class="h-5 w-5 shrink-0 rounded-full border-2 border-gray-600 border-t-purple-500 motion-safe:animate-spin motion-reduce:animate-none"
+            aria-hidden="true"
+          ></span>
+          <span>Loading tasks…</span>
+        </div>
+      } @else if (tasksError()) {
+        <p class="text-sm text-red-300" role="alert">Could not load tasks.</p>
+      } @else if (openTasks().length === 0) {
+        <p class="text-sm text-gray-400">
+          No open tasks.
+          <a
+            routerLink="/tasks/add-task"
+            class="ml-1 text-purple-300 underline-offset-2 hover:underline focus:outline-none focus:ring-2 focus:ring-purple-500 rounded"
+            >Add one</a
+          >
+        </p>
+      } @else {
+        <ul class="m-0 list-none space-y-2 p-0" role="list">
+          @for (task of openTasks(); track task.id) {
+            <li>
+              <a
+                [routerLink]="['/tasks', task.id]"
+                class="flex items-center justify-between gap-2 rounded-xl border border-gray-600/80 bg-[#1a1a1a]/60 px-3 py-2 no-underline transition-colors hover:border-purple-500/35 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <span class="min-w-0 truncate font-medium text-white">{{
+                  task.title
+                }}</span>
+                <span
+                  class="material-icons shrink-0 text-gray-500 text-lg"
+                  aria-hidden="true"
+                  >chevron_right</span
+                >
+              </a>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <section
+      class="rounded-3xl border border-gray-600 bg-[#2c2c2c] p-4 shadow-lg shadow-black/10"
+      aria-label="Recent logs"
+    >
+      <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <h2 class="text-xl font-semibold text-white">Recent logs</h2>
+        <a
+          routerLink="/logs"
+          class="text-sm font-medium text-purple-300 hover:text-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500 rounded"
+          >View all</a
+        >
+      </div>
+
+      @if (logsLoading()) {
+        <div class="flex items-center gap-3 py-4 text-gray-400" role="status">
+          <span
+            class="h-5 w-5 shrink-0 rounded-full border-2 border-gray-600 border-t-purple-500 motion-safe:animate-spin motion-reduce:animate-none"
+            aria-hidden="true"
+          ></span>
+          <span>Loading logs…</span>
+        </div>
+      } @else if (logsError()) {
+        <p class="text-sm text-red-300" role="alert">Could not load logs.</p>
+      } @else if (recentLogs().length === 0) {
+        <p class="text-sm text-gray-400">
+          No logs yet.
+          <a
+            routerLink="/logs/add-log"
+            class="ml-1 text-purple-300 underline-offset-2 hover:underline focus:outline-none focus:ring-2 focus:ring-purple-500 rounded"
+            >Add one</a
+          >
+        </p>
+      } @else {
+        <ul class="m-0 list-none space-y-2 p-0" role="list">
+          @for (log of recentLogs(); track log.id) {
+            <li>
+              <a
+                [routerLink]="['/logs/log', log.id]"
+                class="block rounded-xl border border-gray-600/80 bg-[#1a1a1a]/60 px-3 py-2 no-underline transition-colors hover:border-purple-500/35 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <span class="block font-medium text-white">{{
+                  log.name || "Untitled log"
+                }}</span>
+                @if (logPrimaryDate(log); as iso) {
+                  <time
+                    class="mt-0.5 block text-xs tabular-nums text-gray-400"
+                    [attr.datetime]="iso"
+                    >{{ iso | date: "medium" }}</time
+                  >
+                }
+              </a>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  </div>
 </section>

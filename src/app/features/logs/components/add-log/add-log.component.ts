@@ -216,7 +216,7 @@ export class AddLogComponent {
   private handleSuccess(): void {
     this.router.navigate(['/logs']);
     this.logService.reloadLogsList();
-    this.goalsService.logsGoalStatus.reload();
+        this.goalsService.reloadAllGoalStatus();
     this.categoryOptionsService.categoryOptions.reload();
     this.habitsService.habitsOptions.reload();
   }

@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GoalsService } from '../../../goals/services/goals.service';
+import { HttpResourceRef } from '@angular/common/http';
+import { ResourceStatus } from '@angular/core';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { GoalStatusResponse } from '../../../goals/models/goals.models';
 
@@ -12,11 +13,21 @@ import { GoalStatusResponse } from '../../../goals/models/goals.models';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LogProgressCardComponent {
-  private readonly goalsService = inject(GoalsService);
-  goals = this.goalsService.logsGoalStatus;
+  readonly heading = input.required<string>();
+  readonly goals = input.required<HttpResourceRef<GoalStatusResponse[]>>();
+  /** Shown after current/target numbers (e.g. "logs" or "completed"). */
+  readonly valueLabel = input('logs');
+  readonly ctaLabel = input<string | undefined>();
+  readonly ctaLink = input<string | undefined>();
+  readonly ctaInternal = input(true);
+
+  protected readonly ResourceStatus = ResourceStatus;
 
   getProgressPercentage(goal: GoalStatusResponse): number {
-    return (goal.currentValue / goal.target) * 100;
+    if (!goal.target || goal.target <= 0) {
+      return 0;
+    }
+    return Math.min(100, (goal.currentValue / goal.target) * 100);
   }
 
   getProgressColorClass(goal: GoalStatusResponse): string {

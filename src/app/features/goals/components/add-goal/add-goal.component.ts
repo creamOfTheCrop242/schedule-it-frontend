@@ -45,10 +45,10 @@ export class AddGoalComponent {
   readonly currentGoal = computed(() => {
     if (!this.id) return undefined;
 
-    const goals = this.goalsService.logsGoalStatus.value();
-    if (!goals) return undefined;
-
-    return goals.find((goal) => goal.goalId === this.id);
+    const fromAdded = this.goalsService.logsGoalStatus.value();
+    const fromCompleted = this.goalsService.logsCompletedGoalStatus.value();
+    const merged = [...(fromAdded ?? []), ...(fromCompleted ?? [])];
+    return merged.find((goal) => goal.goalId === this.id);
   });
 
   readonly metricOptions = Object.values(GoalMetric);
@@ -96,7 +96,7 @@ export class AddGoalComponent {
 
   private handleSuccess(): void {
     this.router.navigate(['/goals']);
-    this.goalsService.logsGoalStatus.reload();
+    this.goalsService.reloadAllGoalStatus();
   }
 
   private handleError(): void {

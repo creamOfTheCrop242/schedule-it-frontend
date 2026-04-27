@@ -1,15 +1,42 @@
 <section class="p-4">
   <a
-    routerLink="/habits"
+    [routerLink]="isEditMode && editId ? ['/habits', editId] : '/habits'"
     class="mb-4 inline-flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 rounded"
   >
     <span class="material-icons text-lg leading-none" aria-hidden="true"
       >arrow_back</span
     >
-    Back to habits
+    @if (isEditMode) {
+      Back to habit
+    } @else {
+      Back to habits
+    }
   </a>
 
-  <h2 class="text-xl font-bold mb-4 text-white">Create habit</h2>
+  <h2 class="text-xl font-bold mb-4 text-white">
+    @if (isEditMode) {
+      Edit habit
+    } @else {
+      Create habit
+    }
+  </h2>
+
+  @if (loadError()) {
+    <div
+      role="alert"
+      class="mb-4 rounded-xl border border-red-500/40 bg-red-950/40 p-4 text-red-200"
+    >
+      Could not load this habit. Try again from the habits list.
+    </div>
+  } @else if (isLoadingHabit()) {
+    <div role="status" class="mb-4 inline-flex items-center gap-3 text-gray-300">
+      <span
+        class="h-5 w-5 shrink-0 rounded-full border-2 border-gray-600 border-t-purple-500 motion-safe:animate-spin motion-reduce:animate-none"
+        aria-hidden="true"
+      ></span>
+      <span>Loading…</span>
+    </div>
+  }
 
   @if (errorMessage()) {
     <div class="mb-4 rounded-md bg-red-100 p-3 text-red-700">
@@ -17,72 +44,78 @@
     </div>
   }
 
-  <form (ngSubmit)="onSubmit()" [formGroup]="form" class="space-y-4">
-    <div>
-      <label for="habit-name" class="block text-sm font-medium mb-2 text-gray-200"
-        >Name *</label
-      >
-      <app-input
-        [id]="'habit-name'"
-        placeholder="e.g. Morning meditation"
-        [name]="form.controls['name']"
-        type="text"
-      ></app-input>
-    </div>
+  @if (!loadError()) {
+    <form (ngSubmit)="onSubmit()" [formGroup]="form" class="space-y-4">
+      <div>
+        <label for="habit-name" class="block text-sm font-medium mb-2 text-gray-200"
+          >Name *</label
+        >
+        <app-input
+          [id]="'habit-name'"
+          placeholder="e.g. Morning meditation"
+          [name]="form.controls['name']"
+          type="text"
+        ></app-input>
+      </div>
 
-    <div>
-      <label
-        for="habit-description"
-        class="block text-sm font-medium mb-2 text-gray-200"
-        >Description</label
-      >
-      <app-input
-        [id]="'habit-description'"
-        placeholder="Optional details"
-        type="textarea"
-        [name]="form.controls['description']"
-      ></app-input>
-    </div>
+      <div>
+        <label
+          for="habit-description"
+          class="block text-sm font-medium mb-2 text-gray-200"
+          >Description</label
+        >
+        <app-input
+          [id]="'habit-description'"
+          placeholder="Optional details"
+          type="textarea"
+          [name]="form.controls['description']"
+        ></app-input>
+      </div>
 
-    <div>
-      <label
-        for="habit-cadence"
-        class="block text-sm font-medium mb-2 text-gray-200"
-        >Cadence *</label
-      >
-      <select
-        id="habit-cadence"
-        formControlName="cadence"
-        class="w-full rounded-md border border-gray-600 bg-[#2c2c2c] px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-      >
-        @for (option of cadenceOptions; track option) {
-          <option [value]="option">{{ option }}</option>
-        }
-      </select>
-    </div>
+      <div>
+        <label
+          for="habit-cadence"
+          class="block text-sm font-medium mb-2 text-gray-200"
+          >Cadence *</label
+        >
+        <select
+          id="habit-cadence"
+          formControlName="cadence"
+          class="w-full rounded-md border border-gray-600 bg-[#2c2c2c] px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+        >
+          @for (option of cadenceOptions; track option) {
+            <option [value]="option">{{ option }}</option>
+          }
+        </select>
+      </div>
 
-    <div>
-      <label
-        for="habit-target"
-        class="block text-sm font-medium mb-2 text-gray-200"
-        >Logs per period *</label
-      >
-      <app-input
-        [id]="'habit-target'"
-        placeholder="e.g. 1 for once per day"
-        [name]="form.controls['targetPerPeriod']"
-        type="number"
-      ></app-input>
-    </div>
+      <div>
+        <label
+          for="habit-target"
+          class="block text-sm font-medium mb-2 text-gray-200"
+          >Logs per period *</label
+        >
+        <app-input
+          [id]="'habit-target'"
+          placeholder="e.g. 1 for once per day"
+          [name]="form.controls['targetPerPeriod']"
+          type="number"
+        ></app-input>
+      </div>
 
-    <div class="pt-4">
-      <button
-        type="submit"
-        [disabled]="!form.valid"
-        class="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-purple-400"
-      >
-        Create habit
-      </button>
-    </div>
-  </form>
+      <div class="pt-4">
+        <button
+          type="submit"
+          [disabled]="!form.valid || isLoadingHabit()"
+          class="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-purple-400"
+        >
+          @if (isEditMode) {
+            Save changes
+          } @else {
+            Create habit
+          }
+        </button>
+      </div>
+    </form>
+  }
 </section>
