@@ -9,11 +9,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { GoalsService } from '../../services/goals.service';
 import {
-  AddGoal,
   GoalMetric,
-  GoalScope,
   GoalStatusResponse,
-  UpdateGoal,
 } from '../../models/goals.models';
 import { take } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -33,7 +30,6 @@ export class AddGoalComponent {
     metric: new FormControl<GoalMetric>(GoalMetric.LOGS_ADDED, [
       Validators.required,
     ]),
-    scope: new FormControl<GoalScope>(GoalScope.DAY, [Validators.required]),
     target: new FormControl<number | null>(null, [
       Validators.required,
       Validators.min(1),
@@ -45,14 +41,14 @@ export class AddGoalComponent {
   readonly currentGoal = computed(() => {
     if (!this.id) return undefined;
 
-    const fromAdded = this.goalsService.logsGoalStatus.value();
-    const fromCompleted = this.goalsService.logsCompletedGoalStatus.value();
-    const merged = [...(fromAdded ?? []), ...(fromCompleted ?? [])];
-    return merged.find((goal) => goal.goalId === this.id);
+    // Daily-only UX: edit the DAY definition; server derives other scopes.
+    return this.goalsService
+      .logsGoalStatus
+      .value()
+      ?.find((goal) => goal.goalId === this.id);
   });
 
   readonly metricOptions = Object.values(GoalMetric);
-  readonly scopeOptions = Object.values(GoalScope);
   readonly errorMessage = signal<string | null>(null);
 
   constructor() {
@@ -67,8 +63,7 @@ export class AddGoalComponent {
   onSubmit(): void {
     if (!this.form.valid) return;
 
-    const baseGoal = this.buildBaseGoal();
-    const operation = this.goalsService.addGoal(baseGoal);
+    const operation = this.goalsService.addDailyGoal(this.buildDailyPayload());
 
     this.errorMessage.set(null);
     operation.pipe(take(1)).subscribe({
@@ -77,19 +72,17 @@ export class AddGoalComponent {
     });
   }
 
-  private buildBaseGoal(): AddGoal {
+  private buildDailyPayload(): { metric: GoalMetric; dailyTargetValue: number } {
     const target = this.form.value.target;
     return {
       metric: this.form.value.metric!,
-      scope: this.form.value.scope!,
-      targetValue: typeof target === 'number' ? target : Number(target),
+      dailyTargetValue: typeof target === 'number' ? target : Number(target),
     };
   }
 
   private populateForm(goal: GoalStatusResponse): void {
     this.form.patchValue({
       metric: goal.metric,
-      scope: goal.scope,
       target: goal.target,
     });
   }

@@ -1,4 +1,4 @@
-import { Component, computed, input, OnInit } from '@angular/core';
+import { Component, computed, input } from '@angular/core';
 import { GoalStatusResponse } from '../../models/goals.models';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { CommonModule } from '@angular/common';
@@ -9,13 +9,12 @@ import { CommonModule } from '@angular/common';
   templateUrl: './goal-card.component.html',
   styleUrl: './goal-card.component.scss',
 })
-export class GoalCardComponent implements OnInit {
+export class GoalCardComponent {
   goal = input<GoalStatusResponse>();
   title = input<string>();
-
-  ngOnInit(): void {
-    console.log(this.goal());
-  }
+  note = input<string | undefined>();
+  actionLabel = input<string | undefined>();
+  actionLink = input<string | undefined>();
 
   readonly progressPercentage = computed(() => {
     const goal = this.goal();

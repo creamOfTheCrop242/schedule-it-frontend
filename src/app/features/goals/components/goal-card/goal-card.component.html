@@ -2,6 +2,9 @@
 <div class="cotc-bg-dark rounded-3xl p-4 m-4">
   <div class="space-y-2">
     <p class="text-xl">{{ title() }}</p>
+    @if (note()) {
+      <p class="text-xs text-gray-400">{{ note() }}</p>
+    }
     <div class="flex justify-between text-sm">
       <span>{{ goal()?.currentValue }} / {{ goal()?.target }} logs</span>
       <span class="font-semibold"
@@ -24,13 +27,15 @@
       ></div>
     </div>
   </div>
-  <app-button
-    label="Modify Goal"
-    background="purple"
-    color="white"
-    link="/goals/edit-goal/{{ goal().goalId }}"
-    [isInternal]="true"
-  />
+  @if (actionLabel() && actionLink()) {
+    <app-button
+      [label]="actionLabel()!"
+      background="purple"
+      color="white"
+      [link]="actionLink()!"
+      [isInternal]="true"
+    />
+  }
 </div>
 } @else {
 <div class="cotc-bg-dark rounded-3xl p-4 m-4 flex justify-between items-center">

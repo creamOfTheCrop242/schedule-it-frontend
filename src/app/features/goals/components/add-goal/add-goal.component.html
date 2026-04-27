@@ -23,27 +23,17 @@
       </select>
     </div>
 
-    <!-- Scope -->
+    <!-- Daily Target -->
     <div>
-      <label class="block text-sm font-medium mb-2">Scope *</label>
-      <select
-        formControlName="scope"
-        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-      >
-        @for (option of scopeOptions; track option) {
-          <option [value]="option">{{ option }}</option>
-        }
-      </select>
-    </div>
-
-    <!-- Target -->
-    <div>
-      <label class="block text-sm font-medium mb-2">Target *</label>
+      <label class="block text-sm font-medium mb-2">Daily target *</label>
       <app-input
-        placeholder="Enter target number"
+        placeholder="e.g. 3 logs per day"
         [name]="form.controls['target']"
         type="number"
       ></app-input>
+      <p class="mt-2 text-xs text-gray-400">
+        Weekly/monthly/yearly targets are derived automatically (×7 / ×30 / ×365).
+      </p>
     </div>
 
     <!-- Submit Button -->

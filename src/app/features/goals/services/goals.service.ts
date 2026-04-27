@@ -8,6 +8,12 @@ import {
   GoalStatusResponse,
 } from '../models/goals.models';
 
+export interface AddDailyGoalPayload {
+  metric: GoalMetric;
+  dailyTargetValue: number;
+  filters?: Record<string, any>;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -55,6 +61,13 @@ export class GoalsService {
     return this.httpClient.post<GoalStatusResponse>(
       `${environment.baseUrl}/goals`,
       goal
+    );
+  }
+
+  addDailyGoal(payload: AddDailyGoalPayload) {
+    return this.httpClient.post<{ success: true }>(
+      `${environment.baseUrl}/goals/daily`,
+      payload,
     );
   }
 }
