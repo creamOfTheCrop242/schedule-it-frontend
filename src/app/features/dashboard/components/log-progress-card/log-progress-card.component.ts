@@ -17,6 +17,8 @@ export class LogProgressCardComponent {
   readonly goals = input.required<HttpResourceRef<GoalStatusResponse[]>>();
   /** Shown after current/target numbers (e.g. "logs" or "completed"). */
   readonly valueLabel = input('logs');
+  /** Optional helper text shown under the heading. */
+  readonly helperText = input<string | undefined>();
   readonly ctaLabel = input<string | undefined>();
   readonly ctaLink = input<string | undefined>();
   readonly ctaInternal = input(true);
