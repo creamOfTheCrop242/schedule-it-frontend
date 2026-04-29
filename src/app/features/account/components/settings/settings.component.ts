@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { take } from 'rxjs';
 import { AccountService } from '../../services/account.service';
 import { AuthService } from '../../../auth/services/auth.service';
@@ -14,7 +14,7 @@ import { InputComponent } from '../../../shared/components/input/input.component
 
 @Component({
   selector: 'app-settings',
-  imports: [CommonModule, ReactiveFormsModule, InputComponent],
+  imports: [CommonModule, ReactiveFormsModule, InputComponent, RouterLink],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
 })

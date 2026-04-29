@@ -1,6 +1,15 @@
 <section class="p-4">
   <h2 class="text-xl font-bold mb-4">Settings</h2>
 
+  <div class="border-b border-gray-700 pb-4 mb-4">
+    <a
+      routerLink="/help"
+      class="text-purple-400 hover:text-purple-300 underline text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] rounded"
+    >
+      Help and install app
+    </a>
+  </div>
+
   @if (isLoading()) {
   <p class="text-gray-400 text-sm">Loading user data...</p>
   } @else if (isLoaded()) {

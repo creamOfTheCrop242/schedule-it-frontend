@@ -1,0 +1,97 @@
+<section class="p-4 pb-24 max-w-lg mx-auto text-white" aria-labelledby="help-title">
+  <p class="mb-4">
+    @if (authService.authStatus.value()) {
+    <a
+      routerLink="/dashboard"
+      class="text-purple-400 hover:text-purple-300 underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] rounded"
+    >
+      Back to app
+    </a>
+    } @else {
+    <a
+      routerLink="/auth/login"
+      class="text-purple-400 hover:text-purple-300 underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] rounded"
+    >
+      Back to login
+    </a>
+    }
+  </p>
+
+  <h1 id="help-title" class="text-2xl font-bold mb-2 font-['Source_Sans_Pro']">
+    Help &amp; install
+  </h1>
+  <p class="text-gray-300 text-sm mb-8">
+    The Guide Log helps you track logs, tasks, goals, and habits in one place.
+  </p>
+
+  <h2 class="text-lg font-semibold mb-2">Using the app</h2>
+  <ul class="list-disc pl-5 space-y-2 text-gray-300 text-sm mb-8">
+    <li>
+      <span class="text-white font-medium">Dashboard</span> shows a snapshot of
+      upcoming tasks and recent activity.
+    </li>
+    <li>
+      <span class="text-white font-medium">Logs</span> are journal-style entries
+      you can add, view, and edit from the Logs tab.
+    </li>
+    <li>
+      <span class="text-white font-medium">Tasks</span> are to-dos with their
+      own list and detail views.
+    </li>
+    <li>
+      <span class="text-white font-medium">Goals &amp; habits</span> share the
+      middle tab: open the menu to go to Goals or Habits, then add or track
+      what matters to you.
+    </li>
+    <li>
+      <span class="text-white font-medium">Settings</span> (gear in the header)
+      is where you update your name or sign out.
+    </li>
+  </ul>
+
+  <h2 class="text-lg font-semibold mb-2">Install as an app</h2>
+  <p class="text-gray-300 text-sm mb-3">
+    Installing adds an icon to your home screen and often opens the app in its
+    own window, like a native app.
+  </p>
+  <ul class="list-disc pl-5 space-y-2 text-gray-300 text-sm mb-4">
+    <li>
+      <span class="text-white font-medium">Chrome / Edge (desktop or Android):</span>
+      look for “Install app” or “Install The Guide Log” in the browser menu, or
+      use the prompt if the site offers one.
+    </li>
+    <li>
+      <span class="text-white font-medium">Safari (iPhone / iPad):</span> tap the
+      Share button, then “Add to Home Screen”.
+    </li>
+    <li>
+      <span class="text-white font-medium">Safari (Mac):</span> File → Add to
+      Dock (wording may vary by macOS version).
+    </li>
+  </ul>
+  <p class="text-gray-400 text-xs mb-10">
+    On some browsers you may see an install banner at the bottom of the screen;
+    you can use that or the steps above.
+  </p>
+
+  <footer
+    class="border-t border-gray-700 pt-6 mt-2"
+    aria-labelledby="help-credits-heading"
+  >
+    <h2 id="help-credits-heading" class="sr-only">Credits</h2>
+    <p class="text-gray-300 text-sm mb-2">
+      <span class="text-white font-medium">COTC</span>
+      <span class="text-gray-400"> — Cream of the Crop</span>
+    </p>
+    <p class="text-sm">
+      <a
+        href="https://www.instagram.com/don_muscles/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-purple-400 hover:text-purple-300 underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] rounded"
+      >
+        Instagram: &#64;don_muscles
+      </a>
+    </p>
+  </footer>
+</section>
