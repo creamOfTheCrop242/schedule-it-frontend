@@ -22,3 +22,9 @@ export interface VerifyCodeRequest {
   email: string;
   code: string;
 }
+
+/** Response body from GET /auth/status when the session cookie is valid. */
+export interface AuthStatusPayload {
+  isLoggedIn: boolean;
+  isFeedbackAdmin?: boolean;
+}

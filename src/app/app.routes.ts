@@ -19,6 +19,8 @@ import { HabitsContainerComponent } from './features/habits/containers/habits-co
 import { AddHabitComponent } from './features/habits/components/add-habit/add-habit.component';
 import { HabitDetailComponent } from './features/habits/components/habit-detail/habit-detail.component';
 import { HelpPageComponent } from './features/help/help-page/help-page.component';
+import { FeedbackFormComponent } from './features/feedback/components/feedback-form/feedback-form.component';
+import { FeedbackInboxComponent } from './features/feedback/components/feedback-inbox/feedback-inbox.component';
 
 export const routes: Routes = [
   {
@@ -110,6 +112,18 @@ export const routes: Routes = [
   {
     path: 'settings',
     component: SettingsComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'feedback/inbox',
+    title: 'Feedback inbox',
+    component: FeedbackInboxComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'feedback',
+    title: 'Send feedback',
+    component: FeedbackFormComponent,
     canActivate: [authGuard],
   },
 ];

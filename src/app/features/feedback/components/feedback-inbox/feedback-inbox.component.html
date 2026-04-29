@@ -1,0 +1,50 @@
+<section class="p-4 pb-24 max-w-2xl mx-auto text-white">
+  <h1 class="text-xl font-bold mb-4 font-['Source_Sans_Pro']">Feedback inbox</h1>
+
+  @if (loading()) {
+  <p class="text-gray-400 text-sm">Loading…</p>
+  } @else if (forbidden()) {
+  <p class="text-gray-300 text-sm mb-4">
+    You don’t have access to the feedback inbox.
+  </p>
+  } @else if (loadError()) {
+  <p class="text-red-400 text-sm mb-4">Could not load feedback. Try again later.</p>
+  } @else if (items().length === 0) {
+  <p class="text-gray-400 text-sm">No feedback yet.</p>
+  } @else {
+  <ul class="space-y-4">
+    @for (row of items(); track row.id) {
+    <li class="border border-gray-700 rounded-lg p-4 bg-gray-900/50 space-y-3">
+      <p class="text-xs text-gray-500">{{ formatDate(row.createdAt) }}</p>
+      <div>
+        <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
+          Name
+        </p>
+        <p class="text-sm text-white">{{ row.submitterName || '—' }}</p>
+      </div>
+      <div>
+        <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
+          Email
+        </p>
+        <p class="text-sm text-gray-200">{{ row.submitterEmail || '—' }}</p>
+      </div>
+      <div>
+        <p class="text-xs font-medium text-gray-400 uppercase tracking-wide mb-1">
+          Message
+        </p>
+        <p class="text-sm text-gray-100 whitespace-pre-wrap">{{ row.message }}</p>
+      </div>
+    </li>
+    }
+  </ul>
+  }
+
+  <p class="mt-8">
+    <a
+      routerLink="/settings"
+      class="text-purple-400 hover:text-purple-300 underline text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] rounded"
+    >
+      Back to settings
+    </a>
+  </p>
+</section>

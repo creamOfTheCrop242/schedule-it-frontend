@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 
 import { environment } from '../../../../environments/environment';
 import {
+  AuthStatusPayload,
   LoginRequest,
   RegisterRequest,
   VerifyCodeRequest,
@@ -16,7 +17,7 @@ export class AuthService {
 
   constructor() {}
 
-  authStatus = httpResource({
+  authStatus = httpResource<AuthStatusPayload>({
     url: `${environment.baseUrl}/auth/status`,
     withCredentials: true,
   });

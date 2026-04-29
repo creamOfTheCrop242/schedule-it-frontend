@@ -20,7 +20,7 @@ import { InputComponent } from '../../../shared/components/input/input.component
 })
 export class SettingsComponent {
   private readonly accountService = inject(AccountService);
-  private readonly authService = inject(AuthService);
+  readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
   readonly currentUser = this.accountService.currentUser;
