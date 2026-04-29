@@ -18,12 +18,18 @@ import { TaskDetailComponent } from './features/tasks/components/task-detail/tas
 import { HabitsContainerComponent } from './features/habits/containers/habits-container/habits-container.component';
 import { AddHabitComponent } from './features/habits/components/add-habit/add-habit.component';
 import { HabitDetailComponent } from './features/habits/components/habit-detail/habit-detail.component';
+import { HelpPageComponent } from './features/help/help-page/help-page.component';
 
 export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
     redirectTo: 'dashboard',
+  },
+  {
+    path: 'help',
+    title: 'Help',
+    component: HelpPageComponent,
   },
   {
     path: 'auth',
