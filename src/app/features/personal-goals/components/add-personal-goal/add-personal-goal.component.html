@@ -1,0 +1,102 @@
+<section class="p-4">
+  <a
+    routerLink="/personal-goals"
+    class="mb-4 inline-flex items-center gap-2 rounded text-sm text-gray-400 transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+  >
+    <span class="material-icons text-lg leading-none" aria-hidden="true"
+      >arrow_back</span
+    >
+    Back to personal goals
+  </a>
+
+  <h2 class="mb-4 text-xl font-bold text-white">
+    @if (isEditMode) {
+      Edit personal goal
+    } @else {
+      Create personal goal
+    }
+  </h2>
+
+  @if (loadError()) {
+    <div
+      role="alert"
+      class="mb-4 rounded-xl border border-red-500/40 bg-red-950/40 p-4 text-red-200"
+    >
+      Could not load this goal. Try again from the list.
+    </div>
+  } @else if (isLoadingGoal()) {
+    <div role="status" class="mb-4 inline-flex items-center gap-3 text-gray-300">
+      <span
+        class="h-5 w-5 shrink-0 rounded-full border-2 border-gray-600 border-t-purple-500 motion-safe:animate-spin motion-reduce:animate-none"
+        aria-hidden="true"
+      ></span>
+      <span>Loading…</span>
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="mb-4 rounded-md bg-red-100 p-3 text-red-700">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  @if (!loadError()) {
+    <form (ngSubmit)="onSubmit()" [formGroup]="form" class="space-y-4">
+      <div>
+        <label
+          for="pg-title"
+          class="mb-2 block text-sm font-medium text-gray-200"
+          >Title *</label
+        >
+        <app-input
+          [id]="'pg-title'"
+          placeholder="e.g. Finish the course"
+          [name]="form.controls['title']"
+          type="text"
+        ></app-input>
+      </div>
+
+      <div>
+        <label
+          for="pg-description"
+          class="mb-2 block text-sm font-medium text-gray-200"
+          >Description</label
+        >
+        <app-input
+          [id]="'pg-description'"
+          placeholder="Optional details"
+          type="textarea"
+          [name]="form.controls['description']"
+        ></app-input>
+      </div>
+
+      <div>
+        <label
+          for="pg-target-date"
+          class="mb-2 block text-sm font-medium text-gray-200"
+          >Target date (optional)</label
+        >
+        <input
+          id="pg-target-date"
+          type="date"
+          formControlName="targetDate"
+          class="w-full rounded-md border border-gray-600 bg-[#2c2c2c] px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+        />
+      </div>
+
+      <div class="pt-4">
+        <button
+          type="submit"
+          [disabled]="!form.valid || isLoadingGoal()"
+          class="w-full rounded-md bg-purple-600 px-4 py-2 text-white hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400 disabled:cursor-not-allowed disabled:bg-gray-400"
+        >
+          @if (isEditMode) {
+            Save changes
+          } @else {
+            Create personal goal
+          }
+        </button>
+      </div>
+    </form>
+  }
+</section>

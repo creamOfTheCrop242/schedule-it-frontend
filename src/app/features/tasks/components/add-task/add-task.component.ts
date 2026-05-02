@@ -15,7 +15,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { take } from 'rxjs';
 import { TasksService } from '../../services/tasks.service';
 import { Task } from '../../models/task.model';
@@ -26,10 +26,12 @@ import {
 import { CategoryOptionsService } from '../../../shared/services/category-options.service';
 import { HabitsService } from '../../../habits/services/habits.service';
 import { HabitRow } from '../../../habits/models/habit.model';
+import { PersonalGoalsService } from '../../../personal-goals/services/personal-goals.service';
+import { PersonalGoalRow } from '../../../personal-goals/models/personal-goal.model';
 
 @Component({
   selector: 'app-add-task',
-  imports: [InputComponent, ReactiveFormsModule, CommonModule],
+  imports: [InputComponent, ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './add-task.component.html',
   styleUrl: './add-task.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -40,6 +42,7 @@ export class AddTaskComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly categoryOptionsService = inject(CategoryOptionsService);
   private readonly habitsService = inject(HabitsService);
+  private readonly personalGoalsService = inject(PersonalGoalsService);
 
   readonly form = new FormGroup({
     title: new FormControl('', [Validators.required]),
@@ -47,6 +50,7 @@ export class AddTaskComponent {
     categoryPreset: new FormControl<string>(''),
     categoryCustom: new FormControl(''),
     habitId: new FormControl<string>(''),
+    personalGoalId: new FormControl<string>(''),
   });
 
   readonly categorySelectOptions = computed(() => {
@@ -72,6 +76,16 @@ export class AddTaskComponent {
     }
     return [...(res.value() ?? [])].sort((a, b) =>
       a.name.localeCompare(b.name),
+    );
+  });
+
+  readonly personalGoalsForSelect = computed((): PersonalGoalRow[] => {
+    const res = this.personalGoalsService.personalGoalsOptions;
+    if (res.status() !== ResourceStatus.Resolved || !res.value()) {
+      return [];
+    }
+    return [...(res.value() ?? [])].sort((a, b) =>
+      a.title.localeCompare(b.title),
     );
   });
 
@@ -101,6 +115,7 @@ export class AddTaskComponent {
             categoryPreset: '',
             categoryCustom: '',
             habitId: '',
+            personalGoalId: '',
           });
         }
       });
@@ -120,6 +135,7 @@ export class AddTaskComponent {
         : catPreset.trim();
 
     const habitIdRaw = (this.form.value.habitId ?? '').trim();
+    const personalGoalIdRaw = (this.form.value.personalGoalId ?? '').trim();
 
     this.errorMessage.set(null);
 
@@ -130,12 +146,14 @@ export class AddTaskComponent {
           description: description ?? '',
           category: rawCategory.length > 0 ? rawCategory : '',
           habitId: habitIdRaw || '',
+          personalGoalId: personalGoalIdRaw || '',
         })
       : this.tasksService.create({
           title,
           ...(description ? { description } : {}),
           ...(rawCategory.length > 0 ? { category: rawCategory } : {}),
           ...(habitIdRaw ? { habitId: habitIdRaw } : {}),
+          ...(personalGoalIdRaw ? { personalGoalId: personalGoalIdRaw } : {}),
         });
 
     operation.pipe(take(1)).subscribe({
@@ -159,6 +177,7 @@ export class AddTaskComponent {
       categoryPreset: isCatPreset ? category : category ? CATEGORY_CUSTOM : '',
       categoryCustom: isCatPreset ? '' : category,
       habitId: task.habit?.id ?? task.habitId ?? '',
+      personalGoalId: task.personalGoal?.id ?? task.personalGoalId ?? '',
     });
   }
 
@@ -166,6 +185,7 @@ export class AddTaskComponent {
     this.tasksService.reloadTasksList();
     this.categoryOptionsService.categoryOptions.reload();
     this.habitsService.habitsOptions.reload();
+    this.personalGoalsService.personalGoalsOptions.reload();
     if (editId) {
       void this.router.navigate(['/tasks', editId]);
     } else {

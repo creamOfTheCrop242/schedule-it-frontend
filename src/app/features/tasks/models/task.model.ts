@@ -3,6 +3,7 @@ export interface CreateTaskPayload {
   description?: string;
   category?: string;
   habitId?: string;
+  personalGoalId?: string;
 }
 
 export interface UpdateTaskPayload {
@@ -10,6 +11,7 @@ export interface UpdateTaskPayload {
   description?: string;
   category?: string;
   habitId?: string;
+  personalGoalId?: string | null;
 }
 
 export interface Task {
@@ -19,6 +21,12 @@ export interface Task {
   category?: string | null;
   habitId?: string | null;
   habit?: { id: string; name: string; description?: string | null } | null;
+  personalGoalId?: string | null;
+  personalGoal?: {
+    id: string;
+    title: string;
+    targetDate?: string | null;
+  } | null;
   completedDate: string | null;
   createdAt: string;
   updatedAt: string;

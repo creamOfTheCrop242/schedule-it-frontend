@@ -182,6 +182,42 @@
           </section>
         }
 
+        @if (taskData.habit?.id) {
+          <section class="mt-4">
+            <h2 class="mb-2 text-sm font-medium text-gray-400">Habit</h2>
+            <a
+              [routerLink]="['/habits', taskData.habit.id]"
+              class="inline-flex items-center gap-2 rounded-lg border border-gray-600 bg-[#1a1a1a]/80 px-3 py-2 text-sm text-purple-300 no-underline transition-colors hover:border-purple-500/40 hover:text-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            >
+              <span class="material-icons text-lg leading-none" aria-hidden="true"
+                >sports_score</span
+              >
+              <span class="min-w-0 truncate">{{ taskData.habit.name }}</span>
+              <span class="material-icons text-lg leading-none shrink-0" aria-hidden="true"
+                >chevron_right</span
+              >
+            </a>
+          </section>
+        }
+
+        @if (taskData.personalGoal?.id) {
+          <section class="mt-4">
+            <h2 class="mb-2 text-sm font-medium text-gray-400">Personal goal</h2>
+            <a
+              [routerLink]="['/personal-goals', taskData.personalGoal.id]"
+              class="inline-flex items-center gap-2 rounded-lg border border-gray-600 bg-[#1a1a1a]/80 px-3 py-2 text-sm text-purple-300 no-underline transition-colors hover:border-purple-500/40 hover:text-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            >
+              <span class="material-icons text-lg leading-none" aria-hidden="true"
+                >flag</span
+              >
+              <span class="min-w-0 truncate">{{ taskData.personalGoal.title }}</span>
+              <span class="material-icons text-lg leading-none shrink-0" aria-hidden="true"
+                >chevron_right</span
+              >
+            </a>
+          </section>
+        }
+
         @if (taskData.description) {
           <section class="mt-4">
             <h2 class="mb-2 text-sm font-medium text-gray-400">Description</h2>

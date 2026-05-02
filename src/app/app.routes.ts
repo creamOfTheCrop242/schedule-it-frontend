@@ -19,6 +19,9 @@ import { TaskDetailComponent } from './features/tasks/components/task-detail/tas
 import { HabitsContainerComponent } from './features/habits/containers/habits-container/habits-container.component';
 import { AddHabitComponent } from './features/habits/components/add-habit/add-habit.component';
 import { HabitDetailComponent } from './features/habits/components/habit-detail/habit-detail.component';
+import { PersonalGoalsContainerComponent } from './features/personal-goals/containers/personal-goals-container/personal-goals-container.component';
+import { AddPersonalGoalComponent } from './features/personal-goals/components/add-personal-goal/add-personal-goal.component';
+import { PersonalGoalDetailComponent } from './features/personal-goals/components/personal-goal-detail/personal-goal-detail.component';
 import { HelpPageComponent } from './features/help/help-page/help-page.component';
 import { FeedbackFormComponent } from './features/feedback/components/feedback-form/feedback-form.component';
 import { FeedbackInboxComponent } from './features/feedback/components/feedback-inbox/feedback-inbox.component';
@@ -104,6 +107,20 @@ export const routes: Routes = [
       { path: 'add-habit', component: AddHabitComponent },
       { path: 'edit-habit/:id', component: AddHabitComponent },
       { path: ':id', component: HabitDetailComponent },
+    ],
+  },
+  {
+    path: 'personal-goals',
+    canActivate: [authGuard],
+    children: [
+      { path: '', title: 'Personal goals', component: PersonalGoalsContainerComponent },
+      { path: 'add-personal-goal', title: 'Create personal goal', component: AddPersonalGoalComponent },
+      {
+        path: 'edit-personal-goal/:id',
+        title: 'Edit personal goal',
+        component: AddPersonalGoalComponent,
+      },
+      { path: ':id', title: 'Personal goal', component: PersonalGoalDetailComponent },
     ],
   },
   {

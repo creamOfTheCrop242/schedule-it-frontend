@@ -96,6 +96,12 @@ export class BottomNavMenuComponent implements OnDestroy {
     this.beginGoalsHabitsModalExit(() => void this.router.navigate(['/habits']));
   }
 
+  navigateToPersonalGoals(): void {
+    this.beginGoalsHabitsModalExit(() =>
+      void this.router.navigate(['/personal-goals']),
+    );
+  }
+
   navigateToAddLog(): void {
     this.beginModalExit(() => void this.router.navigate(['/logs/add-log']));
   }
@@ -209,7 +215,9 @@ export class BottomNavMenuComponent implements OnDestroy {
         path === '/goals' ||
         (path.startsWith('/goals/') &&
           !path.includes('/add-goal') &&
-          !path.includes('/edit-goal'))
+          !path.includes('/edit-goal')) ||
+        path === '/personal-goals' ||
+        path.startsWith('/personal-goals/')
       );
     }
     if (route === '/tasks') {

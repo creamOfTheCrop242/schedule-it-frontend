@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
 import { LogService } from '../../services/log.service';
 import { AddLog, Log, MOOD_PRESETS, MOOD_CUSTOM } from '../../models/log.model';
 import { take } from 'rxjs';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { GoalsService } from '../../../goals/services/goals.service';
 import {
   CATEGORY_CUSTOM,
@@ -26,10 +26,12 @@ import {
 import { CategoryOptionsService } from '../../../shared/services/category-options.service';
 import { HabitsService } from '../../../habits/services/habits.service';
 import { HabitRow } from '../../../habits/models/habit.model';
+import { PersonalGoalsService } from '../../../personal-goals/services/personal-goals.service';
+import { PersonalGoalRow } from '../../../personal-goals/models/personal-goal.model';
 
 @Component({
   selector: 'app-add-log',
-  imports: [InputComponent, ReactiveFormsModule, CommonModule],
+  imports: [InputComponent, ReactiveFormsModule, CommonModule, RouterLink],
   templateUrl: './add-log.component.html',
   styleUrl: './add-log.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -41,6 +43,7 @@ export class AddLogComponent {
   private readonly goalsService = inject(GoalsService);
   private readonly categoryOptionsService = inject(CategoryOptionsService);
   private readonly habitsService = inject(HabitsService);
+  private readonly personalGoalsService = inject(PersonalGoalsService);
 
   readonly form = new FormGroup({
     name: new FormControl('', [Validators.required]),
@@ -51,6 +54,7 @@ export class AddLogComponent {
     categoryPreset: new FormControl<string>(''),
     categoryCustom: new FormControl(''),
     habitId: new FormControl<string>(''),
+    personalGoalId: new FormControl<string>(''),
     startTime: new FormControl<string | null>(null),
     endTime: new FormControl<string | null>(null),
     completedDate: new FormControl<string | null>(null),
@@ -89,6 +93,16 @@ export class AddLogComponent {
     }
     return [...(res.value() ?? [])].sort((a, b) =>
       a.name.localeCompare(b.name),
+    );
+  });
+
+  readonly personalGoalsForSelect = computed((): PersonalGoalRow[] => {
+    const res = this.personalGoalsService.personalGoalsOptions;
+    if (res.status() !== ResourceStatus.Resolved || !res.value()) {
+      return [];
+    }
+    return [...(res.value() ?? [])].sort((a, b) =>
+      a.title.localeCompare(b.title),
     );
   });
 
@@ -135,6 +149,7 @@ export class AddLogComponent {
         : catPreset || undefined;
 
     const habitIdRaw = (this.form.value.habitId ?? '').trim();
+    const personalGoalIdRaw = (this.form.value.personalGoalId ?? '').trim();
 
     const base: AddLog = {
       name: this.form.value.name!,
@@ -148,9 +163,17 @@ export class AddLogComponent {
     };
 
     if (this.id) {
-      return { ...base, habitId: habitIdRaw || '' };
+      return {
+        ...base,
+        habitId: habitIdRaw || '',
+        personalGoalId: personalGoalIdRaw || '',
+      };
     }
-    return habitIdRaw ? { ...base, habitId: habitIdRaw } : base;
+    return {
+      ...base,
+      ...(habitIdRaw ? { habitId: habitIdRaw } : {}),
+      ...(personalGoalIdRaw ? { personalGoalId: personalGoalIdRaw } : {}),
+    };
   }
 
   private populateForm(log: Log): void {
@@ -171,6 +194,7 @@ export class AddLogComponent {
       categoryPreset: isCatPreset ? category : category ? CATEGORY_CUSTOM : '',
       categoryCustom: isCatPreset ? '' : category,
       habitId: log.habit?.id ?? log.habitId ?? '',
+      personalGoalId: log.personalGoal?.id ?? log.personalGoalId ?? '',
       startTime: this.toDatetimeLocalInputValue(log.startTime),
       endTime: this.toDatetimeLocalInputValue(log.endTime),
       completedDate: this.toDatetimeLocalInputValue(log.completedDate),
@@ -219,6 +243,7 @@ export class AddLogComponent {
         this.goalsService.reloadAllGoalStatus();
     this.categoryOptionsService.categoryOptions.reload();
     this.habitsService.habitsOptions.reload();
+    this.personalGoalsService.personalGoalsOptions.reload();
   }
 
   private handleError(): void {
