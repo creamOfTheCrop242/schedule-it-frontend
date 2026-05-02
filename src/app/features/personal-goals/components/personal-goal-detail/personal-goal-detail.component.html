@@ -186,7 +186,65 @@
         }
       </article>
 
-      <section class="pt-1" aria-labelledby="pg-linked-logs-heading">
+      <section
+        class="pt-1"
+        aria-labelledby="pg-coaching-heading"
+      >
+        <h2
+          id="pg-coaching-heading"
+          class="m-0 text-lg font-semibold text-white"
+        >
+          AI coaching
+        </h2>
+        <p class="mt-2 m-0 text-sm text-gray-500">
+          Uses OpenAI. Sends this goal and your linked log excerpts (up to 50
+          entries). Tone is blunt and high-accountability (Goggins / Jocko
+          style); strong language is allowed.
+        </p>
+        <button
+          type="button"
+          (click)="requestCoaching(goalData.id)"
+          [disabled]="coachingLoading()"
+          class="mt-3 inline-flex items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-emerald-400 hover:bg-emerald-500/20 focus:outline-none focus:ring-2 focus:ring-emerald-500 disabled:pointer-events-none disabled:opacity-40"
+        >
+          @if (coachingLoading()) {
+            <span
+              class="h-4 w-4 shrink-0 rounded-full border-2 border-gray-600 border-t-emerald-400 motion-safe:animate-spin motion-reduce:animate-none"
+              aria-hidden="true"
+            ></span>
+            <span>Getting coaching…</span>
+          } @else {
+            <span class="material-icons text-xl leading-none" aria-hidden="true"
+              >auto_awesome</span
+            >
+            <span>AI coaching on this goal</span>
+          }
+        </button>
+
+        @if (coachingError()) {
+          <div
+            role="alert"
+            class="mt-4 rounded-xl border border-red-500/40 bg-red-950/40 p-4 text-red-200"
+          >
+            {{ coachingError() }}
+          </div>
+        }
+
+        @if (coachingText(); as coach) {
+          <div
+            class="mt-4 rounded-xl border border-gray-600 bg-[#1a1a1a]/90 p-4"
+            aria-live="polite"
+          >
+            <h3 class="mt-0 mb-2 text-sm font-medium text-gray-300">Coach notes</h3>
+            <pre
+              class="m-0 whitespace-pre-wrap break-words font-sans text-sm text-gray-200"
+              >{{ coach }}</pre
+            >
+          </div>
+        }
+      </section>
+
+      <section class="pt-2" aria-labelledby="pg-linked-logs-heading">
         <h2
           id="pg-linked-logs-heading"
           class="m-0 text-lg font-semibold text-white"
