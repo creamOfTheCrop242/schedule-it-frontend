@@ -82,6 +82,27 @@
       </select>
     </div>
 
+    <div>
+      <label for="task-personal-goal" class="block text-sm font-medium mb-2"
+        >Personal goal (optional)</label
+      >
+      <p class="mb-2 text-xs text-gray-500">
+        Not
+        <a routerLink="/goals" class="text-purple-600 underline">Log goals</a>
+        — completion logs created from this task can inherit this link.
+      </p>
+      <select
+        id="task-personal-goal"
+        formControlName="personalGoalId"
+        class="w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+      >
+        <option value="">No personal goal</option>
+        @for (g of personalGoalsForSelect(); track g.id) {
+          <option [value]="g.id">{{ g.title }}</option>
+        }
+      </select>
+    </div>
+
     <div class="pt-4">
       <button
         type="submit"

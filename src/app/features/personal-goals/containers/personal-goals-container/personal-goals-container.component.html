@@ -1,0 +1,63 @@
+<section class="space-y-5 p-5" aria-label="Personal goals">
+  <header class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="text-2xl font-semibold text-white">Personal goals</h1>
+      <p class="mt-1 text-sm text-gray-400">
+        Tie logs and tasks to what you’re working toward — not the same as
+        <a
+          routerLink="/goals"
+          class="text-purple-300 underline-offset-2 hover:underline focus:outline-none focus:ring-2 focus:ring-purple-500 rounded"
+          >Log goals</a
+        >.
+      </p>
+    </div>
+    <a
+      routerLink="/personal-goals/add-personal-goal"
+      class="inline-flex items-center gap-2 rounded-lg border border-purple-500/40 bg-purple-500/10 px-4 py-2 text-sm font-medium text-white transition-all hover:border-purple-400 hover:bg-purple-500/20 focus:outline-none focus:ring-2 focus:ring-purple-500"
+    >
+      <span class="material-icons text-xl leading-none" aria-hidden="true"
+        >add</span
+      >
+      Create goal
+    </a>
+  </header>
+
+  @if (loading()) {
+    <p class="text-gray-400" role="status">Loading…</p>
+  } @else if (error()) {
+    <div
+      role="alert"
+      class="rounded-xl border border-red-500/40 bg-red-950/40 p-4 text-red-200"
+    >
+      Could not load personal goals. Try again later.
+    </div>
+  } @else if (goals().length === 0) {
+    <p class="text-gray-400">No personal goals yet. Use Create goal to add one.</p>
+  } @else {
+    <ul class="m-0 flex list-none flex-col gap-3 p-0" role="list">
+      @for (g of goals(); track g.id) {
+        <li
+          class="rounded-2xl border border-gray-600 bg-[#2c2c2c] text-white transition-colors hover:border-purple-500/35 focus-within:border-purple-500/35"
+        >
+          <a
+            [routerLink]="['/personal-goals/edit-personal-goal', g.id]"
+            class="block rounded-2xl px-4 py-3 text-inherit no-underline outline-none focus-visible:ring-2 focus-visible:ring-purple-500"
+          >
+            <span class="block font-medium">{{ g.title }}</span>
+            @if (g.description) {
+              <span class="mt-1 block text-sm text-gray-400">{{ g.description }}</span>
+            }
+            <span class="mt-2 block text-xs text-gray-500 tabular-nums">
+              {{ g.linkedLogCount }} linked log{{ g.linkedLogCount === 1 ? '' : 's' }}
+            </span>
+            @if (g.targetDate) {
+              <span class="mt-1 block text-xs text-amber-200/90 tabular-nums">
+                Target: {{ g.targetDate }}
+              </span>
+            }
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</section>

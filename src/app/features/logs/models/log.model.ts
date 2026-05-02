@@ -31,6 +31,12 @@ export interface Log {
   deletedAt?: Date;
   habitId?: string;
   habit?: { id: string; name: string; description?: string | null } | null;
+  personalGoalId?: string;
+  personalGoal?: {
+    id: string;
+    title: string;
+    targetDate?: string | null;
+  } | null;
   /** Set on GET log detail when this log was created by completing a task. */
   sourceTask?: { id: string; title: string } | null;
 }
@@ -38,7 +44,7 @@ export interface Log {
 /** POST/PATCH body fields (no relation graphs). */
 export type AddLog = Omit<
   Log,
-  'id' | 'dependencyLog' | 'notes' | 'habit' | 'sourceTask'
+  'id' | 'dependencyLog' | 'notes' | 'habit' | 'personalGoal' | 'sourceTask'
 >;
 
 export interface Note {
