@@ -10,24 +10,6 @@
     </h2>
     <div class="flex flex-wrap gap-2">
       <a
-        routerLink="/logs/add-log"
-        class="inline-flex items-center gap-1.5 rounded-lg border border-purple-500/40 bg-purple-500/10 px-3 py-2 text-sm font-medium text-white transition-colors hover:border-purple-400 hover:bg-purple-500/20 focus:outline-none focus:ring-2 focus:ring-purple-500"
-      >
-        <span class="material-icons text-lg leading-none" aria-hidden="true"
-          >post_add</span
-        >
-        Add log
-      </a>
-      <a
-        routerLink="/tasks/add-task"
-        class="inline-flex items-center gap-1.5 rounded-lg border border-gray-600 bg-[#2c2c2c] px-3 py-2 text-sm font-medium text-white transition-colors hover:border-purple-500/40 focus:outline-none focus:ring-2 focus:ring-purple-500"
-      >
-        <span class="material-icons text-lg leading-none" aria-hidden="true"
-          >add_task</span
-        >
-        Add task
-      </a>
-      <a
         routerLink="/habits"
         class="inline-flex items-center gap-1.5 rounded-lg border border-gray-600 bg-[#2c2c2c] px-3 py-2 text-sm font-medium text-white transition-colors hover:border-purple-500/40 focus:outline-none focus:ring-2 focus:ring-purple-500"
       >
@@ -41,9 +23,18 @@
         class="inline-flex items-center gap-1.5 rounded-lg border border-gray-600 bg-[#2c2c2c] px-3 py-2 text-sm font-medium text-white transition-colors hover:border-purple-500/40 focus:outline-none focus:ring-2 focus:ring-purple-500"
       >
         <span class="material-icons text-lg leading-none" aria-hidden="true"
-          >flag</span
+          >show_chart</span
         >
-        Goals
+        Log progress
+      </a>
+      <a
+        routerLink="/personal-goals"
+        class="inline-flex items-center gap-1.5 rounded-lg border border-gray-600 bg-[#2c2c2c] px-3 py-2 text-sm font-medium text-white transition-colors hover:border-purple-500/40 focus:outline-none focus:ring-2 focus:ring-purple-500"
+      >
+        <span class="material-icons text-lg leading-none" aria-hidden="true"
+          >self_improvement</span
+        >
+        Personal Goals
       </a>
       <a
         routerLink="/daily-motivation"
@@ -60,7 +51,7 @@
 
   <div class="space-y-6">
     <app-log-progress-card
-      heading="Log goals"
+      heading="Log progress"
       [goals]="goalsService.logsGoalStatus"
       valueLabel="logs"
       ctaLabel="Browse logs"

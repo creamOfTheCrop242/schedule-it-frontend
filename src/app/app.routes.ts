@@ -94,9 +94,13 @@ export const routes: Routes = [
     path: 'goals',
     canActivate: [authGuard],
     children: [
-      { path: '', component: GoalsContainerComponent },
-      { path: 'add-goal', component: AddGoalComponent },
-      { path: 'edit-goal/:id', component: AddGoalComponent },
+      { path: '', title: 'Log progress goal', component: GoalsContainerComponent },
+      { path: 'add-goal', title: 'Add log progress goal', component: AddGoalComponent },
+      {
+        path: 'edit-goal/:id',
+        title: 'Edit log progress goal',
+        component: AddGoalComponent,
+      },
     ],
   },
   {
@@ -113,7 +117,7 @@ export const routes: Routes = [
     path: 'personal-goals',
     canActivate: [authGuard],
     children: [
-      { path: '', title: 'Personal goals', component: PersonalGoalsContainerComponent },
+      { path: '', title: 'Personal', component: PersonalGoalsContainerComponent },
       { path: 'add-personal-goal', title: 'Create personal goal', component: AddPersonalGoalComponent },
       {
         path: 'edit-personal-goal/:id',

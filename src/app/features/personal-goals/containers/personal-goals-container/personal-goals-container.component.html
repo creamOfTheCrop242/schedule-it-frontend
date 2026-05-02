@@ -1,7 +1,7 @@
 <section class="space-y-5 p-5" aria-label="Personal goals">
   <header class="flex flex-wrap items-center justify-between gap-3">
     <div>
-      <h1 class="text-2xl font-semibold text-white">Personal goals</h1>
+      <h1 class="text-2xl font-semibold text-white">Personal</h1>
       <p class="mt-1 text-sm text-gray-400">
         Tie logs and tasks to what you’re working toward — not the same as
         <a
@@ -29,10 +29,10 @@
       role="alert"
       class="rounded-xl border border-red-500/40 bg-red-950/40 p-4 text-red-200"
     >
-      Could not load personal goals. Try again later.
+      Could not load this list. Try again later.
     </div>
   } @else if (goals().length === 0) {
-    <p class="text-gray-400">No personal goals yet. Use Create goal to add one.</p>
+    <p class="text-gray-400">No goals yet. Use Create goal to add one.</p>
   } @else {
     <ul class="m-0 flex list-none flex-col gap-3 p-0" role="list">
       @for (g of goals(); track g.id) {
