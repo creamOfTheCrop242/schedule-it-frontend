@@ -1,6 +1,8 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ResourceStatus,
   computed,
   effect,
@@ -9,9 +11,9 @@ import {
   untracked,
   OnDestroy,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CATEGORY_PRESETS } from '../../../shared/models/category.model';
 import { CategoryOptionsService } from '../../../shared/services/category-options.service';
 import { MOOD_PRESETS } from '../../models/log.model';
@@ -27,6 +29,7 @@ import { LogComponent } from '../../components/log/log.component';
 })
 export class LogsContainerComponent implements OnDestroy {
   logService = inject(LogService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly categoryOptionsService = inject(CategoryOptionsService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -52,12 +55,24 @@ export class LogsContainerComponent implements OnDestroy {
   /** When false, filter controls (date, mood, search) are collapsed. */
   filtersExpanded = signal(false);
 
+  readonly aiSummary = signal<string | null>(null);
+  readonly aiSummaryLoading = signal(false);
+  readonly aiSummaryError = signal<string | null>(null);
+
   /** True during first full load (no rows yet). */
   readonly initialListLoading = computed(
     () => this.logService.logsListLoading() && this.logService.logsList().length === 0,
   );
 
   readonly hasLoadError = computed(() => this.logService.logsListError());
+
+  readonly aiSummaryDisabled = computed(
+    () =>
+      this.aiSummaryLoading() ||
+      this.logService.logsList().length === 0 ||
+      this.initialListLoading() ||
+      this.hasLoadError(),
+  );
 
   /** True while replacing list after filter change but rows still visible. */
   readonly listRefreshingWithContent = computed(
@@ -335,5 +350,39 @@ export class LogsContainerComponent implements OnDestroy {
   clearClientFilters() {
     this.logService.clearMoodCategoryAndSearch();
     this.syncListQueryToUrl();
+  }
+
+  fetchAiSummary(): void {
+    if (this.aiSummaryDisabled()) {
+      return;
+    }
+    this.aiSummaryError.set(null);
+    this.aiSummaryLoading.set(true);
+    this.logService
+      .getAiSummary()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ({ summary }) => {
+          this.aiSummary.set(summary);
+          this.aiSummaryLoading.set(false);
+        },
+        error: (err: unknown) => {
+          this.aiSummaryLoading.set(false);
+          this.aiSummaryError.set(LogsContainerComponent.httpErrorMessage(err));
+        },
+      });
+  }
+
+  private static httpErrorMessage(err: unknown): string {
+    if (err instanceof HttpErrorResponse) {
+      const body = err.error as { message?: string | string[] } | undefined;
+      if (body?.message !== undefined) {
+        return Array.isArray(body.message)
+          ? body.message.join('; ')
+          : body.message;
+      }
+      return err.message || `Request failed (${err.status})`;
+    }
+    return 'Something went wrong.';
   }
 }
