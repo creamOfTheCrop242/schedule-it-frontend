@@ -2,6 +2,7 @@ import { HttpClient, httpResource } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import { Log } from '../../logs/models/log.model';
 import { PersonalGoalRow } from '../models/personal-goal.model';
 
 export interface CreatePersonalGoalPayload {
@@ -38,6 +39,13 @@ export class PersonalGoalsService {
   getOne(id: string): Observable<PersonalGoalRow> {
     return this.http.get<PersonalGoalRow>(
       `${environment.baseUrl}/personal-goals/${id}`,
+    );
+  }
+
+  /** Logs assigned to this personal goal (same shape as main log list). */
+  getLinkedLogs(personalGoalId: string): Observable<Log[]> {
+    return this.http.get<Log[]>(
+      `${environment.baseUrl}/personal-goals/${personalGoalId}/logs`,
     );
   }
 

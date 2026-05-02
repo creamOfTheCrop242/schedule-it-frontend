@@ -1,0 +1,239 @@
+<div class="mx-auto max-w-2xl space-y-5 p-5">
+  <a
+    routerLink="/personal-goals"
+    class="inline-flex items-center gap-2 rounded-lg border border-gray-600 px-3 py-2 text-sm text-gray-300 transition-colors hover:border-purple-500/40 hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+  >
+    <span class="material-icons text-lg leading-none" aria-hidden="true"
+      >arrow_back</span
+    >
+    Back to personal goals
+  </a>
+
+  @if (loadError()) {
+    <div
+      role="alert"
+      class="rounded-xl border border-red-500/40 bg-red-950/40 p-4 text-red-200 shadow-lg shadow-red-900/20 ring-1 ring-red-500/30"
+    >
+      Could not load this personal goal. Check your connection and try again.
+    </div>
+  } @else if (isLoading()) {
+    <div role="status" class="inline-flex items-center gap-3 text-gray-300">
+      <span
+        class="h-5 w-5 shrink-0 rounded-full border-2 border-gray-600 border-t-purple-500 motion-safe:animate-spin motion-reduce:animate-none"
+        aria-hidden="true"
+      ></span>
+      <span>Loading…</span>
+    </div>
+  } @else {
+    @if (goal(); as goalData) {
+      <article
+        class="rounded-3xl border border-gray-600 bg-[#2c2c2c] p-6 shadow-lg shadow-black/20"
+        aria-labelledby="pg-detail-title"
+      >
+        <p class="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
+          Personal goal
+        </p>
+        <div
+          class="flex items-start justify-between gap-3 border-b border-gray-600 pb-4"
+        >
+          <h1
+            id="pg-detail-title"
+            class="min-w-0 flex-1 text-2xl font-semibold tracking-tight text-white sm:text-3xl"
+          >
+            {{ goalData.title }}
+          </h1>
+          <div class="relative shrink-0">
+            <button
+              type="button"
+              id="pg-actions-menu-trigger"
+              class="relative z-[101] flex items-center justify-center rounded-md border border-gray-600 p-1 text-gray-300 transition-colors hover:border-purple-500/40 hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 motion-safe:transition-transform motion-safe:duration-200"
+              [class.scale-110]="actionsMenuOpen()"
+              [attr.aria-expanded]="actionsMenuOpen()"
+              aria-haspopup="menu"
+              aria-controls="pg-actions-menu"
+              (click)="toggleActionsMenu(); $event.stopPropagation()"
+            >
+              <span
+                class="material-icons !text-base leading-none"
+                aria-hidden="true"
+                >more_vert</span
+              >
+              <span class="sr-only">Open personal goal actions menu</span>
+            </button>
+            <button
+              type="button"
+              class="fixed inset-0 z-[90] cursor-default bg-black/50 transition-opacity duration-200 ease-out motion-reduce:transition-none"
+              [class.pointer-events-none]="!actionsMenuOpen()"
+              [class.opacity-0]="!actionsMenuOpen()"
+              [class.opacity-100]="actionsMenuOpen()"
+              [attr.aria-hidden]="true"
+              tabindex="-1"
+              aria-label="Dismiss menu"
+              (click)="closeActionsMenu()"
+            ></button>
+            <div
+              id="pg-actions-menu"
+              role="menu"
+              aria-labelledby="pg-actions-menu-trigger"
+              class="absolute right-0 top-full z-[100] mt-1 w-52 origin-top-right overflow-hidden rounded-xl border border-gray-600 bg-[#1a1a1a] py-1 shadow-xl shadow-purple-950/30 ring-1 ring-purple-500/20 transition-[opacity,transform] duration-200 ease-out motion-reduce:transition-none"
+              [attr.aria-hidden]="!actionsMenuOpen()"
+              [inert]="!actionsMenuOpen()"
+              [class.pointer-events-none]="!actionsMenuOpen()"
+              [class.opacity-0]="!actionsMenuOpen()"
+              [class.scale-95]="!actionsMenuOpen()"
+              [class.-translate-y-1]="!actionsMenuOpen()"
+              [class.opacity-100]="actionsMenuOpen()"
+              [class.scale-100]="actionsMenuOpen()"
+              [class.translate-y-0]="actionsMenuOpen()"
+              (click)="$event.stopPropagation()"
+            >
+              <a
+                [routerLink]="['/personal-goals/edit-personal-goal', goalData.id]"
+                role="menuitem"
+                class="flex w-full items-center gap-2 px-4 py-3 text-left text-sm text-white no-underline hover:bg-purple-500/15 focus:bg-purple-500/15 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500"
+                (click)="closeActionsMenu()"
+              >
+                <span
+                  class="material-icons text-lg text-purple-300"
+                  aria-hidden="true"
+                  >edit</span
+                >
+                Edit
+              </a>
+              <button
+                type="button"
+                role="menuitem"
+                class="flex w-full items-center gap-2 px-4 py-3 text-left text-sm text-red-300 hover:bg-red-950/40 focus:bg-red-950/40 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-500/50"
+                (click)="deleteGoal(goalData.id)"
+              >
+                <span class="material-icons text-lg" aria-hidden="true"
+                  >delete</span
+                >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+
+        @if (goalData.description) {
+          <section class="mt-4">
+            <h2 class="mb-2 text-sm font-medium text-gray-400">Description</h2>
+            <p class="m-0 whitespace-pre-wrap text-gray-200">
+              {{ goalData.description }}
+            </p>
+          </section>
+        }
+
+        @if (goalData.targetDate) {
+          <section class="mt-4">
+            <h2 class="mb-2 text-sm font-medium text-gray-400">Target date</h2>
+            <p class="m-0 tabular-nums text-amber-100/90">{{ goalData.targetDate }}</p>
+          </section>
+        }
+
+        <dl
+          class="mt-6 grid gap-3 border-t border-gray-600 pt-4 text-sm text-gray-400"
+        >
+          @if (goalData.createdAt) {
+            <div class="flex flex-wrap justify-between gap-2">
+              <dt>Created</dt>
+              <dd class="m-0 text-gray-200">
+                {{ goalData.createdAt | date: 'medium' }}
+              </dd>
+            </div>
+          }
+          @if (goalData.updatedAt) {
+            <div class="flex flex-wrap justify-between gap-2">
+              <dt>Updated</dt>
+              <dd class="m-0 text-gray-200">
+                {{ goalData.updatedAt | date: 'medium' }}
+              </dd>
+            </div>
+          }
+        </dl>
+
+        @if (deleteConfirmId() === goalData.id) {
+          <div
+            class="mt-6 rounded-xl border border-red-900/50 bg-[#141414] p-4 shadow-lg shadow-red-950/30 ring-1 ring-red-500/20"
+            role="dialog"
+            aria-labelledby="pg-delete-dialog-title"
+            aria-describedby="pg-delete-dialog-desc"
+          >
+            <p id="pg-delete-dialog-title" class="font-semibold text-white">
+              Delete this personal goal?
+            </p>
+            <p id="pg-delete-dialog-desc" class="mt-1 text-sm text-gray-400">
+              Linked logs and tasks keep their data; the personal goal link is
+              removed. This action cannot be undone.
+            </p>
+            <div class="mt-4 flex flex-wrap gap-2">
+              <button
+                type="button"
+                (click)="confirmDelete(goalData.id)"
+                class="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-[#141414]"
+              >
+                Yes, delete
+              </button>
+              <button
+                type="button"
+                (click)="cancelDelete()"
+                class="rounded-md border border-gray-500 px-4 py-2 text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-[#141414]"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        }
+      </article>
+
+      <section class="pt-1" aria-labelledby="pg-linked-logs-heading">
+        <h2
+          id="pg-linked-logs-heading"
+          class="m-0 text-lg font-semibold text-white"
+        >
+          Linked logs
+        </h2>
+        <p class="mt-2 m-0 text-sm tabular-nums text-gray-400">
+          {{ goalData.linkedLogCount }} log{{
+            goalData.linkedLogCount === 1 ? '' : 's'
+          }}
+          assigned to this goal
+        </p>
+        @if (linkedLogsLoadError()) {
+          <p role="alert" class="mt-4 m-0 text-sm text-amber-200/90">
+            Could not load linked logs. Refresh the page or try again later.
+          </p>
+        } @else if (linkedLogs().length === 0) {
+          <p class="mt-4 m-0 text-sm text-gray-500">
+            No logs linked yet. Assign this goal when you add or edit a log.
+          </p>
+        } @else {
+          <ul
+            class="mt-4 m-0 flex list-none flex-col gap-3 p-0"
+            role="list"
+            aria-label="Logs for this personal goal"
+          >
+            @for (log of linkedLogs(); track log.id) {
+              <li class="m-0 p-0">
+                <app-log [log]="log" />
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    } @else {
+      <div
+        class="rounded-xl border border-gray-600 bg-[#1a1a1a]/80 p-8 text-center text-gray-300"
+        role="status"
+      >
+        <p class="m-0 text-base text-white">Personal goal not found.</p>
+        <a
+          routerLink="/personal-goals"
+          class="mt-4 inline-block rounded text-sm font-medium text-purple-300 underline-offset-2 hover:text-purple-200 hover:underline focus:outline-none focus:ring-2 focus:ring-purple-500"
+        >
+          Back to personal goals
+        </a>
+      </div>
+    }
+  }
+</div>

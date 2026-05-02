@@ -147,10 +147,7 @@
               Personal goal
             </h2>
             <a
-              [routerLink]="[
-                '/personal-goals/edit-personal-goal',
-                logData.personalGoal.id,
-              ]"
+              [routerLink]="['/personal-goals', logData.personalGoal.id]"
               class="inline-flex items-center gap-2 rounded-lg border border-gray-600 bg-[#1a1a1a]/80 px-3 py-2 text-sm text-purple-300 no-underline transition-colors hover:border-purple-500/40 hover:text-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
             >
               <span class="material-icons text-lg leading-none" aria-hidden="true"

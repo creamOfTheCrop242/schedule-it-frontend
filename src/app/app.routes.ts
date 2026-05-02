@@ -21,6 +21,7 @@ import { AddHabitComponent } from './features/habits/components/add-habit/add-ha
 import { HabitDetailComponent } from './features/habits/components/habit-detail/habit-detail.component';
 import { PersonalGoalsContainerComponent } from './features/personal-goals/containers/personal-goals-container/personal-goals-container.component';
 import { AddPersonalGoalComponent } from './features/personal-goals/components/add-personal-goal/add-personal-goal.component';
+import { PersonalGoalDetailComponent } from './features/personal-goals/components/personal-goal-detail/personal-goal-detail.component';
 import { HelpPageComponent } from './features/help/help-page/help-page.component';
 import { FeedbackFormComponent } from './features/feedback/components/feedback-form/feedback-form.component';
 import { FeedbackInboxComponent } from './features/feedback/components/feedback-inbox/feedback-inbox.component';
@@ -119,6 +120,7 @@ export const routes: Routes = [
         title: 'Edit personal goal',
         component: AddPersonalGoalComponent,
       },
+      { path: ':id', title: 'Personal goal', component: PersonalGoalDetailComponent },
     ],
   },
   {
