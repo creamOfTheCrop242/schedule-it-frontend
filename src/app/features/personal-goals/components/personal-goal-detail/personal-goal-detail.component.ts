@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -36,6 +37,10 @@ export class PersonalGoalDetailComponent implements OnInit {
   readonly loadError = signal(false);
   readonly deleteConfirmId = signal<string | null>(null);
   readonly actionsMenuOpen = signal(false);
+
+  readonly coachingText = signal<string | null>(null);
+  readonly coachingLoading = signal(false);
+  readonly coachingError = signal<string | null>(null);
 
   ngOnInit(): void {
     this.route.paramMap
@@ -83,7 +88,46 @@ export class PersonalGoalDetailComponent implements OnInit {
         this.goal.set(goal);
         this.linkedLogs.set(logs);
         this.linkedLogsLoadError.set(logsError);
+        this.coachingText.set(null);
+        this.coachingError.set(null);
+        this.coachingLoading.set(false);
       });
+  }
+
+  requestCoaching(goalId: string): void {
+    if (this.coachingLoading()) {
+      return;
+    }
+    this.coachingError.set(null);
+    this.coachingLoading.set(true);
+    this.personalGoalsService
+      .requestCoaching(goalId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ({ advice }) => {
+          this.coachingText.set(advice);
+          this.coachingLoading.set(false);
+        },
+        error: (err: unknown) => {
+          this.coachingLoading.set(false);
+          this.coachingError.set(
+            PersonalGoalDetailComponent.httpErrorMessage(err),
+          );
+        },
+      });
+  }
+
+  private static httpErrorMessage(err: unknown): string {
+    if (err instanceof HttpErrorResponse) {
+      const body = err.error as { message?: string | string[] } | undefined;
+      if (body?.message !== undefined) {
+        return Array.isArray(body.message)
+          ? body.message.join('; ')
+          : body.message;
+      }
+      return err.message || `Request failed (${err.status})`;
+    }
+    return 'Something went wrong.';
   }
 
   toggleActionsMenu(): void {

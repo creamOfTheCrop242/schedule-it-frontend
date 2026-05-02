@@ -49,6 +49,14 @@ export class PersonalGoalsService {
     );
   }
 
+  /** On-demand AI coaching from logs linked to this goal (uses OpenAI on the server). */
+  requestCoaching(personalGoalId: string): Observable<{ advice: string }> {
+    return this.http.post<{ advice: string }>(
+      `${environment.baseUrl}/personal-goals/${personalGoalId}/coaching`,
+      {},
+    );
+  }
+
   update(id: string, body: UpdatePersonalGoalPayload) {
     return this.http.patch<PersonalGoalRow>(
       `${environment.baseUrl}/personal-goals/${id}`,
