@@ -3,6 +3,7 @@ import { AuthContainerComponent } from './features/auth/containers/auth-containe
 import { LoginComponent } from './features/auth/containers/login/login.component';
 import { RegisterComponent } from './features/auth/containers/register/register.component';
 import { DashboardContainerComponent } from './features/dashboard/containers/dashboard-container/dashboard-container.component';
+import { DailyMotivationPageComponent } from './features/dashboard/components/daily-motivation-page/daily-motivation-page.component';
 import { SendVerifyCodeComponent } from './features/auth/components/send-verify-code/send-verify-code.component';
 import { AddLogComponent } from './features/logs/components/add-log/add-log.component';
 import { authGuard } from './features/auth/guards/auth.guard';
@@ -68,6 +69,12 @@ export const routes: Routes = [
   {
     path: 'dashboard',
     component: DashboardContainerComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'daily-motivation',
+    title: 'Story of the day',
+    component: DailyMotivationPageComponent,
     canActivate: [authGuard],
   },
   {
