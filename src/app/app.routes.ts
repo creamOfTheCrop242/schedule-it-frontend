@@ -117,7 +117,7 @@ export const routes: Routes = [
     path: 'personal-goals',
     canActivate: [authGuard],
     children: [
-      { path: '', title: 'Personal', component: PersonalGoalsContainerComponent },
+      { path: '', title: 'Personal goals', component: PersonalGoalsContainerComponent },
       { path: 'add-personal-goal', title: 'Create personal goal', component: AddPersonalGoalComponent },
       {
         path: 'edit-personal-goal/:id',
