@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams, httpResource } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { AddLog, Log } from '../models/log.model';
 
@@ -149,6 +149,14 @@ export class LogService {
 
   getLog(id: string) {
     return this.httpClient.get<Log>(`${environment.baseUrl}/logs/${id}`);
+  }
+
+  /** Summarizes up to 50 logs matching current list filters (same params as GET /logs). */
+  getAiSummary(): Observable<{ summary: string }> {
+    return this.httpClient.get<{ summary: string }>(
+      `${environment.baseUrl}/logs/ai-summary`,
+      { params: this.filterParams() },
+    );
   }
 
   clearMoodCategoryAndSearch() {
