@@ -30,7 +30,9 @@
         class="rounded-3xl border border-gray-600 bg-[#2c2c2c] p-6 shadow-lg shadow-black/20"
         aria-labelledby="pg-detail-title"
       >
-        <p class="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500">
+        <p
+          class="mb-1 text-xs font-medium uppercase tracking-wide text-gray-500"
+        >
           Personal goal
         </p>
         <div
@@ -88,7 +90,10 @@
               (click)="$event.stopPropagation()"
             >
               <a
-                [routerLink]="['/personal-goals/edit-personal-goal', goalData.id]"
+                [routerLink]="[
+                  '/personal-goals/edit-personal-goal',
+                  goalData.id,
+                ]"
                 role="menuitem"
                 class="flex w-full items-center gap-2 px-4 py-3 text-left text-sm text-white no-underline hover:bg-purple-500/15 focus:bg-purple-500/15 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500"
                 (click)="closeActionsMenu()"
@@ -127,7 +132,9 @@
         @if (goalData.targetDate) {
           <section class="mt-4">
             <h2 class="mb-2 text-sm font-medium text-gray-400">Target date</h2>
-            <p class="m-0 tabular-nums text-amber-100/90">{{ goalData.targetDate }}</p>
+            <p class="m-0 tabular-nums text-amber-100/90">
+              {{ goalData.targetDate }}
+            </p>
           </section>
         }
 
@@ -138,7 +145,7 @@
             <div class="flex flex-wrap justify-between gap-2">
               <dt>Created</dt>
               <dd class="m-0 text-gray-200">
-                {{ goalData.createdAt | date: 'medium' }}
+                {{ goalData.createdAt | date: "medium" }}
               </dd>
             </div>
           }
@@ -146,7 +153,7 @@
             <div class="flex flex-wrap justify-between gap-2">
               <dt>Updated</dt>
               <dd class="m-0 text-gray-200">
-                {{ goalData.updatedAt | date: 'medium' }}
+                {{ goalData.updatedAt | date: "medium" }}
               </dd>
             </div>
           }
@@ -186,10 +193,7 @@
         }
       </article>
 
-      <section
-        class="pt-1"
-        aria-labelledby="pg-coaching-heading"
-      >
+      <section class="pt-1" aria-labelledby="pg-coaching-heading">
         <h2
           id="pg-coaching-heading"
           class="m-0 text-lg font-semibold text-white"
@@ -197,9 +201,7 @@
           AI coaching
         </h2>
         <p class="mt-2 m-0 text-sm text-gray-500">
-          Uses OpenAI. Sends this goal and your linked log excerpts (up to 50
-          entries). Tone is blunt and high-accountability (Goggins / Jocko
-          style); strong language is allowed.
+          Uses AI to provide coaching on this goal.
         </p>
         <button
           type="button"
@@ -235,7 +237,9 @@
             class="mt-4 rounded-xl border border-gray-600 bg-[#1a1a1a]/90 p-4"
             aria-live="polite"
           >
-            <h3 class="mt-0 mb-2 text-sm font-medium text-gray-300">Coach notes</h3>
+            <h3 class="mt-0 mb-2 text-sm font-medium text-gray-300">
+              Coach notes
+            </h3>
             <pre
               class="m-0 whitespace-pre-wrap break-words font-sans text-sm text-gray-200"
               >{{ coach }}</pre
@@ -253,7 +257,7 @@
         </h2>
         <p class="mt-2 m-0 text-sm tabular-nums text-gray-400">
           {{ goalData.linkedLogCount }} log{{
-            goalData.linkedLogCount === 1 ? '' : 's'
+            goalData.linkedLogCount === 1 ? "" : "s"
           }}
           assigned to this goal
         </p>
