@@ -81,11 +81,8 @@ export class AddHabitComponent implements OnInit {
 
     const descTrimmed = this.form.value.description?.trim() ?? '';
     const cadence = this.form.value.cadence ?? GoalScope.DAY;
-    const targetRaw = this.form.value.targetPerPeriod;
     const targetPerPeriod =
-      typeof targetRaw === 'number' && Number.isFinite(targetRaw)
-        ? Math.max(1, Math.floor(targetRaw))
-        : 1;
+      AddHabitComponent.coerceTargetPerPeriod(this.form.value.targetPerPeriod);
     this.errorMessage.set(null);
 
     const id = this.editId;
@@ -125,5 +122,19 @@ export class AddHabitComponent implements OnInit {
         error: () =>
           this.errorMessage.set('Failed to create habit. Please try again.'),
       });
+  }
+
+  /** `<input type="number">` often yields strings; coerce before PATCH/POST. */
+  private static coerceTargetPerPeriod(raw: unknown): number {
+    if (raw === null || raw === undefined) {
+      return 1;
+    }
+    if (typeof raw === 'number' && Number.isFinite(raw)) {
+      return Math.max(1, Math.floor(raw));
+    }
+    const s = String(raw).trim();
+    if (s === '') return 1;
+    const n = Number(s);
+    return Number.isFinite(n) ? Math.max(1, Math.floor(n)) : 1;
   }
 }
