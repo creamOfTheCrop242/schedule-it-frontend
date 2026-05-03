@@ -1,86 +1,224 @@
-<section class="p-4 pb-24 max-w-lg mx-auto text-white" aria-labelledby="help-title">
-  <p class="mb-4">
+<section
+  class="mx-auto max-w-xl space-y-8 p-4 pb-24 text-white"
+  aria-labelledby="help-title"
+>
+  <p class="mb-0">
     @if (authService.authStatus.value()) {
-    <a
-      routerLink="/dashboard"
-      class="text-purple-400 hover:text-purple-300 underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] rounded"
-    >
-      Back to app
-    </a>
+      <a
+        routerLink="/dashboard"
+        class="rounded text-purple-400 underline-offset-2 hover:text-purple-300 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a]"
+      >
+        Back to app
+      </a>
     } @else {
-    <a
-      routerLink="/auth/login"
-      class="text-purple-400 hover:text-purple-300 underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] rounded"
-    >
-      Back to login
-    </a>
+      <a
+        routerLink="/auth/login"
+        class="rounded text-purple-400 underline-offset-2 hover:text-purple-300 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a]"
+      >
+        Back to login
+      </a>
     }
   </p>
 
-  <h1 id="help-title" class="text-2xl font-bold mb-2 font-['Source_Sans_Pro']">
-    Help &amp; install
-  </h1>
-  <p class="text-gray-300 text-sm mb-8">
-    The Guide Log helps you track logs, tasks, goals, and habits in one place.
-  </p>
+  <header>
+    <h1
+      id="help-title"
+      class="mb-2 font-['Source_Sans_Pro'] text-2xl font-bold"
+    >
+      Help &amp; install
+    </h1>
+    <p class="text-sm text-gray-300">
+      The Guide Log is a life log: journals (<strong>logs</strong>),
+      <strong>tasks</strong>, <strong>habits</strong>, numeric
+      <strong>log progress goals</strong>, <strong>personal goals</strong> tied
+      to your activity, optional <strong>AI</strong> summaries and coaching,
+      and a shared daily <strong>Story of the day</strong>.
+    </p>
+  </header>
 
-  <h2 class="text-lg font-semibold mb-2">Using the app</h2>
-  <ul class="list-disc pl-5 space-y-2 text-gray-300 text-sm mb-8">
-    <li>
-      <span class="text-white font-medium">Dashboard</span> shows a snapshot of
-      upcoming tasks and recent activity.
-    </li>
-    <li>
-      <span class="text-white font-medium">Logs</span> are journal-style entries
-      you can add, view, and edit from the Logs tab.
-    </li>
-    <li>
-      <span class="text-white font-medium">Tasks</span> are to-dos with their
-      own list and detail views.
-    </li>
-    <li>
-      <span class="text-white font-medium">Goals &amp; habits</span> share the
-      middle tab: open the menu to go to Goals or Habits, then add or track
-      what matters to you.
-    </li>
-    <li>
-      <span class="text-white font-medium">Settings</span> (gear in the header)
-      is where you update your name or sign out.
-    </li>
-  </ul>
+  <section aria-labelledby="help-home-heading">
+    <h2 id="help-home-heading" class="mb-2 text-lg font-semibold">Home</h2>
+    <ul class="list-disc space-y-2 pl-5 text-sm text-gray-300">
+      <li>
+        <span class="font-medium text-white">Dashboard</span> shows quick
+        links to habits, log progress, personal goals, and Story of the day
+        (SOTD), plus previews of habits, open tasks, and recent logs.
+      </li>
+    </ul>
+  </section>
 
-  <h2 class="text-lg font-semibold mb-2">Install as an app</h2>
-  <p class="text-gray-300 text-sm mb-3">
-    Installing adds an icon to your home screen and often opens the app in its
-    own window, like a native app.
-  </p>
-  <ul class="list-disc pl-5 space-y-2 text-gray-300 text-sm mb-4">
-    <li>
-      <span class="text-white font-medium">Chrome / Edge (desktop or Android):</span>
-      look for “Install app” or “Install The Guide Log” in the browser menu, or
-      use the prompt if the site offers one.
-    </li>
-    <li>
-      <span class="text-white font-medium">Safari (iPhone / iPad):</span> tap the
-      Share button, then “Add to Home Screen”.
-    </li>
-    <li>
-      <span class="text-white font-medium">Safari (Mac):</span> File → Add to
-      Dock (wording may vary by macOS version).
-    </li>
-  </ul>
-  <p class="text-gray-400 text-xs mb-10">
-    On some browsers you may see an install banner at the bottom of the screen;
-    you can use that or the steps above.
-  </p>
+  <section aria-labelledby="help-logs-heading">
+    <h2 id="help-logs-heading" class="mb-2 text-lg font-semibold">Logs</h2>
+    <ul class="list-disc space-y-2 pl-5 text-sm text-gray-300">
+      <li>
+        <span class="font-medium text-white">Logs</span> are journal-style
+        entries—add, filter, and open each from
+        <a
+          routerLink="/logs"
+          class="text-purple-300 underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 rounded"
+          >Logs</a
+        >.
+      </li>
+      <li>
+        When adding or editing a log you can attach an optional
+        <span class="font-medium text-white">personal goal</span> so that log
+        counts toward that goal’s linked list and AI coaching.
+      </li>
+      <li>
+        <span class="font-medium text-white">AI summary</span> on the logs
+        screen sends excerpts from logs that match your
+        <em>current filters</em> (up to 50) to the model for a blunt read on
+        patterns—not medical advice.
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="help-tasks-heading">
+    <h2 id="help-tasks-heading" class="mb-2 text-lg font-semibold">Tasks</h2>
+    <ul class="list-disc space-y-2 pl-5 text-sm text-gray-300">
+      <li>
+        <span class="font-medium text-white">Tasks</span> live under
+        <a
+          routerLink="/tasks"
+          class="text-purple-300 underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 rounded"
+          >Tasks</a
+        >; you can optionally link a task to a personal goal for your own
+        organization.
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="help-goals-heading">
+    <h2 id="help-goals-heading" class="mb-2 text-lg font-semibold">
+      Log progress goals
+    </h2>
+    <ul class="list-disc space-y-2 pl-5 text-sm text-gray-300">
+      <li>
+        Open the middle tab (scoreboard icon) →
+        <span class="font-medium text-white">Log goals</span> or go to
+        <a
+          routerLink="/goals"
+          class="text-purple-300 underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 rounded"
+          >Log progress goal</a
+        >.
+      </li>
+      <li>
+        Set a <strong>daily</strong> target and choose whether you track
+        <strong>logs added</strong> or <strong>logs completed</strong>. Weekly,
+        monthly, and yearly bars use the same daily number (×7 / ×30 / ×365).
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="help-pg-heading">
+    <h2 id="help-pg-heading" class="mb-2 text-lg font-semibold">
+      Personal goals
+    </h2>
+    <ul class="list-disc space-y-2 pl-5 text-sm text-gray-300">
+      <li>
+        <span class="font-medium text-white">Personal goals</span> are named
+        aims—not the same as log progress goals. Create them from the same
+        middle-tab menu, then attach them on log or task forms.
+      </li>
+      <li>
+        A goal’s detail page lists <strong>linked logs</strong> and offers
+        <strong>AI coaching</strong> using up to fifty of those logs (notes
+        included when present). Coaching does not read tasks; it needs logs
+        assigned to the goal.
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="help-habits-heading">
+    <h2 id="help-habits-heading" class="mb-2 text-lg font-semibold">Habits</h2>
+    <ul class="list-disc space-y-2 pl-5 text-sm text-gray-300">
+      <li>
+        From the middle tab choose
+        <a
+          routerLink="/habits"
+          class="text-purple-300 underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 rounded"
+          >Habits</a
+        >: each habit has a <strong>cadence</strong> and
+        <strong>logs per period</strong>—the minimum log check-ins per period
+        that count that period toward your streak.
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="help-sotd-heading">
+    <h2 id="help-sotd-heading" class="mb-2 text-lg font-semibold">
+      Story of the day
+    </h2>
+    <ul class="list-disc space-y-2 pl-5 text-sm text-gray-300">
+      <li>
+        One shared AI-written motivational piece per <strong>UTC calendar day</strong>
+        (everyone sees the same story until the next UTC midnight). Each day’s
+        prompt includes a rotating world region so settings vary.
+      </li>
+      <li>
+        Reach it from the dashboard quick action
+        <span class="font-medium text-white">SOTD</span> or
+        <a
+          routerLink="/daily-motivation"
+          class="text-purple-300 underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 rounded"
+          >Story of the day</a
+        >.
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="help-nav-heading">
+    <h2 id="help-nav-heading" class="mb-2 text-lg font-semibold">Navigation</h2>
+    <ul class="list-disc space-y-2 pl-5 text-sm text-gray-300">
+      <li>
+        Bottom bar: <strong>Home</strong>, <strong>Logs</strong>,
+        <strong>Add</strong> (log or task), <strong>Tasks</strong>, and
+        <strong>Goals &amp; habits</strong> (opens Log goals, Personal goals, or
+        Habits).
+      </li>
+      <li>
+        <span class="font-medium text-white">Settings</span> (gear in the
+        header) is for your name and signing out.
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="help-install-heading">
+    <h2 id="help-install-heading" class="mb-2 text-lg font-semibold">
+      Install as an app
+    </h2>
+    <p class="mb-3 text-sm text-gray-300">
+      Installing adds an icon to your home screen and often opens the app in
+      its own window, like a native app.
+    </p>
+    <ul class="mb-4 list-disc space-y-2 pl-5 text-sm text-gray-300">
+      <li>
+        <span class="font-medium text-white">Chrome / Edge (desktop or Android):</span>
+        look for “Install app” or “Install The Guide Log” in the browser menu,
+        or use the prompt if the site offers one.
+      </li>
+      <li>
+        <span class="font-medium text-white">Safari (iPhone / iPad):</span> tap
+        the Share button, then “Add to Home Screen”.
+      </li>
+      <li>
+        <span class="font-medium text-white">Safari (Mac):</span> File → Add to
+        Dock (wording may vary by macOS version).
+      </li>
+    </ul>
+    <p class="text-xs text-gray-400">
+      On some browsers you may see an install banner at the bottom of the
+      screen; you can use that or the steps above.
+    </p>
+  </section>
 
   <footer
-    class="border-t border-gray-700 pt-6 mt-2"
+    class="mt-2 border-t border-gray-700 pt-6"
     aria-labelledby="help-credits-heading"
   >
     <h2 id="help-credits-heading" class="sr-only">Credits</h2>
-    <p class="text-gray-300 text-sm mb-2">
-      <span class="text-white font-medium">COTC</span>
+    <p class="mb-2 text-sm text-gray-300">
+      <span class="font-medium text-white">COTC</span>
       <span class="text-gray-400"> — Cream of the Crop</span>
     </p>
     <p class="text-sm">
@@ -88,7 +226,7 @@
         href="https://www.instagram.com/don_muscles/"
         target="_blank"
         rel="noopener noreferrer"
-        class="text-purple-400 hover:text-purple-300 underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] rounded"
+        class="rounded text-purple-400 underline-offset-2 hover:text-purple-300 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a]"
       >
         Instagram: &#64;don_muscles
       </a>
