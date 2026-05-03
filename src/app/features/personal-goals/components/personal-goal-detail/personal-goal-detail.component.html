@@ -201,7 +201,9 @@
           AI coaching
         </h2>
         <p class="mt-2 m-0 text-sm text-gray-500">
-          Uses AI to provide coaching on this goal.
+          Uses AI on up to fifty linked logs (including notes when present).
+          Tasks can reference this goal, but coaching only sees logs—add or edit
+          logs with this goal attached so there is something to react to.
         </p>
         <button
           type="button"
@@ -267,7 +269,8 @@
           </p>
         } @else if (linkedLogs().length === 0) {
           <p class="mt-4 m-0 text-sm text-gray-500">
-            No logs linked yet. Assign this goal when you add or edit a log.
+            No logs linked yet. Add or edit a log and set this personal goal so
+            entries appear here and AI coaching has data.
           </p>
         } @else {
           <ul

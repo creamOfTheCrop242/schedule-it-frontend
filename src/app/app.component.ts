@@ -23,7 +23,7 @@ export class AppComponent {
   appService = inject(AppService);
   authService = inject(AuthService);
   router = inject(Router);
-  title = 'schedule-it';
+  title = 'The Guide Log';
   status = false;
 
   constructor() {}
