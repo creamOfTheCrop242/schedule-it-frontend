@@ -14,16 +14,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'schedule-it' title`, () => {
+  it(`should have the app title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('schedule-it');
+    expect(app.title).toEqual('The Guide Log');
   });
 
-  it('should render title', () => {
+  it('should render main layout shell', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, schedule-it');
+    expect(compiled.querySelector('main')).toBeTruthy();
   });
 });

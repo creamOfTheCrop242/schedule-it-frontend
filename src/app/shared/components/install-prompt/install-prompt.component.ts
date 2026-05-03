@@ -12,9 +12,10 @@ import { CommonModule } from '@angular/common';
     >
       <div class="flex items-center justify-between">
         <div class="flex-1">
-          <h3 class="font-semibold text-gray-900">Install ScheduleIt</h3>
+          <h3 class="font-semibold text-gray-900">Install The Guide Log</h3>
           <p class="text-sm text-gray-600 mt-1">
-            Add to home screen for a better experience
+            Add to your home screen for quicker access to logs, goals, and
+            habits.
           </p>
         </div>
         <div class="flex gap-2">
