@@ -124,7 +124,7 @@
           </button>
         </div>
         <p id="add-choice-dialog-desc" class="text-sm text-gray-400 mb-5">
-          Choose whether to log an activity or create a standalone task.
+          Full log, quick one-liner, or a standalone task.
         </p>
         <div class="flex flex-col gap-3">
           <button
@@ -133,6 +133,13 @@
             (click)="navigateToAddLog()"
           >
             Add log
+          </button>
+          <button
+            type="button"
+            class="w-full rounded-lg border border-[#555] bg-transparent py-3 px-4 font-medium text-white hover:bg-[#404040] focus:outline-none focus:ring-2 focus:ring-purple-400"
+            (click)="navigateToQuickLog()"
+          >
+            Quick log
           </button>
           <button
             type="button"
