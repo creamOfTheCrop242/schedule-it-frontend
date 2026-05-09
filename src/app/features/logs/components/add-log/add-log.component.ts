@@ -6,6 +6,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { InputComponent } from '../../../shared/components/input/input.component';
 import {
   FormControl,
@@ -13,10 +14,10 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgTemplateOutlet } from '@angular/common';
 import { LogService } from '../../services/log.service';
 import { AddLog, Log, MOOD_PRESETS, MOOD_CUSTOM } from '../../models/log.model';
-import { take } from 'rxjs';
+import { map, take } from 'rxjs';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { GoalsService } from '../../../goals/services/goals.service';
 import {
@@ -31,7 +32,7 @@ import { PersonalGoalRow } from '../../../personal-goals/models/personal-goal.mo
 
 @Component({
   selector: 'app-add-log',
-  imports: [InputComponent, ReactiveFormsModule, CommonModule, RouterLink],
+  imports: [InputComponent, ReactiveFormsModule, CommonModule, RouterLink, NgTemplateOutlet],
   templateUrl: './add-log.component.html',
   styleUrl: './add-log.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -61,6 +62,18 @@ export class AddLogComponent {
   });
 
   readonly id = this.route.snapshot.paramMap.get('id');
+
+  /** True when URL has `?quick=1` and not editing (quick layout is add-only). */
+  private readonly quickFromQuery = toSignal(
+    this.route.queryParamMap.pipe(
+      map((m) => m.get('quick') === '1'),
+    ),
+    {
+      initialValue: this.route.snapshot.queryParamMap.get('quick') === '1',
+    },
+  );
+
+  readonly isQuickMode = computed(() => !this.id && this.quickFromQuery());
 
   readonly moodPresetOptions = ['', ...MOOD_PRESETS, MOOD_CUSTOM];
 
@@ -108,6 +121,8 @@ export class AddLogComponent {
 
   readonly errorMessage = signal<string | null>(null);
   readonly scheduleOpen = signal(false);
+  /** Quick mode: expanded block for optional fields below the fold. */
+  readonly moreDetailsOpen = signal(false);
 
   constructor() {
     if (this.id) {
@@ -207,6 +222,17 @@ export class AddLogComponent {
 
   toggleSchedule(): void {
     this.scheduleOpen.update((open) => !open);
+  }
+
+  toggleMoreDetails(): void {
+    this.moreDetailsOpen.update((open) => !open);
+  }
+
+  navigateToFullAddLog(): void {
+    void this.router.navigate(['/logs', 'add-log'], {
+      queryParams: {},
+      replaceUrl: true,
+    });
   }
 
   private toDate(date: Date | string | undefined): Date | null {
