@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { catchError, finalize, of, take } from 'rxjs';
+import { OnboardingStateService } from '../../../onboarding/onboarding-state.service';
 import { environment } from '../../../../../environments/environment';
 import { HabitsService } from '../../../habits/services/habits.service';
 import { HabitRow } from '../../../habits/models/habit.model';
@@ -30,6 +31,7 @@ export class DashboardContainerComponent implements OnInit {
   private readonly http = inject(HttpClient);
   readonly goalsService = inject(GoalsService);
   private readonly habitsService = inject(HabitsService);
+  readonly onboardingState = inject(OnboardingStateService);
 
   protected readonly ResourceStatus = ResourceStatus;
 
@@ -56,6 +58,30 @@ export class DashboardContainerComponent implements OnInit {
   readonly habitsError = computed(
     () => this.habitsService.habitsOptions.status() === ResourceStatus.Error,
   );
+
+  readonly firstLogBannerDismissedLocal = signal(false);
+
+  readonly showFirstLogBanner = computed(() => {
+    if (this.firstLogBannerDismissedLocal()) {
+      return false;
+    }
+    if (
+      !this.onboardingState.isSkipped() ||
+      this.onboardingState.isCompleted() ||
+      this.onboardingState.isFirstLogBannerDismissed()
+    ) {
+      return false;
+    }
+    if (this.logsLoading() || this.logsError()) {
+      return false;
+    }
+    return this.recentLogs().length === 0;
+  });
+
+  dismissFirstLogBanner(): void {
+    this.onboardingState.dismissFirstLogBanner();
+    this.firstLogBannerDismissedLocal.set(true);
+  }
 
   ngOnInit(): void {
     this.headerDate.set(
