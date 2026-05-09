@@ -1,7 +1,19 @@
 <section class="p-4">
-  <h2 class="text-xl font-bold mb-4">
-    {{ id ? "Edit Log" : "Add New Log" }}
+  <h2 class="mb-4 text-xl font-bold">
+    @if (id) {
+      Edit Log
+    } @else if (isQuickMode()) {
+      Quick log
+    } @else {
+      Add New Log
+    }
   </h2>
+
+  @if (isQuickMode()) {
+    <p class="mb-4 text-sm text-gray-300">
+      One line is enough. Expand for mood, notes, habits, or times.
+    </p>
+  }
 
   @if (errorMessage()) {
     <div class="mb-4 rounded-md bg-red-100 p-3 text-red-700">
@@ -11,7 +23,7 @@
 
   <form (ngSubmit)="onSubmit()" [formGroup]="form" class="space-y-4">
     <div>
-      <label for="log-name" class="block text-sm font-medium mb-2">Log Name *</label>
+      <label for="log-name" class="mb-2 block text-sm font-medium">Log Name *</label>
       <app-input
         [id]="'log-name'"
         placeholder="Enter log name"
@@ -20,201 +32,236 @@
       ></app-input>
     </div>
 
-    <div>
-      <label for="log-description" class="block text-sm font-medium mb-2">Description</label>
-      <app-input
-        [id]="'log-description'"
-        placeholder="Enter log description"
-        [name]="form.controls['description']"
-        type="textarea"
-      ></app-input>
-    </div>
-
-    <div>
-      <label for="log-surroundings" class="block text-sm font-medium mb-2">Surroundings</label>
-      <app-input
-        [id]="'log-surroundings'"
-        placeholder="e.g. Coffee shop, Home office"
-        [name]="form.controls['surroundings']"
-        type="textarea"
-      ></app-input>
-    </div>
-
-    <div>
-      <label for="log-mood" class="block text-sm font-medium mb-2">Mood</label>
-      <select
-        id="log-mood"
-        formControlName="moodPreset"
-        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-      >
-        <option value="">Select mood (optional)</option>
-        @for (option of moodPresetOptions; track option) {
-          @if (option) {
-            <option [value]="option">{{ option }}</option>
-          }
-        }
-      </select>
-    </div>
-
-    @if (form.get('moodPreset')?.value === 'Custom') {
-      <div>
-        <label for="log-mood-custom" class="block text-sm font-medium mb-2">Custom mood</label>
-        <app-input
-          [id]="'log-mood-custom'"
-          placeholder="How's your mood?"
-          [name]="form.controls['moodCustom']"
-          type="text"
-        ></app-input>
-      </div>
-    }
-
-    <div>
-      <label for="log-category" class="block text-sm font-medium mb-2">Category</label>
-      <select
-        id="log-category"
-        formControlName="categoryPreset"
-        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-      >
-        <option value="">Select category (optional)</option>
-        @for (option of categorySelectOptions(); track option) {
-          @if (option) {
-            <option [value]="option">{{ option }}</option>
-          }
-        }
-      </select>
-    </div>
-
-    @if (form.get('categoryPreset')?.value === 'Custom') {
-      <div>
-        <label for="log-category-custom" class="block text-sm font-medium mb-2">Custom category</label>
-        <app-input
-          [id]="'log-category-custom'"
-          placeholder="e.g. Client project"
-          [name]="form.controls['categoryCustom']"
-          type="text"
-        ></app-input>
-      </div>
-    }
-
-    <div>
-      <label for="log-habit" class="block text-sm font-medium mb-2">Habit</label>
-      <select
-        id="log-habit"
-        formControlName="habitId"
-        class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-      >
-        <option value="">No habit (optional)</option>
-        @for (h of habitsForSelect(); track h.id) {
-          <option [value]="h.id">{{ h.name }}</option>
-        }
-      </select>
-    </div>
-
-    <div>
-      <label for="log-personal-goal" class="block text-sm font-medium mb-2"
-        >Personal goal (optional)</label
-      >
-      <p class="mb-2 text-xs text-gray-500">
-        Not the same as
-        <a routerLink="/goals" class="text-purple-600 underline">Log goals</a>
-        — link this log to something you’re pursuing.
-      </p>
-      <select
-        id="log-personal-goal"
-        formControlName="personalGoalId"
-        class="w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
-      >
-        <option value="">No personal goal</option>
-        @for (g of personalGoalsForSelect(); track g.id) {
-          <option [value]="g.id">{{ g.title }}</option>
-        }
-      </select>
-    </div>
-
-    <div>
-      <label for="log-completed-date" class="block text-sm font-medium mb-2"
-        >Completed date &amp; time</label
-      >
-      <p class="text-xs text-gray-500 mb-2">
-        Optional. Leave blank to use the current time when you save (useful if you are catching up on a past day).
-      </p>
-      <app-input
-        [id]="'log-completed-date'"
-        placeholder="When did you finish?"
-        [name]="form.controls['completedDate']"
-        type="datetime-local"
-      ></app-input>
-    </div>
-
-    <div>
-      <button
-        type="button"
-        id="log-schedule-toggle"
-        (click)="toggleSchedule()"
-        [attr.aria-expanded]="scheduleOpen()"
-        aria-controls="log-schedule-panel"
-        class="cotc-bg-dark flex w-full items-center justify-between rounded-md border border-gray-600 px-3 py-2 text-left text-sm font-medium text-white shadow-sm hover:bg-[#383838] focus:outline-none focus:ring-2 focus:ring-purple-500"
-      >
-        <span>Start &amp; end times</span>
-        <svg
-          class="h-5 w-5 shrink-0 text-gray-400 transition-transform duration-300 ease-in-out motion-reduce:transition-none"
-          [class.rotate-180]="scheduleOpen()"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          aria-hidden="true"
+    @if (isQuickMode()) {
+      <div class="space-y-3 pt-1">
+        <button
+          type="submit"
+          [disabled]="!form.valid"
+          class="w-full rounded-md bg-purple-600 px-4 py-2 text-white hover:bg-purple-700 disabled:cursor-not-allowed disabled:bg-gray-400"
         >
-          <path
-            fill-rule="evenodd"
-            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
-            clip-rule="evenodd"
-          />
-        </svg>
-      </button>
+          Create Log
+        </button>
+        <button
+          type="button"
+          (click)="navigateToFullAddLog()"
+          class="w-full text-center text-sm font-medium text-purple-600 underline-offset-2 hover:underline"
+        >
+          Use full log form
+        </button>
+        <button
+          type="button"
+          (click)="toggleMoreDetails()"
+          [attr.aria-expanded]="moreDetailsOpen()"
+          class="w-full rounded-md border border-gray-600 bg-[#2a2a2a] px-3 py-2 text-left text-sm font-medium text-gray-100 shadow-sm hover:bg-[#383838] focus:outline-none focus:ring-2 focus:ring-purple-500"
+        >
+          {{ moreDetailsOpen() ? 'Hide optional details' : 'More details (mood, notes, habits…)' }}
+        </button>
+      </div>
 
-      <div
-        class="grid transition-[grid-template-rows] duration-300 ease-in-out motion-reduce:transition-none"
-        [style.grid-template-rows]="scheduleOpen() ? '1fr' : '0fr'"
+      @if (moreDetailsOpen()) {
+        <ng-container *ngTemplateOutlet="logOptionalFields"></ng-container>
+      }
+    } @else {
+      <ng-container *ngTemplateOutlet="logOptionalFields"></ng-container>
+
+      <div class="pt-4">
+        <button
+          type="submit"
+          [disabled]="!form.valid"
+          class="w-full rounded-md bg-purple-600 px-4 py-2 text-white hover:bg-purple-700 disabled:cursor-not-allowed disabled:bg-gray-400"
+        >
+          {{ id ? "Update Log" : "Create Log" }}
+        </button>
+      </div>
+    }
+
+  <ng-template #logOptionalFields>
+  <div>
+    <label for="log-description" class="mb-2 block text-sm font-medium">Description</label>
+    <app-input
+      [id]="'log-description'"
+      placeholder="Enter log description"
+      [name]="form.controls['description']"
+      type="textarea"
+    ></app-input>
+  </div>
+
+  <div>
+    <label for="log-surroundings" class="mb-2 block text-sm font-medium">Surroundings</label>
+    <app-input
+      [id]="'log-surroundings'"
+      placeholder="e.g. Coffee shop, Home office"
+      [name]="form.controls['surroundings']"
+      type="textarea"
+    ></app-input>
+  </div>
+
+  <div>
+    <label for="log-mood" class="mb-2 block text-sm font-medium">Mood</label>
+    <select
+      id="log-mood"
+      formControlName="moodPreset"
+      class="w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+    >
+      <option value="">Select mood (optional)</option>
+      @for (option of moodPresetOptions; track option) {
+        @if (option) {
+          <option [value]="option">{{ option }}</option>
+        }
+      }
+    </select>
+  </div>
+
+  @if (form.get('moodPreset')?.value === 'Custom') {
+    <div>
+      <label for="log-mood-custom" class="mb-2 block text-sm font-medium">Custom mood</label>
+      <app-input
+        [id]="'log-mood-custom'"
+        placeholder="How's your mood?"
+        [name]="form.controls['moodCustom']"
+        type="text"
+      ></app-input>
+    </div>
+  }
+
+  <div>
+    <label for="log-category" class="mb-2 block text-sm font-medium">Category</label>
+    <select
+      id="log-category"
+      formControlName="categoryPreset"
+      class="w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+    >
+      <option value="">Select category (optional)</option>
+      @for (option of categorySelectOptions(); track option) {
+        @if (option) {
+          <option [value]="option">{{ option }}</option>
+        }
+      }
+    </select>
+  </div>
+
+  @if (form.get('categoryPreset')?.value === 'Custom') {
+    <div>
+      <label for="log-category-custom" class="mb-2 block text-sm font-medium">Custom category</label>
+      <app-input
+        [id]="'log-category-custom'"
+        placeholder="e.g. Client project"
+        [name]="form.controls['categoryCustom']"
+        type="text"
+      ></app-input>
+    </div>
+  }
+
+  <div>
+    <label for="log-habit" class="mb-2 block text-sm font-medium">Habit</label>
+    <select
+      id="log-habit"
+      formControlName="habitId"
+      class="w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+    >
+      <option value="">No habit (optional)</option>
+      @for (h of habitsForSelect(); track h.id) {
+        <option [value]="h.id">{{ h.name }}</option>
+      }
+    </select>
+  </div>
+
+  <div>
+    <label for="log-personal-goal" class="mb-2 block text-sm font-medium"
+      >Personal goal (optional)</label
+    >
+    <p class="mb-2 text-xs text-gray-500">
+      Not the same as
+      <a routerLink="/goals" class="text-purple-600 underline">Log goals</a>
+      — link this log to something you’re pursuing.
+    </p>
+    <select
+      id="log-personal-goal"
+      formControlName="personalGoalId"
+      class="w-full rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+    >
+      <option value="">No personal goal</option>
+      @for (g of personalGoalsForSelect(); track g.id) {
+        <option [value]="g.id">{{ g.title }}</option>
+      }
+    </select>
+  </div>
+
+  <div>
+    <label for="log-completed-date" class="mb-2 block text-sm font-medium"
+      >Completed date &amp; time</label
+    >
+    <p class="mb-2 text-xs text-gray-500">
+      Optional. Leave blank to use the current time when you save (useful if you are catching up on a past day).
+    </p>
+    <app-input
+      [id]="'log-completed-date'"
+      placeholder="When did you finish?"
+      [name]="form.controls['completedDate']"
+      type="datetime-local"
+    ></app-input>
+  </div>
+
+  <div>
+    <button
+      type="button"
+      id="log-schedule-toggle"
+      (click)="toggleSchedule()"
+      [attr.aria-expanded]="scheduleOpen()"
+      aria-controls="log-schedule-panel"
+      class="cotc-bg-dark flex w-full items-center justify-between rounded-md border border-gray-600 px-3 py-2 text-left text-sm font-medium text-white shadow-sm hover:bg-[#383838] focus:outline-none focus:ring-2 focus:ring-purple-500"
+    >
+      <span>Start &amp; end times</span>
+      <svg
+        class="h-5 w-5 shrink-0 text-gray-400 transition-transform duration-300 ease-in-out motion-reduce:transition-none"
+        [class.rotate-180]="scheduleOpen()"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+        aria-hidden="true"
       >
-        <div class="min-h-0 overflow-hidden">
-          <div
-            id="log-schedule-panel"
-            role="region"
-            aria-labelledby="log-schedule-toggle"
-            class="space-y-4 pt-3"
-            [attr.inert]="scheduleOpen() ? null : ''"
-          >
-            <div>
-              <label for="log-start-time" class="block text-sm font-medium mb-2">Start time</label>
-              <app-input
-                [id]="'log-start-time'"
-                placeholder="Select start time"
-                [name]="form.controls['startTime']"
-                type="datetime-local"
-              ></app-input>
-            </div>
+        <path
+          fill-rule="evenodd"
+          d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </button>
 
-            <div>
-              <label for="log-end-time" class="block text-sm font-medium mb-2">End time</label>
-              <app-input
-                [id]="'log-end-time'"
-                placeholder="Select end time"
-                [name]="form.controls['endTime']"
-                type="datetime-local"
-              ></app-input>
-            </div>
+    <div
+      class="grid transition-[grid-template-rows] duration-300 ease-in-out motion-reduce:transition-none"
+      [style.grid-template-rows]="scheduleOpen() ? '1fr' : '0fr'"
+    >
+      <div class="min-h-0 overflow-hidden">
+        <div
+          id="log-schedule-panel"
+          role="region"
+          aria-labelledby="log-schedule-toggle"
+          class="space-y-4 pt-3"
+          [attr.inert]="scheduleOpen() ? null : ''"
+        >
+          <div>
+            <label for="log-start-time" class="mb-2 block text-sm font-medium">Start time</label>
+            <app-input
+              [id]="'log-start-time'"
+              placeholder="Select start time"
+              [name]="form.controls['startTime']"
+              type="datetime-local"
+            ></app-input>
+          </div>
+
+          <div>
+            <label for="log-end-time" class="mb-2 block text-sm font-medium">End time</label>
+            <app-input
+              [id]="'log-end-time'"
+              placeholder="Select end time"
+              [name]="form.controls['endTime']"
+              type="datetime-local"
+            ></app-input>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="pt-4">
-      <button
-        type="submit"
-        [disabled]="!form.valid"
-        class="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
-      >
-        {{ id ? "Update Log" : "Create Log" }}
-      </button>
-    </div>
+  </div>
+  </ng-template>
   </form>
 </section>

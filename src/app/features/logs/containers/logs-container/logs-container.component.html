@@ -1,6 +1,6 @@
 <section class="space-y-5 p-5" aria-label="Logs">
   <header
-    class="flex flex-wrap items-start justify-start gap-x-4 gap-y-4"
+    class="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-start md:justify-start md:gap-3"
   >
     <h1
       id="logs-heading"
@@ -14,7 +14,9 @@
         >
       }
     </h1>
-    <div class="flex min-w-0 flex-wrap items-center justify-start gap-2">
+    <div
+      class="flex min-w-0 flex-col items-start gap-2 md:flex-row md:flex-wrap md:items-center md:justify-start"
+    >
       <button
         type="button"
         (click)="fetchAiSummary()"
@@ -35,6 +37,16 @@
           <span>AI summary</span>
         }
       </button>
+      <a
+        routerLink="/logs/add-log"
+        [queryParams]="{ quick: '1' }"
+        class="inline-flex items-center gap-2 rounded-lg border border-gray-600 bg-[#2c2c2c] px-3 py-2 text-sm font-medium text-white transition-all duration-300 hover:border-purple-500/40 focus:outline-none focus:ring-2 focus:ring-purple-500 active:scale-[0.98] motion-reduce:transition-none"
+      >
+        <span class="material-icons text-xl leading-none" aria-hidden="true"
+          >edit_note</span
+        >
+        Quick
+      </a>
       <div class="flex flex-wrap items-center gap-2">
         <a
           routerLink="/logs/voice-log"

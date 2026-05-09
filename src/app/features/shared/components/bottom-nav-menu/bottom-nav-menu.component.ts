@@ -106,6 +106,12 @@ export class BottomNavMenuComponent implements OnDestroy {
     this.beginModalExit(() => void this.router.navigate(['/logs/add-log']));
   }
 
+  navigateToQuickLog(): void {
+    this.beginModalExit(() =>
+      void this.router.navigate(['/logs/add-log'], { queryParams: { quick: '1' } }),
+    );
+  }
+
   navigateToAddTask(): void {
     this.beginModalExit(() => void this.router.navigate(['/tasks/add-task']));
   }
