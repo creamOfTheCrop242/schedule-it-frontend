@@ -4,6 +4,18 @@ import { Observable, Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { AddLog, Log, VoiceLogDraft } from '../models/log.model';
 
+export type StoredPeriodType = 'day' | 'week' | 'month' | 'year';
+
+export interface StoredPeriodSummaryDto {
+  periodType: string;
+  periodKey: string;
+  summary: string | null;
+  status: string;
+  errorMessage: string | null;
+  model: string | null;
+  updatedAt: string;
+}
+
 /** Page size for GET /logs (must match default backend limit). */
 export const LOGS_PAGE_SIZE = 10;
 
@@ -165,6 +177,22 @@ export class LogService {
     return this.httpClient.get<{ summary: string }>(
       `${environment.baseUrl}/logs/ai-summary`,
       { params: this.filterParams() },
+    );
+  }
+
+  /** Stored rollup from nightly job (GET /logs/summaries). */
+  getStoredPeriodSummary(
+    period: StoredPeriodType,
+    anchorYmd: string,
+    timeZone: string,
+  ): Observable<StoredPeriodSummaryDto> {
+    let params = new HttpParams()
+      .set('period', period)
+      .set('anchor', anchorYmd)
+      .set('timeZone', timeZone);
+    return this.httpClient.get<StoredPeriodSummaryDto>(
+      `${environment.baseUrl}/logs/summaries`,
+      { params },
     );
   }
 

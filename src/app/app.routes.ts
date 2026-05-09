@@ -9,6 +9,7 @@ import { AddLogComponent } from './features/logs/components/add-log/add-log.comp
 import { authGuard } from './features/auth/guards/auth.guard';
 import { loginGuard } from './features/auth/guards/login.guard';
 import { LogsContainerComponent } from './features/logs/containers/logs-container/logs-container.component';
+import { LogSummariesPageComponent } from './features/logs/pages/log-summaries-page/log-summaries-page.component';
 import { LogDetailComponent } from './features/logs/components/log-detail/log-detail.component';
 import { VoiceLogComponent } from './features/logs/components/voice-log/voice-log.component';
 import { GoalsContainerComponent } from './features/goals/containers/goals-container/goals-container.component';
@@ -95,6 +96,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: '', component: LogsContainerComponent },
+      { path: 'summaries', title: 'Log summaries', component: LogSummariesPageComponent },
       { path: 'log/:id', component: LogDetailComponent },
       { path: 'add-log', component: AddLogComponent },
       { path: 'voice-log', title: 'Voice log', component: VoiceLogComponent },

@@ -1,0 +1,98 @@
+<section class="space-y-5 p-5" aria-label="Log period summaries">
+  <header class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+    <div class="flex min-w-0 flex-col gap-2">
+      <div class="flex flex-wrap items-center gap-2">
+        <a
+          routerLink="/logs"
+          class="inline-flex items-center gap-1 text-sm font-medium text-purple-300 transition-colors hover:text-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500 rounded"
+        >
+          <span class="material-icons text-lg leading-none" aria-hidden="true">arrow_back</span>
+          Back to logs
+        </a>
+      </div>
+      <h1 class="m-0 text-2xl font-semibold text-white">Period summaries</h1>
+      <p class="m-0 max-w-2xl text-sm text-gray-400">
+        Choose a date and period. Stored summaries (OpenAI) use your account time zone and are
+        generated overnight after each period ends. They include all logs in that calendar window.
+        ISO weeks run Monday–Sunday.
+      </p>
+    </div>
+  </header>
+
+  <div class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end sm:gap-4">
+    <label class="flex min-w-0 flex-col gap-1 text-sm text-gray-300">
+      <span class="font-medium">Anchor date</span>
+      <input
+        type="date"
+        class="max-w-xs rounded-lg border border-gray-600 bg-[#1a1a1a] px-3 py-2 text-white focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+        [ngModel]="anchorYmd()"
+        (ngModelChange)="onAnchorYmdChange($event)"
+      />
+    </label>
+    <div
+      class="flex flex-wrap gap-1 rounded-lg border border-gray-600/80 bg-[#1a1a1a] p-1"
+      role="tablist"
+      aria-label="Summary period"
+    >
+      @for (opt of periodTabOptions; track opt.id) {
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="periodSummaryTab() === opt.id"
+          (click)="setPeriodSummaryTab(opt.id)"
+          [class]="
+            periodSummaryTab() === opt.id
+              ? 'inline-flex shrink-0 items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-white bg-emerald-500/25 ring-1 ring-emerald-500/40 focus:outline-none focus:ring-2 focus:ring-emerald-500 motion-reduce:transition-none'
+              : 'inline-flex shrink-0 items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-gray-400 hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 motion-reduce:transition-none'
+          "
+        >
+          <span class="material-icons text-lg leading-none" aria-hidden="true">auto_awesome</span>
+          {{ opt.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (storedPeriodSummaryLoading()) {
+    <p class="m-0 flex items-center gap-2 text-sm text-gray-400" aria-live="polite">
+      <span
+        class="inline-block h-4 w-4 shrink-0 rounded-full border-2 border-gray-600 border-t-emerald-400 motion-safe:animate-spin motion-reduce:animate-none"
+        aria-hidden="true"
+      ></span>
+      Loading summary…
+    </p>
+  }
+
+  @if (storedPeriodSummaryError()) {
+    <div
+      role="alert"
+      class="rounded-xl border border-amber-500/40 bg-amber-950/30 p-4 text-amber-100"
+    >
+      {{ storedPeriodSummaryError() }}
+    </div>
+  }
+
+  @if (storedPeriodSummary(); as row) {
+    <section
+      class="rounded-xl border border-gray-600 bg-[#1a1a1a]/90 p-4"
+      [attr.aria-label]="'Summary ' + row.periodKey"
+    >
+      <h2 class="mt-0 mb-2 text-sm font-medium text-gray-300">
+        {{ row.periodType }} · {{ row.periodKey }}
+      </h2>
+      @if (row.status === 'FAILED') {
+        <p class="m-0 text-sm text-red-300">
+          Generation failed{{ row.errorMessage ? ': ' + row.errorMessage : '.' }}
+        </p>
+      } @else if (row.summary) {
+        <pre
+          class="m-0 whitespace-pre-wrap break-words font-sans text-sm text-gray-200"
+          role="status"
+          >{{ row.summary }}</pre
+        >
+      } @else {
+        <p class="m-0 text-sm text-gray-400">No summary text stored.</p>
+      }
+    </section>
+  }
+</section>
