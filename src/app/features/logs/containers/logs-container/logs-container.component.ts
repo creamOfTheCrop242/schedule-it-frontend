@@ -58,7 +58,7 @@ export class LogsContainerComponent implements OnDestroy {
   readonly aiSummary = signal<string | null>(null);
   readonly aiSummaryLoading = signal(false);
   readonly aiSummaryError = signal<string | null>(null);
-  /** After a successful summary, block new requests for 5 minutes (mirrored on server). */
+  /** After a successful summary only; cleared on any request error so retries are allowed. */
   readonly aiSummaryCooldownActive = signal(false);
   private aiSummaryCooldownTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
@@ -277,10 +277,7 @@ export class LogsContainerComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.scrollObserver?.disconnect();
     this.scrollObserver = null;
-    if (this.aiSummaryCooldownTimeoutId !== null) {
-      clearTimeout(this.aiSummaryCooldownTimeoutId);
-      this.aiSummaryCooldownTimeoutId = null;
-    }
+    this.clearAiSummaryCooldown();
   }
 
   private setupScrollObserver(): void {
@@ -379,13 +376,20 @@ export class LogsContainerComponent implements OnDestroy {
         },
         error: (err: unknown) => {
           this.aiSummaryLoading.set(false);
+          this.clearAiSummaryCooldown();
           const msg = LogsContainerComponent.httpErrorMessage(err);
           this.aiSummaryError.set(msg);
-          if (err instanceof HttpErrorResponse && err.status === 429) {
-            this.startAiSummaryCooldown();
-          }
         },
       });
+  }
+
+  /** Drop client cooldown so a failed run does not burn the 5-minute window. */
+  private clearAiSummaryCooldown(): void {
+    if (this.aiSummaryCooldownTimeoutId !== null) {
+      clearTimeout(this.aiSummaryCooldownTimeoutId);
+      this.aiSummaryCooldownTimeoutId = null;
+    }
+    this.aiSummaryCooldownActive.set(false);
   }
 
   private startAiSummaryCooldown(): void {
@@ -406,6 +410,12 @@ export class LogsContainerComponent implements OnDestroy {
         return Array.isArray(body.message)
           ? body.message.join('; ')
           : body.message;
+      }
+      if (err.status === 504 || err.status === 503) {
+        return 'The server took too long to finish the summary. Try narrowing filters or retry in a moment.';
+      }
+      if (err.status === 0) {
+        return 'The request did not complete (network or timeout). Check your connection and try again.';
       }
       return err.message || `Request failed (${err.status})`;
     }
