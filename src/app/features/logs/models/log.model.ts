@@ -58,6 +58,7 @@ export interface VoiceLogDraft {
   name: string;
   mood: string;
   description: string;
+  surroundings: string;
   transcript: string;
 }
 

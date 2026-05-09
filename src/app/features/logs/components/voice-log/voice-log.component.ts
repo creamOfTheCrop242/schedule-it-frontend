@@ -50,6 +50,7 @@ export class VoiceLogComponent implements OnDestroy {
     name: new FormControl('', [Validators.required]),
     mood: new FormControl<string>('', [Validators.required]),
     description: new FormControl('', [Validators.required]),
+    surroundings: new FormControl(''),
   });
 
   private mediaStream: MediaStream | null = null;
@@ -137,7 +138,7 @@ export class VoiceLogComponent implements OnDestroy {
   discardDraft(): void {
     this.recordPhase.set('idle');
     this.transcriptPreview.set(null);
-    this.form.reset({ name: '', mood: '', description: '' });
+    this.form.reset({ name: '', mood: '', description: '', surroundings: '' });
   }
 
   onSubmit(): void {
@@ -151,6 +152,7 @@ export class VoiceLogComponent implements OnDestroy {
         name: v.name!,
         mood: v.mood || undefined,
         description: v.description || undefined,
+        surroundings: v.surroundings?.trim() || undefined,
       })
       .pipe(take(1))
       .subscribe({
@@ -194,6 +196,7 @@ export class VoiceLogComponent implements OnDestroy {
           name: draft.name,
           mood: moodOk ? draft.mood : 'Calm',
           description: draft.description || draft.transcript,
+          surroundings: draft.surroundings ?? '',
         });
         this.transcriptPreview.set(draft.transcript);
         this.recordPhase.set('draft');

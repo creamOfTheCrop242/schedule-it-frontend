@@ -16,8 +16,8 @@
   <h1 class="mb-2 text-xl font-bold text-white">Voice log</h1>
   <p class="mb-4 max-w-xl text-sm text-gray-400">
     Say what you want to capture in your log. We send the clip to OpenAI (speech
-    + wording) to propose a title, mood, and description. Edit before saving—not
-    medical advice.
+    + wording) to propose a title, mood, description, and surroundings (setting
+    or context). Edit before saving—not medical advice.
   </p>
 
   @if (errorMessage()) {
@@ -115,6 +115,21 @@
           id="vl-description"
           formControlName="description"
           rows="5"
+          class="w-full rounded-lg border border-gray-600 bg-[#2c2c2c] px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+        ></textarea>
+      </div>
+
+      <div>
+        <label class="mb-1 block text-sm font-medium text-gray-200" for="vl-surroundings">
+          Surroundings
+        </label>
+        <p class="mb-1 text-xs text-gray-500">
+          Where you were, who was around, or context inferred from your recording (optional).
+        </p>
+        <textarea
+          id="vl-surroundings"
+          formControlName="surroundings"
+          rows="3"
           class="w-full rounded-lg border border-gray-600 bg-[#2c2c2c] px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
         ></textarea>
       </div>
