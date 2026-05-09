@@ -1,10 +1,10 @@
 <section class="space-y-5 p-5" aria-label="Logs">
   <header
-    class="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-start md:justify-between md:gap-3"
+    class="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-start md:justify-start md:gap-3"
   >
     <h1
       id="logs-heading"
-      class="flex flex-wrap items-baseline gap-2 text-2xl font-semibold text-white"
+      class="flex min-w-0 flex-wrap items-baseline gap-2 text-2xl font-semibold text-white"
     >
       Logs
       @if (headerBadgeText() !== undefined) {
@@ -14,7 +14,9 @@
         >
       }
     </h1>
-    <div class="flex flex-col items-start gap-2">
+    <div
+      class="flex min-w-0 flex-col items-start gap-2 md:flex-row md:flex-wrap md:items-center md:justify-start"
+    >
       <button
         type="button"
         (click)="fetchAiSummary()"
@@ -35,16 +37,27 @@
           <span>AI summary</span>
         }
       </button>
+      <a
+        routerLink="/logs/add-log"
+        [queryParams]="{ quick: '1' }"
+        class="inline-flex items-center gap-2 rounded-lg border border-gray-600 bg-[#2c2c2c] px-3 py-2 text-sm font-medium text-white transition-all duration-300 hover:border-purple-500/40 focus:outline-none focus:ring-2 focus:ring-purple-500 active:scale-[0.98] motion-reduce:transition-none"
+      >
+        <span class="material-icons text-xl leading-none" aria-hidden="true"
+          >edit_note</span
+        >
+        Quick
+      </a>
       <div class="flex flex-wrap items-center gap-2">
         <a
-          routerLink="/logs/add-log"
-          [queryParams]="{ quick: '1' }"
-          class="inline-flex items-center gap-2 rounded-lg border border-gray-600 bg-[#2c2c2c] px-3 py-2 text-sm font-medium text-white transition-all duration-300 hover:border-purple-500/40 focus:outline-none focus:ring-2 focus:ring-purple-500 active:scale-[0.98] motion-reduce:transition-none"
+          routerLink="/logs/voice-log"
+          aria-label="Create a voice log"
+          title="Speak to draft a log (microphone)"
+          class="inline-flex items-center gap-2 rounded-lg border border-sky-500/40 bg-sky-500/10 px-3 py-2 text-sm font-medium text-white transition-all duration-300 hover:border-sky-400 hover:bg-sky-500/15 focus:outline-none focus:ring-2 focus:ring-sky-500 active:scale-[0.98] motion-reduce:transition-none"
         >
           <span class="material-icons text-xl leading-none" aria-hidden="true"
-            >edit_note</span
+            >mic</span
           >
-          Quick
+          Voice log
         </a>
         <a
           routerLink="/logs/add-log"

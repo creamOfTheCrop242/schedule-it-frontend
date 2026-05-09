@@ -2,7 +2,7 @@ import { HttpClient, HttpParams, httpResource } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { AddLog, Log } from '../models/log.model';
+import { AddLog, Log, VoiceLogDraft } from '../models/log.model';
 
 /** Page size for GET /logs (must match default backend limit). */
 export const LOGS_PAGE_SIZE = 10;
@@ -69,6 +69,15 @@ export class LogService {
 
   addLog(log: AddLog) {
     return this.httpClient.post<Log>(`${environment.baseUrl}/logs`, log);
+  }
+
+  voiceDraft(audio: Blob, filename = 'recording.webm') {
+    const body = new FormData();
+    body.append('audio', audio, filename);
+    return this.httpClient.post<VoiceLogDraft>(
+      `${environment.baseUrl}/logs/voice-draft`,
+      body,
+    );
   }
 
   updateLog(log: AddLog & { id: string }) {
