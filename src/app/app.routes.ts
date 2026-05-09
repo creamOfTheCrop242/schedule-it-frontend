@@ -25,6 +25,9 @@ import { PersonalGoalDetailComponent } from './features/personal-goals/component
 import { HelpPageComponent } from './features/help/help-page/help-page.component';
 import { FeedbackFormComponent } from './features/feedback/components/feedback-form/feedback-form.component';
 import { FeedbackInboxComponent } from './features/feedback/components/feedback-inbox/feedback-inbox.component';
+import { WelcomeComponent } from './features/onboarding/welcome/welcome.component';
+import { dashboardPreflightGuard } from './features/onboarding/dashboard-preflight.guard';
+import { welcomeGuard } from './features/onboarding/welcome.guard';
 
 export const routes: Routes = [
   {
@@ -70,9 +73,15 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'welcome',
+    title: 'Welcome',
+    component: WelcomeComponent,
+    canActivate: [authGuard, welcomeGuard],
+  },
+  {
     path: 'dashboard',
     component: DashboardContainerComponent,
-    canActivate: [authGuard],
+    canActivate: [authGuard, dashboardPreflightGuard],
   },
   {
     path: 'daily-motivation',
