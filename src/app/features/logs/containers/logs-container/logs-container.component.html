@@ -21,6 +21,7 @@
         type="button"
         (click)="fetchAiSummary()"
         [disabled]="aiSummaryDisabled()"
+        title="Summarizes up to 50 filtered logs via OpenAI. You can run this once every 5 minutes."
         class="inline-flex items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:border-emerald-400 hover:bg-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/20 focus:outline-none focus:ring-2 focus:ring-emerald-500 active:scale-[0.98] motion-reduce:transition-none disabled:pointer-events-none disabled:opacity-40"
         aria-live="polite"
       >

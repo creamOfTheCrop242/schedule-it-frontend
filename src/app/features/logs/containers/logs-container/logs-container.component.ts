@@ -58,6 +58,11 @@ export class LogsContainerComponent implements OnDestroy {
   readonly aiSummary = signal<string | null>(null);
   readonly aiSummaryLoading = signal(false);
   readonly aiSummaryError = signal<string | null>(null);
+  /** After a successful summary, block new requests for 5 minutes (mirrored on server). */
+  readonly aiSummaryCooldownActive = signal(false);
+  private aiSummaryCooldownTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
+  private static readonly AI_SUMMARY_COOLDOWN_MS = 5 * 60 * 1000;
 
   /** True during first full load (no rows yet). */
   readonly initialListLoading = computed(
@@ -69,6 +74,7 @@ export class LogsContainerComponent implements OnDestroy {
   readonly aiSummaryDisabled = computed(
     () =>
       this.aiSummaryLoading() ||
+      this.aiSummaryCooldownActive() ||
       this.logService.logsList().length === 0 ||
       this.initialListLoading() ||
       this.hasLoadError(),
@@ -271,6 +277,10 @@ export class LogsContainerComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.scrollObserver?.disconnect();
     this.scrollObserver = null;
+    if (this.aiSummaryCooldownTimeoutId !== null) {
+      clearTimeout(this.aiSummaryCooldownTimeoutId);
+      this.aiSummaryCooldownTimeoutId = null;
+    }
   }
 
   private setupScrollObserver(): void {
@@ -365,12 +375,28 @@ export class LogsContainerComponent implements OnDestroy {
         next: ({ summary }) => {
           this.aiSummary.set(summary);
           this.aiSummaryLoading.set(false);
+          this.startAiSummaryCooldown();
         },
         error: (err: unknown) => {
           this.aiSummaryLoading.set(false);
-          this.aiSummaryError.set(LogsContainerComponent.httpErrorMessage(err));
+          const msg = LogsContainerComponent.httpErrorMessage(err);
+          this.aiSummaryError.set(msg);
+          if (err instanceof HttpErrorResponse && err.status === 429) {
+            this.startAiSummaryCooldown();
+          }
         },
       });
+  }
+
+  private startAiSummaryCooldown(): void {
+    this.aiSummaryCooldownActive.set(true);
+    if (this.aiSummaryCooldownTimeoutId !== null) {
+      clearTimeout(this.aiSummaryCooldownTimeoutId);
+    }
+    this.aiSummaryCooldownTimeoutId = setTimeout(() => {
+      this.aiSummaryCooldownActive.set(false);
+      this.aiSummaryCooldownTimeoutId = null;
+    }, LogsContainerComponent.AI_SUMMARY_COOLDOWN_MS);
   }
 
   private static httpErrorMessage(err: unknown): string {
