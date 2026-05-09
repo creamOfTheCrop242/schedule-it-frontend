@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -16,6 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CATEGORY_PRESETS } from '../../../shared/models/category.model';
 import { CategoryOptionsService } from '../../../shared/services/category-options.service';
+import { AccountService } from '../../../account/services/account.service';
 import { MOOD_PRESETS } from '../../models/log.model';
 import { LogService } from '../../services/log.service';
 import { LogComponent } from '../../components/log/log.component';
@@ -29,6 +29,7 @@ import { LogComponent } from '../../components/log/log.component';
 })
 export class LogsContainerComponent implements OnDestroy {
   logService = inject(LogService);
+  private readonly accountService = inject(AccountService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly categoryOptionsService = inject(CategoryOptionsService);
   private readonly route = inject(ActivatedRoute);
@@ -55,14 +56,7 @@ export class LogsContainerComponent implements OnDestroy {
   /** When false, filter controls (date, mood, search) are collapsed. */
   filtersExpanded = signal(false);
 
-  readonly aiSummary = signal<string | null>(null);
-  readonly aiSummaryLoading = signal(false);
-  readonly aiSummaryError = signal<string | null>(null);
-  /** After a successful summary only; cleared on any request error so retries are allowed. */
-  readonly aiSummaryCooldownActive = signal(false);
-  private aiSummaryCooldownTimeoutId: ReturnType<typeof setTimeout> | null = null;
-
-  private static readonly AI_SUMMARY_COOLDOWN_MS = 5 * 60 * 1000;
+  private summaryTimeZoneSeeded = false;
 
   /** True during first full load (no rows yet). */
   readonly initialListLoading = computed(
@@ -70,15 +64,6 @@ export class LogsContainerComponent implements OnDestroy {
   );
 
   readonly hasLoadError = computed(() => this.logService.logsListError());
-
-  readonly aiSummaryDisabled = computed(
-    () =>
-      this.aiSummaryLoading() ||
-      this.aiSummaryCooldownActive() ||
-      this.logService.logsList().length === 0 ||
-      this.initialListLoading() ||
-      this.hasLoadError(),
-  );
 
   /** True while replacing list after filter change but rows still visible. */
   readonly listRefreshingWithContent = computed(
@@ -272,12 +257,40 @@ export class LogsContainerComponent implements OnDestroy {
       this.logService.logsListLoadingMore();
       untracked(() => queueMicrotask(() => this.setupScrollObserver()));
     });
+
+    effect((onCleanup) => {
+      if (this.summaryTimeZoneSeeded) {
+        return;
+      }
+      const cur = this.accountService.currentUser;
+      if (cur.status() !== ResourceStatus.Resolved) {
+        return;
+      }
+      const user = cur.value();
+      if (!user) {
+        return;
+      }
+      if (user.summaryTimeZone) {
+        this.summaryTimeZoneSeeded = true;
+        return;
+      }
+      this.summaryTimeZoneSeeded = true;
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const sub = this.accountService.updateAccount({ summaryTimeZone: tz }).subscribe({
+        next: () => {
+          void this.accountService.currentUser.reload();
+        },
+        error: () => {
+          this.summaryTimeZoneSeeded = false;
+        },
+      });
+      onCleanup(() => sub.unsubscribe());
+    });
   }
 
   ngOnDestroy(): void {
     this.scrollObserver?.disconnect();
     this.scrollObserver = null;
-    this.clearAiSummaryCooldown();
   }
 
   private setupScrollObserver(): void {
@@ -359,66 +372,4 @@ export class LogsContainerComponent implements OnDestroy {
     this.syncListQueryToUrl();
   }
 
-  fetchAiSummary(): void {
-    if (this.aiSummaryDisabled()) {
-      return;
-    }
-    this.aiSummaryError.set(null);
-    this.aiSummaryLoading.set(true);
-    this.logService
-      .getAiSummary()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: ({ summary }) => {
-          this.aiSummary.set(summary);
-          this.aiSummaryLoading.set(false);
-          this.startAiSummaryCooldown();
-        },
-        error: (err: unknown) => {
-          this.aiSummaryLoading.set(false);
-          this.clearAiSummaryCooldown();
-          const msg = LogsContainerComponent.httpErrorMessage(err);
-          this.aiSummaryError.set(msg);
-        },
-      });
-  }
-
-  /** Drop client cooldown so a failed run does not burn the 5-minute window. */
-  private clearAiSummaryCooldown(): void {
-    if (this.aiSummaryCooldownTimeoutId !== null) {
-      clearTimeout(this.aiSummaryCooldownTimeoutId);
-      this.aiSummaryCooldownTimeoutId = null;
-    }
-    this.aiSummaryCooldownActive.set(false);
-  }
-
-  private startAiSummaryCooldown(): void {
-    this.aiSummaryCooldownActive.set(true);
-    if (this.aiSummaryCooldownTimeoutId !== null) {
-      clearTimeout(this.aiSummaryCooldownTimeoutId);
-    }
-    this.aiSummaryCooldownTimeoutId = setTimeout(() => {
-      this.aiSummaryCooldownActive.set(false);
-      this.aiSummaryCooldownTimeoutId = null;
-    }, LogsContainerComponent.AI_SUMMARY_COOLDOWN_MS);
-  }
-
-  private static httpErrorMessage(err: unknown): string {
-    if (err instanceof HttpErrorResponse) {
-      const body = err.error as { message?: string | string[] } | undefined;
-      if (body?.message !== undefined) {
-        return Array.isArray(body.message)
-          ? body.message.join('; ')
-          : body.message;
-      }
-      if (err.status === 504 || err.status === 503) {
-        return 'The server took too long to finish the summary. Try narrowing filters or retry in a moment.';
-      }
-      if (err.status === 0) {
-        return 'The request did not complete (network or timeout). Check your connection and try again.';
-      }
-      return err.message || `Request failed (${err.status})`;
-    }
-    return 'Something went wrong.';
-  }
 }
