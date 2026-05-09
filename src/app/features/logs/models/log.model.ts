@@ -53,3 +53,11 @@ export interface Note {
   log?: Log;
 }
 
+/** Draft from POST /logs/voice-draft (OpenAI Whisper + structuring). */
+export interface VoiceLogDraft {
+  name: string;
+  mood: string;
+  description: string;
+  transcript: string;
+}
+

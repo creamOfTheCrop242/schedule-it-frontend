@@ -1,8 +1,10 @@
 <section class="space-y-5 p-5" aria-label="Logs">
-  <header class="flex flex-wrap items-center justify-between gap-3">
+  <header
+    class="flex flex-wrap items-start justify-start gap-x-4 gap-y-4"
+  >
     <h1
       id="logs-heading"
-      class="flex flex-wrap items-baseline gap-2 text-2xl font-semibold text-white"
+      class="flex min-w-0 flex-wrap items-baseline gap-2 text-2xl font-semibold text-white"
     >
       Logs
       @if (headerBadgeText() !== undefined) {
@@ -12,7 +14,7 @@
         >
       }
     </h1>
-    <div class="flex flex-wrap items-center justify-end gap-2">
+    <div class="flex min-w-0 flex-wrap items-center justify-start gap-2">
       <button
         type="button"
         (click)="fetchAiSummary()"
@@ -33,15 +35,28 @@
           <span>AI summary</span>
         }
       </button>
-      <a
-        routerLink="/logs/add-log"
-        class="inline-flex items-center gap-2 rounded-lg border border-purple-500/40 bg-purple-500/10 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:border-purple-400 hover:bg-purple-500/20 hover:shadow-lg hover:shadow-purple-500/20 focus:outline-none focus:ring-2 focus:ring-purple-500 active:scale-[0.98] motion-reduce:transition-none"
-      >
-        <span class="material-icons text-xl leading-none" aria-hidden="true"
-          >add</span
+      <div class="flex flex-wrap items-center gap-2">
+        <a
+          routerLink="/logs/voice-log"
+          aria-label="Create a voice log"
+          title="Speak to draft a log (microphone)"
+          class="inline-flex items-center gap-2 rounded-lg border border-sky-500/40 bg-sky-500/10 px-3 py-2 text-sm font-medium text-white transition-all duration-300 hover:border-sky-400 hover:bg-sky-500/15 focus:outline-none focus:ring-2 focus:ring-sky-500 active:scale-[0.98] motion-reduce:transition-none"
         >
-        Add log
-      </a>
+          <span class="material-icons text-xl leading-none" aria-hidden="true"
+            >mic</span
+          >
+          Voice log
+        </a>
+        <a
+          routerLink="/logs/add-log"
+          class="inline-flex items-center gap-2 rounded-lg border border-purple-500/40 bg-purple-500/10 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:border-purple-400 hover:bg-purple-500/20 hover:shadow-lg hover:shadow-purple-500/20 focus:outline-none focus:ring-2 focus:ring-purple-500 active:scale-[0.98] motion-reduce:transition-none"
+        >
+          <span class="material-icons text-xl leading-none" aria-hidden="true"
+            >add</span
+          >
+          Add log
+        </a>
+      </div>
     </div>
   </header>
 

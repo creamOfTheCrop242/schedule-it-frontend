@@ -10,6 +10,7 @@ import { authGuard } from './features/auth/guards/auth.guard';
 import { loginGuard } from './features/auth/guards/login.guard';
 import { LogsContainerComponent } from './features/logs/containers/logs-container/logs-container.component';
 import { LogDetailComponent } from './features/logs/components/log-detail/log-detail.component';
+import { VoiceLogComponent } from './features/logs/components/voice-log/voice-log.component';
 import { GoalsContainerComponent } from './features/goals/containers/goals-container/goals-container.component';
 import { AddGoalComponent } from './features/goals/components/add-goal/add-goal.component';
 import { SettingsComponent } from './features/account/components/settings/settings.component';
@@ -96,6 +97,7 @@ export const routes: Routes = [
       { path: '', component: LogsContainerComponent },
       { path: 'log/:id', component: LogDetailComponent },
       { path: 'add-log', component: AddLogComponent },
+      { path: 'voice-log', title: 'Voice log', component: VoiceLogComponent },
       { path: 'edit-log/:id', component: AddLogComponent },
     ],
   },
