@@ -24,6 +24,16 @@
         Privacy Policy
       </a>
     </div>
+    @if (currentUser.value()?.email?.toLowerCase() === 'dhudson0242@gmail.com') {
+    <div>
+      <a
+        routerLink="/settings/admin"
+        class="text-purple-400 hover:text-purple-300 underline text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a] rounded"
+      >
+        Admin dashboard
+      </a>
+    </div>
+    }
     <div>
       <a
         routerLink="/feedback"
