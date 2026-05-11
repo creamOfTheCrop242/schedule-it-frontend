@@ -1,0 +1,200 @@
+<article
+  class="mx-auto max-w-xl space-y-6 p-4 pb-24 text-white"
+  aria-labelledby="privacy-title"
+>
+  <p class="mb-0">
+    @if (authService.authStatus.value()) {
+      <a
+        routerLink="/settings"
+        class="rounded text-purple-400 underline-offset-2 hover:text-purple-300 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a]"
+        >Back to settings</a
+      >
+    } @else {
+      <a
+        routerLink="/auth/login"
+        class="rounded text-purple-400 underline-offset-2 hover:text-purple-300 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a]"
+        >Back to login</a
+      >
+    }
+  </p>
+
+  <header>
+    <h1
+      id="privacy-title"
+      class="mb-2 font-['Source_Sans_Pro'] text-2xl font-bold"
+    >
+      Privacy Policy
+    </h1>
+    <!-- <p class="text-xs text-amber-200/90">
+      Last updated: May 6, 2026. This is a general template—not legal advice. Have a
+      privacy lawyer review it, especially if you serve users in the EU, UK, California,
+      or other regions with specific privacy laws.
+    </p> -->
+  </header>
+
+  <section
+    class="space-y-4 text-sm leading-relaxed text-gray-300"
+    aria-label="Privacy sections"
+  >
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">1. Who we are</h2>
+      <p class="m-0">
+        This policy describes how The Guide Log (“we,” “us”) handles personal
+        information when you use our web application and related services.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">
+        2. Information we collect
+      </h2>
+      <ul class="mt-1 list-disc space-y-1 pl-5">
+        <li>
+          <strong class="text-gray-200">Account data:</strong> such as name,
+          email, and profile details you provide; authentication data when you
+          use email/password or social sign-in (for example Google or Facebook).
+        </li>
+        <li>
+          <strong class="text-gray-200">Content you create:</strong> logs
+          (including mood, descriptions, surroundings, dates), tasks, habits,
+          goals, notes, feedback you send us, and similar app content.
+        </li>
+        <li>
+          <strong class="text-gray-200">Voice and media:</strong> if you use
+          voice logging, audio you submit may be processed by our servers and by
+          third-party providers (for example for transcription or drafting).
+        </li>
+        <li>
+          <strong class="text-gray-200">Technical data:</strong> such as
+          device/browser type, cookies or similar technologies used for session
+          and security, general log or error data, and security-related
+          information needed to run and protect the Service.
+        </li>
+      </ul>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">
+        3. How we use information
+      </h2>
+      <p class="m-0">
+        We use personal information to provide and maintain the Service,
+        authenticate you, personalize your experience, generate optional AI
+        outputs you request, improve reliability and security, communicate with
+        you about the Service, and comply with law.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">
+        4. AI and automated processing
+      </h2>
+      <p class="m-0">
+        When you use optional AI features, portions of your content (for example
+        transcribed speech or log text) may be sent to third-party AI providers
+        (such as OpenAI) under their terms and privacy policies. Do not submit
+        highly sensitive information you are not comfortable having processed
+        that way.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">5. Sharing</h2>
+      <p class="m-0">
+        We may share information with service providers who help us host, store,
+        analyze, or secure the Service (for example cloud hosting, email, or AI
+        APIs). We may disclose information if required by law or to protect
+        rights, safety, and integrity of users and the Service.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">6. Retention</h2>
+      <p class="m-0">
+        We keep information as long as your account is active and as needed to
+        provide the Service, comply with legal obligations, resolve disputes,
+        and enforce our agreements. Some backups may persist for a limited time
+        after deletion.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">7. Security</h2>
+      <p class="m-0">
+        We use reasonable administrative, technical, and organizational measures
+        to protect personal information. No method of transmission or storage is
+        100% secure.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">
+        8. Your choices and rights
+      </h2>
+      <p class="m-0">
+        Depending on where you live, you may have rights to access, correct,
+        delete, or export personal information, or to object to or restrict
+        certain processing. To exercise rights, contact us as described below.
+        You can also update some profile information in the app.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">
+        9. California residents
+      </h2>
+      <p class="m-0">
+        If the California Consumer Privacy Act (CCPA) or California Privacy
+        Rights Act (CPRA) applies, you may have additional rights (for example
+        to know, delete, or opt out of certain “sales” or “sharing” as defined
+        by California law). We do not sell personal information for money. To
+        submit a request, use the contact method below.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">
+        10. International users
+      </h2>
+      <p class="m-0">
+        If you access the Service from outside the United States, your
+        information may be processed in the United States or other countries
+        where we or our providers operate, which may have different data
+        protection rules than your country.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">11. Children</h2>
+      <p class="m-0">
+        The Service is not directed to children under 13, and we do not
+        knowingly collect personal information from them. If you believe we have
+        collected information from a child under 13, contact us so we can delete
+        it.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">12. Changes</h2>
+      <p class="m-0">
+        We may update this policy and will change the “Last updated” date when
+        we do. Material changes may be communicated through the Service where
+        appropriate.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">13. Contact</h2>
+      <p class="m-0">
+        Privacy questions: when signed in, use
+        @if (authService.authStatus.value()) {
+          <a
+            routerLink="/feedback"
+            class="text-purple-300 underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 rounded"
+            >Send feedback</a
+          >
+        } @else {
+          <span class="text-gray-200">Send feedback</span> (under Settings after
+          you sign in)
+        }
+        or the privacy contact published for the Service.
+      </p>
+    </div>
+    <p class="m-0 text-xs text-gray-500">
+      See also
+      <a
+        routerLink="/legal/terms"
+        class="text-purple-300 underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 rounded"
+        >Terms of Service</a
+      >.
+    </p>
+  </section>
+</article>
