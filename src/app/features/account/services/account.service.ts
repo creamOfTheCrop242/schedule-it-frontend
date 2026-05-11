@@ -7,6 +7,14 @@ import {
   User,
 } from '../model/account.model';
 
+export interface AdminDashboardDto {
+  totalAccounts: number;
+  accounts: Array<{
+    email: string;
+    lastActivityAt: string; // ISO
+  }>;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -31,6 +39,13 @@ export class AccountService {
       `${environment.baseUrl}/account/update`,
       request,
       { withCredentials: true }
+    );
+  }
+
+  getAdminDashboard() {
+    return this.httpClient.get<AdminDashboardDto>(
+      `${environment.baseUrl}/internal/admin/dashboard`,
+      { withCredentials: true },
     );
   }
 }

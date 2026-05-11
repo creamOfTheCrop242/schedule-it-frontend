@@ -15,6 +15,7 @@ import { VoiceLogComponent } from './features/logs/components/voice-log/voice-lo
 import { GoalsContainerComponent } from './features/goals/containers/goals-container/goals-container.component';
 import { AddGoalComponent } from './features/goals/components/add-goal/add-goal.component';
 import { SettingsComponent } from './features/account/components/settings/settings.component';
+import { AdminDashboardComponent } from './features/account/pages/admin-dashboard/admin-dashboard.component';
 import { AddTaskComponent } from './features/tasks/components/add-task/add-task.component';
 import { TasksContainerComponent } from './features/tasks/containers/tasks-container/tasks-container.component';
 import { TaskDetailComponent } from './features/tasks/components/task-detail/task-detail.component';
@@ -165,6 +166,12 @@ export const routes: Routes = [
   {
     path: 'settings',
     component: SettingsComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'settings/admin',
+    title: 'Admin dashboard',
+    component: AdminDashboardComponent,
     canActivate: [authGuard],
   },
   {
