@@ -25,6 +25,8 @@ import { PersonalGoalsContainerComponent } from './features/personal-goals/conta
 import { AddPersonalGoalComponent } from './features/personal-goals/components/add-personal-goal/add-personal-goal.component';
 import { PersonalGoalDetailComponent } from './features/personal-goals/components/personal-goal-detail/personal-goal-detail.component';
 import { HelpPageComponent } from './features/help/help-page/help-page.component';
+import { TermsOfServicePageComponent } from './features/legal/terms-of-service-page/terms-of-service-page.component';
+import { PrivacyPolicyPageComponent } from './features/legal/privacy-policy-page/privacy-policy-page.component';
 import { FeedbackFormComponent } from './features/feedback/components/feedback-form/feedback-form.component';
 import { FeedbackInboxComponent } from './features/feedback/components/feedback-inbox/feedback-inbox.component';
 import { WelcomeComponent } from './features/onboarding/welcome/welcome.component';
@@ -41,6 +43,16 @@ export const routes: Routes = [
     path: 'help',
     title: 'Help',
     component: HelpPageComponent,
+  },
+  {
+    path: 'legal/terms',
+    title: 'Terms of Service',
+    component: TermsOfServicePageComponent,
+  },
+  {
+    path: 'legal/privacy',
+    title: 'Privacy Policy',
+    component: PrivacyPolicyPageComponent,
   },
   {
     path: 'auth',

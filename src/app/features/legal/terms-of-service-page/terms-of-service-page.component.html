@@ -1,0 +1,182 @@
+<article
+  class="mx-auto max-w-xl space-y-6 p-4 pb-24 text-white"
+  aria-labelledby="tos-title"
+>
+  <p class="mb-0">
+    @if (authService.authStatus.value()) {
+      <a
+        routerLink="/settings"
+        class="rounded text-purple-400 underline-offset-2 hover:text-purple-300 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a]"
+        >Back to settings</a
+      >
+    } @else {
+      <a
+        routerLink="/auth/login"
+        class="rounded text-purple-400 underline-offset-2 hover:text-purple-300 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1a1a1a]"
+        >Back to login</a
+      >
+    }
+  </p>
+
+  <header>
+    <h1 id="tos-title" class="mb-2 font-['Source_Sans_Pro'] text-2xl font-bold">
+      Terms of Service
+    </h1>
+    <!-- <p class="text-xs text-amber-200/90">
+      Last updated: May 6, 2026. This is a general template for a personal productivity
+      app—not legal advice. Have an attorney review and adapt it for your entity,
+      jurisdiction, and how you actually run the service.
+    </p> -->
+  </header>
+
+  <section
+    class="space-y-4 text-sm leading-relaxed text-gray-300"
+    aria-label="Terms sections"
+  >
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">1. Agreement</h2>
+      <p class="m-0">
+        By creating an account or using The Guide Log (“Service”), you agree to
+        these Terms. If you do not agree, do not use the Service.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">2. The Service</h2>
+      <p class="m-0">
+        The Service lets you record logs, tasks, habits, goals, and related
+        features we may add or change. We do not guarantee availability,
+        accuracy, or that features will remain unchanged.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">3. Eligibility</h2>
+      <p class="m-0">
+        You must be at least 13 years old (or the age of digital consent in your
+        country, if higher). If you use the Service on behalf of an
+        organization, you represent that you have authority to bind that
+        organization.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">
+        4. Account and security
+      </h2>
+      <p class="m-0">
+        You are responsible for your login credentials and for activity under
+        your account. Notify us through the in-app feedback flow if you suspect
+        unauthorized access.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">5. Your content</h2>
+      <p class="m-0">
+        You retain rights to content you submit (for example logs, voice
+        recordings you upload, and notes). You grant us a non-exclusive license
+        to host, process, display, and back up that content solely to operate,
+        secure, and improve the Service—including sending portions to
+        third-party AI providers when you use optional AI features (see Privacy
+        Policy).
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">6. AI features</h2>
+      <p class="m-0">
+        Optional features (for example voice transcription, summaries, coaching,
+        or “Story of the day”) use automated systems and may be inaccurate,
+        incomplete, or inappropriate for your situation. They are not medical,
+        mental health, legal, or professional advice. Do not rely on them for
+        diagnosis or treatment. Use at your own risk.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">7. Acceptable use</h2>
+      <p class="m-0">
+        You will not misuse the Service: no illegal activity, harassment,
+        attempting to break security, scraping at scale without permission, or
+        uploading malware. We may suspend or terminate accounts that violate
+        these rules or threaten others.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">8. Third parties</h2>
+      <p class="m-0">
+        Sign-in with Google or Facebook and other integrations are subject to
+        those providers’ terms. We are not responsible for third-party sites or
+        services.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">9. Disclaimers</h2>
+      <p class="m-0">
+        The Service is provided “as is” and “as available,” without warranties
+        of any kind, whether express or implied, including merchantability,
+        fitness for a particular purpose, and non-infringement, to the fullest
+        extent permitted by law.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">
+        10. Limitation of liability
+      </h2>
+      <p class="m-0">
+        To the maximum extent permitted by law, we and our suppliers will not be
+        liable for any indirect, incidental, special, consequential, or punitive
+        damages, or any loss of profits, data, goodwill, or other intangible
+        losses, arising from your use of the Service. Our aggregate liability
+        for claims arising from the Service is limited to the greater of (a) the
+        amount you paid us for the Service in the twelve months before the claim
+        or (b) fifty U.S. dollars (USD $50), unless applicable law requires
+        otherwise.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">11. Indemnity</h2>
+      <p class="m-0">
+        You will defend and indemnify us against claims arising from your
+        content, your use of the Service, or your violation of these Terms, to
+        the extent permitted by law.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">12. Termination</h2>
+      <p class="m-0">
+        You may stop using the Service at any time. We may suspend or terminate
+        access for operational, legal, or policy reasons. Provisions that by
+        their nature should survive will survive termination.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">13. Changes</h2>
+      <p class="m-0">
+        We may update these Terms. We will indicate a new “Last updated” date
+        when we do. Continued use after changes constitutes acceptance to the
+        extent allowed by law.
+      </p>
+    </div>
+    <div>
+      <h2 class="mb-1 text-base font-semibold text-white">14. Contact</h2>
+      <p class="m-0">
+        Questions about these Terms: when signed in, use
+        @if (authService.authStatus.value()) {
+          <a
+            routerLink="/feedback"
+            class="text-purple-300 underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 rounded"
+            >Send feedback</a
+          >
+        } @else {
+          <span class="text-gray-200">Send feedback</span> (under Settings after
+          you sign in)
+        }
+        or the support contact published for the Service.
+      </p>
+    </div>
+    <p class="m-0 text-xs text-gray-500">
+      See also
+      <a
+        routerLink="/legal/privacy"
+        class="text-purple-300 underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 rounded"
+        >Privacy Policy</a
+      >.
+    </p>
+  </section>
+</article>

@@ -33,12 +33,14 @@ export class RegisterComponent {
     email: new FormControl('', [Validators.required]),
     password: new FormControl('', [Validators.required]),
     confirmPassword: new FormControl('', [Validators.required]),
+    acceptTerms: new FormControl(false, { nonNullable: true, validators: [Validators.requiredTrue] }),
   });
   formErrors = {
     name: null,
     email: null,
     password: null,
     confirmPassword: null,
+    acceptTerms: null as string | null,
   };
 
   validateForm() {
@@ -47,6 +49,7 @@ export class RegisterComponent {
       email: null,
       password: null,
       confirmPassword: null,
+      acceptTerms: null,
     };
 
     if (this.form.invalid) {
@@ -67,12 +70,18 @@ export class RegisterComponent {
         this.formErrors.confirmPassword = 'Please enter a Confirm password';
       }
 
+      if (this.form.controls['acceptTerms'].errors) {
+        this.formErrors.acceptTerms =
+          'Please accept the Terms of Service and Privacy Policy to continue.';
+      }
+
       return false;
     }
     this.formErrors.name = null;
     this.formErrors.confirmPassword = null;
     this.formErrors.email = null;
     this.formErrors.password = null;
+    this.formErrors.acceptTerms = null;
     return true;
   }
 
