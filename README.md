@@ -32,6 +32,16 @@ ng test
 
 Uses the Karma test runner.
 
+## QA onboarding (development)
+
+To re-run the **welcome / first-log** flow without registering a new account:
+
+1. Register once with a dedicated sandbox email and use it for QA.
+2. In the backend repo, add `DEV_ONBOARDING_RESET_SECRET` to `.env` to the same value as `devOnboardingResetSecret` in [`src/environments/environment.development.ts`](src/environments/environment.development.ts) (default: `local-dev-onboarding-reset`; see backend `.env.example`). Do not set `NODE_ENV=production` locally. Restart the API after editing `.env`.
+3. Run `ng serve` (development build), open **Settings**, and use **QA: Reset onboarding sandbox**. That calls `POST /internal/dev/reset-onboarding-sandbox`, clears `gl_onboarding_v1` / `gl_onboarding_banner_dismiss_v1` in localStorage, and navigates to Home so guards can send you to `/welcome` when the log list is empty.
+
+This control is omitted in production builds (`environment.production`).
+
 ## More
 
 [Angular CLI documentation](https://angular.dev/tools/cli)

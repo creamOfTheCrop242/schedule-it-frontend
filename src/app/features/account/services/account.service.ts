@@ -48,4 +48,20 @@ export class AccountService {
       { withCredentials: true },
     );
   }
+
+  /** Development only: soft-delete all logs + clear summaries; requires matching backend secret. */
+  resetOnboardingSandbox(devSecret: string) {
+    return this.httpClient.post<{
+      ok: true;
+      logsSoftDeleted: number;
+      summariesDeleted: number;
+    }>(
+      `${environment.baseUrl}/internal/dev/reset-onboarding-sandbox`,
+      {},
+      {
+        withCredentials: true,
+        headers: { 'X-Dev-Onboarding-Reset': devSecret },
+      },
+    );
+  }
 }

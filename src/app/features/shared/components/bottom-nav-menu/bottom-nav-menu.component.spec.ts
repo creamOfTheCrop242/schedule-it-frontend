@@ -43,4 +43,20 @@ describe('BottomNavMenuComponent', () => {
     expect(dialog).toBeTruthy();
     expect(component.addChoiceModalOpen()).toBe(true);
   });
+
+  it('lists Quick log as the primary add action in the dialog', () => {
+    const btn = fixture.debugElement.query(
+      By.css('button[aria-label="Add log or task"]'),
+    );
+    btn.nativeElement.click();
+    fixture.detectChanges();
+
+    const dialog = fixture.debugElement.query(By.css('#add-choice-dialog'));
+    const buttons = dialog
+      .queryAll(By.css('button'))
+      .filter((b) => b.nativeElement.textContent?.trim() === 'Quick log');
+    expect(buttons.length).toBe(1);
+    const quickBtn = buttons[0].nativeElement as HTMLButtonElement;
+    expect(quickBtn.className).toContain('bg-teal-600');
+  });
 });
