@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormControl,
@@ -11,6 +11,7 @@ import { take } from 'rxjs';
 import { AccountService } from '../../services/account.service';
 import { AuthService } from '../../../auth/services/auth.service';
 import { InputComponent } from '../../../shared/components/input/input.component';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-settings',
@@ -22,6 +23,12 @@ export class SettingsComponent {
   private readonly accountService = inject(AccountService);
   readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+
+  readonly showDevOnboardingReset =
+    !environment.production && !!environment.devOnboardingResetSecret;
+
+  readonly resetSandboxSubmitting = signal(false);
+  readonly resetSandboxError = signal<string | null>(null);
 
   readonly currentUser = this.accountService.currentUser;
 
@@ -103,5 +110,35 @@ export class SettingsComponent {
       month: 'long',
       day: 'numeric',
     });
+  }
+
+  resetOnboardingSandbox(): void {
+    const secret = environment.devOnboardingResetSecret;
+    if (!secret) return;
+
+    this.resetSandboxError.set(null);
+    this.resetSandboxSubmitting.set(true);
+
+    this.accountService
+      .resetOnboardingSandbox(secret)
+      .pipe(take(1))
+      .subscribe({
+        next: () => {
+          this.resetSandboxSubmitting.set(false);
+          try {
+            localStorage.removeItem('gl_onboarding_v1');
+            localStorage.removeItem('gl_onboarding_banner_dismiss_v1');
+          } catch {
+            /* ignore */
+          }
+          void this.router.navigateByUrl('/dashboard');
+        },
+        error: () => {
+          this.resetSandboxSubmitting.set(false);
+          this.resetSandboxError.set(
+            'Reset failed. Ensure the backend is running (not production), DEV_ONBOARDING_RESET_SECRET in backend .env matches this dev app build, and the server was restarted after changing .env.',
+          );
+        },
+      });
   }
 }

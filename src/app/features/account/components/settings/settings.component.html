@@ -99,6 +99,36 @@
       }
     </div>
 
+    @if (showDevOnboardingReset) {
+    <div
+      class="rounded-lg border border-amber-600/50 bg-amber-950/20 p-4 space-y-3"
+      aria-label="QA onboarding sandbox reset"
+    >
+      <h3 class="text-base font-semibold text-amber-100">QA: Reset onboarding sandbox</h3>
+      <p class="text-sm text-gray-300 m-0">
+        Soft-deletes <strong class="text-white">all your logs</strong> and removes stored
+        <strong class="text-white">period summaries</strong> on the server (development
+        only), clears onboarding flags in this browser, then opens Home so the welcome flow
+        can run again. Use a dedicated test account.
+      </p>
+      @if (resetSandboxError(); as err) {
+      <p class="text-sm text-red-300 m-0" role="alert">{{ err }}</p>
+      }
+      <button
+        type="button"
+        (click)="resetOnboardingSandbox()"
+        [disabled]="resetSandboxSubmitting()"
+        class="w-full rounded-md border border-amber-500/60 bg-amber-600/20 px-4 py-2 text-sm font-medium text-amber-50 hover:bg-amber-600/30 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+      >
+        {{
+          resetSandboxSubmitting()
+            ? 'Resetting…'
+            : 'Reset data and go to Home'
+        }}
+      </button>
+    </div>
+    }
+
     <!-- Update Name Form -->
     <div class="border-t border-gray-700 pt-6">
       <h3 class="text-lg font-semibold mb-4">Update Name</h3>

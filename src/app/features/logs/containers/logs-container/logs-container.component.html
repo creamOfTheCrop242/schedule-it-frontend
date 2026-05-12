@@ -365,9 +365,33 @@
               </div>
               <p class="m-0">No logs yet.</p>
               <p class="mt-2 mb-0 text-sm text-gray-400">
-                Use <span class="font-medium text-gray-200">Add log</span> to
-                create your first entry.
+                One line is enough for your first receipt—use
+                <span class="font-medium text-gray-200">Quick log</span>—or open
+                <span class="font-medium text-gray-200">Add log</span> for the full form.
               </p>
+              <div
+                class="mt-5 flex flex-col items-stretch justify-center gap-2 sm:flex-row sm:flex-wrap"
+              >
+                <a
+                  routerLink="/logs/add-log"
+                  [queryParams]="{ quick: '1' }"
+                  class="inline-flex items-center justify-center gap-2 rounded-lg border border-teal-500/40 bg-teal-500/15 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:border-teal-400 hover:bg-teal-500/25 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                >
+                  <span class="material-icons text-xl leading-none" aria-hidden="true"
+                    >edit_note</span
+                  >
+                  Quick log
+                </a>
+                <a
+                  routerLink="/logs/add-log"
+                  class="inline-flex items-center justify-center gap-2 rounded-lg border border-purple-500/40 bg-purple-500/10 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:border-purple-400 hover:bg-purple-500/20 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                >
+                  <span class="material-icons text-xl leading-none" aria-hidden="true"
+                    >add</span
+                  >
+                  Add log
+                </a>
+              </div>
             </div>
           }
         }
